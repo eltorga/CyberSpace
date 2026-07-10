@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowerpedia Catalog</title>
+    <!-- PapaParse for CSV reading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Base Notion-style elegant monochrome */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #202020;
+            --border-color: #e2e2e2;
+            --hover-bg: #f9f9f9;
+            --pill-bg: #f0f0f0;
+            --shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 2px 4px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        /* Rainbow Animation */
+        @keyframes rainbow-spin {
+            0% { background-color: #F44336; }
+            16% { background-color: #FF9800; }
+            33% { background-color: #FFEB3B; }
+            50% { background-color: #4CAF50; }
+            66% { background-color: #2196F3; }
+            83% { background-color: #9C27B0; }
+            100% { background-color: #F44336; }
+        }
+        .rainbow-anim {
+            animation: rainbow-spin 3s linear infinite;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: var(--bg-color);
+            z-index: 100;
+            padding: 12px 24px;
+        }
+
+        .header-inner {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .logo {
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: -0.02em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar {
+            padding: 6px 30px 6px 32px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 220px;
+            outline: none;
+            font-family: inherit;
+            height: 35px;
+            box-sizing: border-box;
+        }
+
+        .search-bar:focus {
+            border-color: #999;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 10px;
+            color: #999;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .clear-search:hover { color: #333; }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        select {
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: white;
+            outline: none;
+            cursor: pointer;
+            font-family: inherit;
+            height: 35px;
+            box-sizing: border-box;
+        }
+
+        /* Custom Dropdown for Colors */
+        .custom-dropdown {
+            position: relative;
+            display: inline-block;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        
+        .custom-dropdown-selected {
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+            height: 35px;
+            justify-content: space-between;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        .custom-dropdown-options {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: var(--shadow);
+            z-index: 200;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 4px;
+        }
+
+        .custom-dropdown-options.show {
+            display: block;
+        }
+
+        .custom-dropdown-option {
+            padding: 8px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-dropdown-option:hover {
+            background: var(--hover-bg);
+        }
+
+        .btn {
+            padding: 6px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+            font-family: inherit;
+            height: 35px;
+            box-sizing: border-box;
+        }
+
+        .btn:hover { background: var(--hover-bg); }
+
+        /* Loader */
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            color: #777;
+            font-size: 1rem;
+            gap: 16px;
+        }
+
+        .loader-container i {
+            font-size: 2.5rem;
+            color: #333;
+        }
+
+        /* Main Grid */
+        main {
+            padding: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            background: white;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .card-img-container {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-color: var(--hover-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 12px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .color-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: inline-block;
+            border: 1px solid rgba(0,0,0,0.1); 
+            overflow: hidden; 
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .capsule-group {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 6px;
+            align-items: center;
+        }
+
+        .capsule {
+            background: var(--pill-bg);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #333;
+            cursor: pointer;
+            transition: filter 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .capsule:hover { filter: brightness(0.95); }
+
+        .load-more-container { text-align: center; padding: 20px 0; }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-color);
+            border-radius: 12px;
+            width: 1100px;
+            max-width: 95vw;
+            height: auto;
+            max-height: 90vh; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            align-items: stretch; 
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #555;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+        
+        .close-btn:hover { background: var(--hover-bg); color: #000; }
+
+        /* Left Side (Fixed/Sticky padding) */
+        .modal-left {
+            width: 50%;
+            border-right: 1px solid var(--border-color);
+            background: var(--hover-bg);
+            position: relative; 
+        }
+
+        .modal-left-inner {
+            position: sticky;
+            top: 0;
+            padding: 24px; 
+            box-sizing: border-box;
+        }
+
+        .modal-left-inner img {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: white;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Right Side (Scrollable) */
+        .modal-right {
+            width: 50%;
+            padding: 40px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto; 
+            max-height: 90vh;
+            box-sizing: border-box;
+        }
+
+        .modal-right::-webkit-scrollbar { width: 8px; }
+        .modal-right::-webkit-scrollbar-track { background: transparent; }
+        .modal-right::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        .modal-right::-webkit-scrollbar-thumb:hover { background: #999; }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .capsule-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #777;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /* Lists for Packing */
+        .packing-list {
+            margin: 0;
+            padding-left: 32px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .packing-list li { margin-bottom: 4px; }
+
+        /* Markdown Table Styling */
+        .markdown-body table {
+            width: auto;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+        .markdown-body th, .markdown-body td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .markdown-body th {
+            background: var(--hover-bg);
+            font-weight: 600;
+        }
+
+        /* Login Modal Small */
+        .login-box {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .login-box input {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+        }
+        
+        @media (max-width: 1200px) {
+            .grid-container { grid-template-columns: repeat(5, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .grid-container { grid-template-columns: repeat(3, 1fr); }
+            .modal-content { flex-direction: column; max-height: 90vh; }
+            .modal-left { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .modal-left-inner { padding: 16px; position: relative; } 
+            .modal-right { width: 100%; height: auto; padding: 24px; overflow-y: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-inner">
+            <div class="header-left">
+                <a href="#" class="logo" onclick="resetPage(event)">
+                    <i class="fa-solid fa-leaf"></i> Flowerpedia
+                </a>
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" class="search-bar" placeholder="Search flowers...">
+                    <i class="fa-solid fa-xmark clear-search" id="clearSearchBtn" onclick="clearSearch()"></i>
+                </div>
+            </div>
+            <div class="header-right">
+                <select id="filterSpecie"><option value="">All Species</option></select>
+                <select id="filterFarm"><option value="">All Farms</option></select>
+                
+                <!-- Custom Dropdown for Colors -->
+                <div class="custom-dropdown" id="colorDropdownWrapper">
+                    <div class="custom-dropdown-selected" id="colorSelected" onclick="toggleColorDropdown()">
+                        <span>All Colors</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem; color: #777;"></i>
+                    </div>
+                    <div class="custom-dropdown-options" id="colorOptions">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <button id="loginBtn" class="btn"><i class="fa-solid fa-lock"></i> Log In</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Loader Display -->
+        <div id="loader" class="loader-container">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            <span>Cargando la base de datos...</span>
+        </div>
+
+        <div id="grid" class="grid-container" style="display: none;"></div>
+        
+        <div class="load-more-container">
+            <button id="loadMoreBtn" class="btn" style="display: none;">Load More</button>
+        </div>
+    </main>
+
+    <!-- Details Modal -->
+    <div id="detailsModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('detailsModal')"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-left">
+                <div class="modal-left-inner">
+                    <img id="mImg" src="" alt="">
+                </div>
+            </div>
+            <div class="modal-right">
+                <h2 id="mName" class="modal-title">Name</h2>
+                
+                <div>
+                    <div class="section-label"><i class="fa-solid fa-seedling"></i> Specie</div>
+                    <div id="mSpecie" class="capsule-container"></div>
+                </div>
+
+                <div>
+                    <div class="section-label"><i class="fa-solid fa-palette"></i> Colors</div>
+                    <div id="mColor" class="capsule-container"></div>
+                </div>
+
+                <div>
+                    <div class="section-label"><i class="fa-solid fa-tractor"></i> Farms</div>
+                    <div id="mFarm" class="capsule-container"></div>
+                </div>
+
+                <div>
+                    <div class="section-label"><i class="fa-solid fa-box-open"></i> Packing & Pricing</div>
+                    <ul id="mPacking" class="packing-list"></ul>
+                </div>
+
+                <div id="mCompSection" style="display: none;">
+                    <div class="section-label"><i class="fa-solid fa-table"></i> Composition</div>
+                    <div id="mCompTable" class="markdown-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="login-box">
+            <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-lock"></i> Staff Access</h3>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn" onclick="attemptLogin()" style="background: black; color: white;">Log In</button>
+            <button class="btn" onclick="closeModal('loginModal')">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // Enlace oficial de publicación de Google Sheets
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
+        const fallbackImg = 'https://blogger.googleusercontent.com/img/a/AVvXsEgf4r0cd6cRsoR4p_6WdmSxaGrLW4eNl50WIOZnbUfshTbpUxXQ6_9wZLyJawr2JAkXc146Znf-LCwC3RLmZg4aESc8Pj39shd1Wm4irFmLRv5NxbRON-TXr9ipOcDZKx8cDSNXG0oGNwxslRCPcbi9Qj-sLQ_LbIgCXeLIf70j8Lj-SqkH1TB63itZ8Bm3=w600-h600';
+
+        let allData = [];
+        let filteredData = [];
+        let currentIndex = 0;
+        const itemsPerPage = 49; 
+        let isLoggedIn = false;
+        let activeColorFilter = "";
+
+        const authUsers = { 'caguilar': '1995', 'dvalencia': '6969' };
+
+        const specieOrder = [
+            "Standard Rose", "Garden Rose", "Garden Aike Rose", 
+            "David Austin Garden Rose", "Victorian Garden Rose", 
+            "Garden Spray Rose", "Spray Rose"
+        ];
+
+        const colorPalette = {
+            "bicolor": { dot: "#9C27B0", bg: "#F3E5F5" },
+            "blue": { dot: "#1976D2", bg: "#E3F2FD" },
+            "bronze": { dot: "#D84315", bg: "#FBE9E7" },
+            "burgundy": { dot: "#880E4F", bg: "#FCE4EC" },
+            "christmas": { dot: "#2E7D32", bg: "#E8F5E9" },
+            "coral": { dot: "#FF7043", bg: "#FBE9E7" },
+            "cream": { dot: "#FFF59D", bg: "#FFFDE7" },
+            "earth": { dot: "#795548", bg: "#EFEBE9" },
+            "easter": { dot: "#BA68C8", bg: "#F3E5F5" },
+            "fall": { dot: "#EF6C00", bg: "#FFF3E0" },
+            "green": { dot: "#4CAF50", bg: "#E8F5E9" },
+            "hot pink": { dot: "#E91E63", bg: "#FCE4EC" },
+            "lavender": { dot: "#9575CD", bg: "#EDE7F6" },
+            "light blue": { dot: "#81D4FA", bg: "#E1F5FE" },
+            "light pink": { dot: "#F48FB1", bg: "#FCE4EC" },
+            "medium pink": { dot: "#D81B60", bg: "#FCE4EC" },
+            "mustard": { dot: "#FBC02D", bg: "#FFF9C4" },
+            "orange": { dot: "#FF9800", bg: "#FFF3E0" },
+            "peach": { dot: "#FFAB91", bg: "#FBE9E7" },
+            "purple": { dot: "#7B1FA2", bg: "#F3E5F5" },
+            "rainbow": { dot: "rainbow", bg: "#FFEBEE" },
+            "red": { dot: "#D32F2F", bg: "#FFEBEE" },
+            "sand": { dot: "#D7CCC8", bg: "#EFEBE9" },
+            "spring": { dot: "#66BB6A", bg: "#E8F5E9" },
+            "tinted": { dot: "#00BCD4", bg: "#E0F7FA" },
+            "white": { dot: "#FFFFFF", bg: "#F5F5F5", border: "#E0E0E0" },
+            "yellow": { dot: "#FFEB3B", bg: "#FFFDE7" }
+        };
+
+        function getDropdownColorStyle(colorName) {
+            const lp = colorName.trim().toLowerCase();
+            if (lp === 'rainbow') {
+                return {
+                    dotHtml: `<span class="color-dot rainbow-anim"></span>`,
+                    bg: `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};`
+                };
+            }
+            if (colorPalette[lp]) {
+                const borderCss = colorPalette[lp].border ? ` border: 1px solid ${colorPalette[lp].border};` : '';
+                return {
+                    dotHtml: `<span class="color-dot" style="background-color: ${colorPalette[lp].dot};${borderCss}"></span>`,
+                    bg: `background-color: ${colorPalette[lp].bg}; border-color: ${colorPalette[lp].bg};`
+                };
+            }
+            return {
+                dotHtml: `<span class="color-dot" style="background-color: #999;"></span>`,
+                bg: `background-color: #f0f0f0; border-color: #f0f0f0;`
+            };
+        }
+
+        function renderColorCapsulesHTML(dataStr) {
+            if (!dataStr || !dataStr.trim()) return '';
+            const parts = dataStr.split(',').map(s => s.trim());
+            const realColors = parts.filter(p => {
+                const lp = p.toLowerCase();
+                return lp !== 'bicolor' && lp !== 'tinted' && lp !== 'tinited' && lp !== 'rainbow';
+            });
+
+            let html = '';
+            parts.forEach(p => {
+                const lp = p.toLowerCase();
+                let dotHtml = '';
+                let bgStyle = '';
+
+                if (lp === 'rainbow') {
+                    dotHtml = `<span class="color-dot rainbow-anim"></span>`;
+                    bgStyle = `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};`;
+                } else if (lp === 'bicolor') {
+                    if (realColors.length >= 2) {
+                        const c1 = colorPalette[realColors[0].toLowerCase()]?.dot || '#ccc';
+                        const c2 = colorPalette[realColors[1].toLowerCase()]?.dot || '#999';
+                        dotHtml = `<span class="color-dot" style="background: linear-gradient(to right, ${c1} 50%, ${c2} 50%); border: none;"></span>`;
+                    } else {
+                        dotHtml = `<span class="color-dot" style="background-color: ${colorPalette['bicolor'].dot};"></span>`;
+                    }
+                    bgStyle = `background-color: ${colorPalette['bicolor'].bg}; border-color: ${colorPalette['bicolor'].bg};`;
+                } else if (colorPalette[lp]) {
+                    const borderCss = colorPalette[lp].border ? ` border: 1px solid ${colorPalette[lp].border};` : '';
+                    dotHtml = `<span class="color-dot" style="background-color: ${colorPalette[lp].dot};${borderCss}"></span>`;
+                    bgStyle = `background-color: ${colorPalette[lp].bg}; border-color: ${colorPalette[lp].bg};`;
+                } else {
+                    dotHtml = `<span class="color-dot" style="background-color: #999;"></span>`;
+                    bgStyle = `background-color: #f0f0f0; border-color: #f0f0f0;`;
+                }
+
+                html += `<div class="capsule" style="${bgStyle}">${dotHtml} ${p}</div>`;
+            });
+            return html;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchData();
+            
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', () => {
+                const clearBtn = document.getElementById('clearSearchBtn');
+                clearBtn.style.display = searchInput.value.length > 0 ? 'block' : 'none';
+                applyFilters();
+            });
+
+            document.getElementById('filterSpecie').addEventListener('change', applyFilters);
+            document.getElementById('filterFarm').addEventListener('change', applyFilters);
+            
+            document.getElementById('loginBtn').addEventListener('click', () => {
+                if(isLoggedIn) {
+                    isLoggedIn = false;
+                    document.getElementById('loginBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Log In';
+                    alert("Logged out successfully");
+                    applyFilters(); 
+                } else {
+                    document.getElementById('loginModal').classList.add('active');
+                    document.getElementById('username').focus();
+                }
+            });
+
+            document.getElementById('password').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') attemptLogin();
+            });
+
+            document.getElementById('loadMoreBtn').addEventListener('click', renderGrid);
+
+            window.addEventListener('click', function(e) {
+                if (!document.getElementById('colorDropdownWrapper').contains(e.target)) {
+                    document.getElementById('colorOptions').classList.remove('show');
+                }
+            });
+        });
+
+        function toggleColorDropdown() {
+            document.getElementById('colorOptions').classList.toggle('show');
+        }
+
+        function selectCustomColor(val) {
+            activeColorFilter = val;
+            const displaySpan = document.querySelector('#colorSelected span');
+            if(val === '') {
+                displaySpan.innerHTML = 'All Colors';
+            } else {
+                const style = getDropdownColorStyle(val);
+                displaySpan.innerHTML = `${style.dotHtml} ${val}`;
+            }
+            document.getElementById('colorOptions').classList.remove('show');
+            applyFilters();
+        }
+
+        function resetPage(e) {
+            e.preventDefault();
+            clearSearch();
+            document.getElementById('filterSpecie').value = "";
+            document.getElementById('filterFarm').value = "";
+            selectCustomColor('');
+            applyFilters();
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            applyFilters();
+        }
+
+        function fetchData() {
+            // Modificación: Utilizamos la API Fetch para evitar bloqueos CORS en staticdomains
+            const urlWithCacheBuster = sheetUrl + '&t=' + new Date().getTime();
+
+            fetch(urlWithCacheBuster)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("HTTP Status: " + response.status);
+                    }
+                    return response.text();
+                })
+                .then(csvText => {
+                    Papa.parse(csvText, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            document.getElementById('loader').style.display = 'none';
+                            document.getElementById('grid').style.display = 'grid';
+
+                            allData = results.data;
+                            filteredData = [...allData];
+                            populateDropdowns();
+                            renderGrid();
+                        },
+                        error: function(err) {
+                            console.error("Error parseando el CSV:", err);
+                            mostrarErrorBaseDatos("Error interno al leer el archivo CSV.");
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error("Fetch Error:", err);
+                    mostrarErrorBaseDatos("Bloqueo de seguridad CORS o falta de conexión.");
+                });
+        }
+
+        function mostrarErrorBaseDatos(mensaje) {
+            document.getElementById('loader').innerHTML = `
+                <i class="fa-solid fa-triangle-exclamation" style="color: #d32f2f;"></i>
+                <span style="color: #d32f2f;">${mensaje}</span>
+            `;
+        }
+
+        function extractUnique(field) {
+            let items = new Set();
+            allData.forEach(row => {
+                if(row[field]) {
+                    row[field].split(',').forEach(item => items.add(item.trim()));
+                }
+            });
+            return Array.from(items);
+        }
+
+        function populateDropdowns() {
+            let species = extractUnique('SPECIE');
+            species.sort((a, b) => {
+                let indexA = specieOrder.indexOf(a);
+                let indexB = specieOrder.indexOf(b);
+                if(indexA !== -1 && indexB !== -1) return indexA - indexB;
+                if(indexA !== -1) return -1;
+                if(indexB !== -1) return 1;
+                return a.localeCompare(b);
+            });
+            const selSpecie = document.getElementById('filterSpecie');
+            species.forEach(sp => selSpecie.add(new Option(sp, sp)));
+
+            let farms = extractUnique('FARM').sort();
+            const selFarm = document.getElementById('filterFarm');
+            farms.forEach(f => selFarm.add(new Option(f, f)));
+
+            let colors = extractUnique('COLOR').sort();
+            const optionsContainer = document.getElementById('colorOptions');
+            
+            optionsContainer.innerHTML = `<div class="custom-dropdown-option" onclick="selectCustomColor('')">
+                <span class="color-dot" style="background: transparent; border: 1px solid #ccc;"></span> All Colors
+            </div>`;
+
+            colors.forEach(c => {
+                const style = getDropdownColorStyle(c);
+                const optionHtml = `<div class="custom-dropdown-option" onclick="selectCustomColor('${c}')">
+                    ${style.dotHtml} ${c}
+                </div>`;
+                optionsContainer.insertAdjacentHTML('beforeend', optionHtml);
+            });
+        }
+
+        function applyFilters() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const fSpecie = document.getElementById('filterSpecie').value;
+            const fFarm = document.getElementById('filterFarm').value;
+            const fColor = activeColorFilter;
+
+            filteredData = allData.filter(row => {
+                let match = true;
+                if (term) {
+                    const searchStr = `${row.NAME} ${row.SPECIE} ${row.COLOR} ${row.FARM}`.toLowerCase();
+                    if (!searchStr.includes(term)) match = false;
+                }
+                if (fSpecie && (!row.SPECIE || !row.SPECIE.includes(fSpecie))) match = false;
+                if (fFarm && (!row.FARM || !row.FARM.includes(fFarm))) match = false;
+                if (fColor && (!row.COLOR || !row.COLOR.includes(fColor))) match = false;
+                return match;
+            });
+
+            currentIndex = 0;
+            document.getElementById('grid').innerHTML = '';
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('grid');
+            const end = Math.min(currentIndex + itemsPerPage, filteredData.length);
+            
+            for (let i = currentIndex; i < end; i++) {
+                const row = filteredData[i];
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => openDetails(row);
+
+                const imgUrl = row.IMG ? row.IMG.trim() : fallbackImg;
+                
+                let colorCapsulesTags = '';
+                if (row.COLOR && row.COLOR.trim()) {
+                    colorCapsulesTags = renderColorCapsulesHTML(row.COLOR);
+                }
+
+                card.innerHTML = `
+                    <div class="card-img-container">
+                        <img src="${imgUrl}" onerror="this.onerror=null; this.src='${fallbackImg}'" alt="Flower">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="card-title">${row.NAME || 'Unknown'}</div>
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <div class="capsule" style="background: white;">${row.SPECIE || '-'}</div>
+                        </div>
+                        <div class="capsule-group">
+                            ${colorCapsulesTags}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+            
+            currentIndex = end;
+            const loadBtn = document.getElementById('loadMoreBtn');
+            if (currentIndex >= filteredData.length) {
+                loadBtn.style.display = 'none';
+            } else {
+                loadBtn.style.display = 'inline-block';
+            }
+        }
+
+        function openDetails(row) {
+            const img = document.getElementById('mImg');
+            img.src = row.IMG ? row.IMG.trim() : fallbackImg;
+            img.onerror = function() { this.onerror=null; this.src = fallbackImg; };
+            
+            document.getElementById('mName').innerText = row.NAME || 'Unknown';
+            
+            renderClickableCapsules('mSpecie', row.SPECIE, 'filterSpecie');
+            renderClickableCapsules('mFarm', row.FARM, 'filterFarm');
+            renderSplitColorCapsules('mColor', row.COLOR);
+
+            let packingHtml = '';
+            ['EB', 'QB', 'HB'].forEach(box => {
+                if (row[box]) {
+                    const parsed = parseBoxDataList(box, row[box]);
+                    if (parsed) packingHtml += parsed;
+                }
+            });
+            document.getElementById('mPacking').innerHTML = packingHtml || '<li><em>No packing info</em></li>';
+
+            const compSection = document.getElementById('mCompSection');
+            if (row.COMP && row.COMP.trim() !== '') {
+                compSection.style.display = 'block';
+                let secureMarkdown = processSecureMarkdown(row.COMP);
+                document.getElementById('mCompTable').innerHTML = marked.parse(secureMarkdown);
+            } else {
+                compSection.style.display = 'none';
+            }
+
+            document.getElementById('detailsModal').classList.add('active');
+        }
+
+        function renderClickableCapsules(elementId, dataStr, filterId) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            if (dataStr) {
+                const items = dataStr.split(',');
+                items.forEach(item => {
+                    const val = item.trim();
+                    if(val) {
+                        const span = document.createElement('span');
+                        span.className = 'capsule';
+                        span.style.background = "white";
+                        span.innerText = val;
+                        span.onclick = (e) => {
+                            e.stopPropagation();
+                            document.getElementById(filterId).value = val;
+                            closeModal('detailsModal');
+                            applyFilters();
+                        };
+                        container.appendChild(span);
+                    }
+                });
+            } else {
+                container.innerHTML = '<span style="font-size:0.8rem; color:#999;">-</span>';
+            }
+        }
+
+        function renderSplitColorCapsules(elementId, dataStr) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            if (dataStr && dataStr.trim()) {
+                const parts = dataStr.split(',').map(s => s.trim());
+                const realColors = parts.filter(p => {
+                    const lp = p.toLowerCase();
+                    return lp !== 'bicolor' && lp !== 'tinted' && lp !== 'tinited' && lp !== 'rainbow';
+                });
+
+                parts.forEach(p => {
+                    const lp = p.toLowerCase();
+                    let dotHtml = '';
+                    let bgStyle = '';
+
+                    if (lp === 'rainbow') {
+                        dotHtml = `<span class="color-dot rainbow-anim"></span>`;
+                        bgStyle = `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};`;
+                    } else if (lp === 'bicolor') {
+                        if (realColors.length >= 2) {
+                            const c1 = colorPalette[realColors[0].toLowerCase()]?.dot || '#ccc';
+                            const c2 = colorPalette[realColors[1].toLowerCase()]?.dot || '#999';
+                            dotHtml = `<span class="color-dot" style="background: linear-gradient(to right, ${c1} 50%, ${c2} 50%); border: none;"></span>`;
+                        } else {
+                            dotHtml = `<span class="color-dot" style="background-color: ${colorPalette['bicolor'].dot};"></span>`;
+                        }
+                        bgStyle = `background-color: ${colorPalette['bicolor'].bg}; border-color: ${colorPalette['bicolor'].bg};`;
+                    } else if (colorPalette[lp]) {
+                        const borderCss = colorPalette[lp].border ? ` border: 1px solid ${colorPalette[lp].border};` : '';
+                        dotHtml = `<span class="color-dot" style="background-color: ${colorPalette[lp].dot};${borderCss}"></span>`;
+                        bgStyle = `background-color: ${colorPalette[lp].bg}; border-color: ${colorPalette[lp].bg};`;
+                    } else {
+                        dotHtml = `<span class="color-dot" style="background-color: #999;"></span>`;
+                        bgStyle = `background-color: #f0f0f0; border-color: #f0f0f0;`;
+                    }
+
+                    const span = document.createElement('span');
+                    span.className = 'capsule';
+                    span.style.cssText = bgStyle;
+                    span.innerHTML = `${dotHtml} ${p}`;
+                    
+                    span.onclick = (e) => {
+                        e.stopPropagation();
+                        selectCustomColor(p);
+                        closeModal('detailsModal');
+                    };
+                    container.appendChild(span);
+                });
+            } else {
+                container.innerHTML = '<span style="font-size:0.8rem; color:#999;">-</span>';
+            }
+        }
+
+        function parseBoxDataList(boxType, dataStr) {
+            const segments = dataStr.split(';');
+            let htmlLines = "";
+            
+            const regexCm = /(\d+cm)x(\d+)(?:\s*\$([\d.]+))?/i;
+            const regexNoCm = /^x(\d+)(?:\s*\$([\d.]+))?(?:\s*(per box))?/i;
+
+            segments.forEach(seg => {
+                const s = seg.trim();
+                if (!s) return;
+
+                const matchCm = s.match(regexCm);
+                if (matchCm) {
+                    const length = matchCm[1];
+                    const stems = matchCm[2];
+                    const price = matchCm[3];
+
+                    let str = `<li>${boxType} x${stems} Stems ${length}`;
+                    if (price && isLoggedIn) {
+                        str += ` <strong>@ $${price}</strong>`;
+                    }
+                    str += `</li>`;
+                    htmlLines += str;
+                    return;
+                }
+
+                const matchNoCm = s.match(regexNoCm);
+                if (matchNoCm) {
+                    const stems = matchNoCm[1];
+                    const price = matchNoCm[2];
+                    const perBox = matchNoCm[3];
+
+                    let str = `<li>${boxType} x${stems} Stems`;
+                    if (price && isLoggedIn) {
+                        str += ` <strong>@ $${price}${perBox ? ' ' + perBox.toLowerCase() : ''}</strong>`;
+                    }
+                    str += `</li>`;
+                    htmlLines += str;
+                    return;
+                }
+
+                htmlLines += `<li>${boxType}: ${s}</li>`;
+            });
+            return htmlLines;
+        }
+
+        function processSecureMarkdown(md) {
+            if (isLoggedIn) return md; 
+            
+            const lines = md.split('\n');
+            const safeLines = lines.map(line => {
+                if (line.includes('|')) {
+                    const parts = line.split('|');
+                    let offset = line.trim().startsWith('|') ? 1 : 0;
+                    if (parts.length > offset + 2) {
+                        parts.splice(offset + 2, 1); 
+                    }
+                    return parts.join('|');
+                }
+                return line;
+            });
+            return safeLines.join('\n');
+        }
+
+        function attemptLogin() {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            
+            if (authUsers[u] && authUsers[u] === p) {
+                isLoggedIn = true;
+                document.getElementById('loginBtn').innerHTML = `<i class="fa-solid fa-unlock"></i> Staff (${u})`;
+                closeModal('loginModal');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                
+                if(document.getElementById('detailsModal').classList.contains('active')) {
+                    const title = document.getElementById('mName').innerText;
+                    const row = filteredData.find(r => r.NAME === title);
+                    if(row) openDetails(row);
+                }
+            } else {
+                alert("Credenciales incorrectas.");
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
