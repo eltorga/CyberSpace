@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- Marked.js para tablas Markdown -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
-    <!-- RemixIcon (Iconos en formato línea) -->
+    <!-- RemixIcon -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
     <style>
@@ -582,9 +582,8 @@
     <header id="mainHeader" style="display: none;">
         <div class="header-inner">
             <div class="header-left">
-                <!-- Se actualizó el icono a la flor en formato línea -->
                 <a href="#" class="logo" onclick="resetPage(event)">
-                    <i class="ri-leaf-line"></i> Flowerpedia
+                    <i class="ri-flower-line"></i> Flowerpedia
                 </a>
                 <div class="search-container">
                     <i class="ri-search-line search-icon"></i>
@@ -598,7 +597,7 @@
                     <i class="ri-filter-off-line"></i> Clear Filters
                 </button>
 
-                <!-- Dropdown Species (Multi-select) -->
+                <!-- Dropdown Species -->
                 <div class="multi-dropdown" id="wrapper-specie">
                     <div class="multi-dropdown-selected" onclick="toggleDD('opts-specie')">
                         <span style="display:flex; align-items:center; gap:8px;">
@@ -610,7 +609,7 @@
                     <div class="multi-dropdown-options" id="opts-specie"></div>
                 </div>
 
-                <!-- Dropdown Farm (Multi-select) -->
+                <!-- Dropdown Farm -->
                 <div class="multi-dropdown" id="wrapper-farm">
                     <div class="multi-dropdown-selected" onclick="toggleDD('opts-farm')">
                         <span style="display:flex; align-items:center; gap:8px;">
@@ -622,7 +621,7 @@
                     <div class="multi-dropdown-options" id="opts-farm"></div>
                 </div>
                 
-                <!-- Dropdown Colors (Multi-select) -->
+                <!-- Dropdown Colors -->
                 <div class="multi-dropdown" id="wrapper-color">
                     <div class="multi-dropdown-selected" onclick="toggleDD('opts-color')">
                         <span style="display:flex; align-items:center; gap:8px;">
@@ -650,7 +649,6 @@
         <div id="grid" class="grid-container" style="display: none;"></div>
         
         <div class="load-more-container">
-            <!-- Se llamó explícitamente a renderGrid desde el HTML y se cambió el display -->
             <button id="loadMoreBtn" class="btn" onclick="renderGrid()" style="display: none; margin: 0 auto;">Load More</button>
         </div>
     </main>
@@ -668,7 +666,6 @@
                 <h2 id="mName" class="modal-title">Name</h2>
                 
                 <div>
-                    <!-- Iconos de subsecciones en formato "line" -->
                     <div class="section-label"><i class="ri-plant-line"></i> Specie</div>
                     <div id="mSpecie" class="capsule-container"></div>
                 </div>
@@ -710,7 +707,10 @@
     </div>
 
     <script>
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
+        // Enlaces de Google Sheets
+        const baseCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
+        const farmsCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=1636116794&single=true&output=csv'; 
+        
         const fallbackImg = 'https://blogger.googleusercontent.com/img/a/AVvXsEgf4r0cd6cRsoR4p_6WdmSxaGrLW4eNl50WIOZnbUfshTbpUxXQ6_9wZLyJawr2JAkXc146Znf-LCwC3RLmZg4aESc8Pj39shd1Wm4irFmLRv5NxbRON-TXr9ipOcDZKx8cDSNXG0oGNwxslRCPcbi9Qj-sLQ_LbIgCXeLIf70j8Lj-SqkH1TB63itZ8Bm3=w600-h600';
 
         let allData = [];
@@ -722,6 +722,7 @@
         let selectedSpecies = [];
         let selectedFarms = [];
         let selectedColors = [];
+        let farmsArrival = {}; 
 
         const authUsers = { 'caguilar': '1995', 'dvalencia': '6969' };
 
@@ -899,18 +900,39 @@
             return html;
         }
 
-        function fetchData() {
-            const cacheBusterUrl = sheetUrl + '&t=' + new Date().getTime();
+        // Función Helper para descargar CSV usando PapaParse
+        function fetchCSV(url) {
+            return new Promise((resolve, reject) => {
+                const busterUrl = url + (url.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+                Papa.parse(busterUrl, {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) { resolve(results.data); },
+                    error: function(err) { reject(err); }
+                });
+            });
+        }
 
-            Papa.parse(cacheBusterUrl, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
+        function fetchData() {
+            // Descarga simultánea de ambas bases de datos
+            Promise.all([fetchCSV(baseCsvUrl), fetchCSV(farmsCsvUrl)])
+                .then(([mainData, farmsDataArray]) => {
+                    
+                    // Llenar el diccionario de llegadas
+                    farmsDataArray.forEach(row => {
+                        let farmName = row.Nombre || row[' Nombre '] || row.NOMBRE;
+                        let llegada = row.Llegada || row[' Llegada '] || row.LLEGADA;
+                        
+                        if(farmName) {
+                            farmsArrival[farmName.trim().toLowerCase()] = llegada ? llegada.trim().toLowerCase() : '';
+                        }
+                    });
+
                     document.getElementById('loader').style.display = 'none';
                     document.getElementById('grid').style.display = 'grid';
 
-                    allData = results.data;
+                    allData = mainData;
                     filteredData = [...allData];
                     populateDropdowns();
                     
@@ -922,12 +944,11 @@
                     });
                     
                     renderGrid();
-                },
-                error: function(err) {
-                    console.error("Error parseando:", err);
-                    mostrarErrorBaseDatos("Error interno al cargar la base de datos de Google Sheets.");
-                }
-            });
+                })
+                .catch(err => {
+                    console.error("Error conectando a Google Sheets:", err);
+                    mostrarErrorBaseDatos("Error de conexión a la base de datos.");
+                });
         }
 
         function mostrarErrorBaseDatos(mensaje) {
@@ -1160,7 +1181,7 @@
             document.getElementById('mName').innerText = row.NAME || 'Unknown';
             
             renderClickableCapsules('mSpecie', row.SPECIE, 'specie');
-            renderClickableCapsules('mFarm', row.FARM, 'farm');
+            renderFarmCapsules('mFarm', row.FARM, 'farm');
             renderSplitColorCapsules('mColor', row.COLOR);
 
             let packingHtml = '';
@@ -1196,6 +1217,50 @@
                         span.className = 'capsule';
                         span.style.background = "white";
                         span.innerText = val;
+                        span.onclick = (e) => {
+                            e.stopPropagation();
+                            clearAllFilters();
+                            toggleMultiSelection(filterType, val);
+                            closeModal('detailsModal');
+                        };
+                        container.appendChild(span);
+                    }
+                });
+            } else {
+                container.innerHTML = '<span style="font-size:0.8rem; color:#999;">-</span>';
+            }
+        }
+
+        // Lógica de Pintado para Fincas y su Llegada
+        function renderFarmCapsules(elementId, dataStr, filterType) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            if (dataStr) {
+                const items = dataStr.split(',');
+                items.forEach(item => {
+                    const val = item.trim();
+                    if(val) {
+                        const status = farmsArrival[val.toLowerCase()];
+                        let iconHtml = '<i class="ri-truck-line" style="color: #777; margin-right: 4px;"></i>';
+                        let bgStyle = 'background: white; border-color: var(--border-color);';
+
+                        // Coloreado condicional basado en Y, N, o -
+                        if (status === 'y') {
+                            iconHtml = '<i class="ri-time-line" style="color: #4CAF50; margin-right: 4px;"></i>';
+                            bgStyle = 'background-color: #E8F5E9; border-color: #C8E6C9; color: #2E7D32;';
+                        } else if (status === 'n') {
+                            iconHtml = '<i class="ri-time-line" style="color: #F44336; margin-right: 4px;"></i>';
+                            bgStyle = 'background-color: #FFEBEE; border-color: #FFCDD2; color: #C62828;';
+                        } else if (status === '-') {
+                            iconHtml = '<i class="ri-time-line" style="color: #FF9800; margin-right: 4px;"></i>';
+                            bgStyle = 'background-color: #FFF3E0; border-color: #FFE0B2; color: #EF6C00;';
+                        }
+
+                        const span = document.createElement('span');
+                        span.className = 'capsule';
+                        span.style.cssText = bgStyle;
+                        span.innerHTML = iconHtml + val;
+                        
                         span.onclick = (e) => {
                             e.stopPropagation();
                             clearAllFilters();
