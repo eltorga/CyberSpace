@@ -706,8 +706,8 @@
     </div>
 
     <script>
-        // Enlace oficial de publicación de Google Sheets
-        const baseCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
+        // ENLACE DIRECTO (CERO PROXIES) - Funciona perfecto en servidores normales
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
         const fallbackImg = 'https://blogger.googleusercontent.com/img/a/AVvXsEgf4r0cd6cRsoR4p_6WdmSxaGrLW4eNl50WIOZnbUfshTbpUxXQ6_9wZLyJawr2JAkXc146Znf-LCwC3RLmZg4aESc8Pj39shd1Wm4irFmLRv5NxbRON-TXr9ipOcDZKx8cDSNXG0oGNwxslRCPcbi9Qj-sLQ_LbIgCXeLIf70j8Lj-SqkH1TB63itZ8Bm3=w600-h600';
 
         let allData = [];
@@ -807,7 +807,7 @@
                 localStorage.removeItem('fp_staff_user');
                 localStorage.removeItem('fp_staff_pass');
                 document.getElementById('loginBtn').innerHTML = '<i class="ri-lock-line"></i> Log In';
-                applyFilters(); // Recarga para ocultar precios
+                applyFilters(); 
             } else {
                 document.getElementById('loginModal').classList.add('active');
                 document.getElementById('username').focus();
@@ -902,48 +902,35 @@
 
         // --- MANEJO DE DATOS Y CONEXIÓN A GOOGLE SHEETS ---
         function fetchData() {
-            const cacheBuster = new Date().getTime();
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(baseCsvUrl)}&disableCache=true&t=${cacheBuster}`;
+            // Se usa Papa.parse directamente con el enlace oficial CSV para hosts normales.
+            const cacheBusterUrl = sheetUrl + '&t=' + new Date().getTime();
 
-            fetch(proxyUrl)
-                .then(response => {
-                    if (!response.ok) throw new Error("HTTP Status: " + response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    if(!data.contents) throw new Error("No content");
+            Papa.parse(cacheBusterUrl, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('grid').style.display = 'grid';
+
+                    allData = results.data;
+                    filteredData = [...allData];
+                    populateDropdowns();
                     
-                    Papa.parse(data.contents, {
-                        header: true,
-                        skipEmptyLines: true,
-                        complete: function(results) {
-                            document.getElementById('loader').style.display = 'none';
-                            document.getElementById('grid').style.display = 'grid';
-
-                            allData = results.data;
-                            filteredData = [...allData];
-                            populateDropdowns();
-                            
-                            // Lógica para la barra de búsqueda general
-                            const searchInput = document.getElementById('searchInput');
-                            searchInput.addEventListener('input', () => {
-                                const clearBtn = document.getElementById('clearSearchBtn');
-                                clearBtn.style.display = searchInput.value.length > 0 ? 'block' : 'none';
-                                applyFilters();
-                            });
-                            
-                            renderGrid();
-                        },
-                        error: function(err) {
-                            console.error("Error parseando:", err);
-                            mostrarErrorBaseDatos("Error interno al organizar la tabla.");
-                        }
+                    const searchInput = document.getElementById('searchInput');
+                    searchInput.addEventListener('input', () => {
+                        const clearBtn = document.getElementById('clearSearchBtn');
+                        clearBtn.style.display = searchInput.value.length > 0 ? 'block' : 'none';
+                        applyFilters();
                     });
-                })
-                .catch(err => {
-                    console.error("Fetch Error:", err);
-                    mostrarErrorBaseDatos("Bloqueo de seguridad CORS o falta de conexión.");
-                });
+                    
+                    renderGrid();
+                },
+                error: function(err) {
+                    console.error("Error parseando:", err);
+                    mostrarErrorBaseDatos("Error interno al cargar la base de datos de Google Sheets.");
+                }
+            });
         }
 
         function mostrarErrorBaseDatos(mensaje) {
@@ -1105,7 +1092,6 @@
                     if (!row.FARM) {
                         match = false;
                     } else {
-                        // Comprueba si alguna de las fincas de la fila está en el array de seleccionados
                         const rowFarms = row.FARM.split(',').map(f => f.trim());
                         const hasMatchingFarm = rowFarms.some(f => selectedFarms.includes(f));
                         if (!hasMatchingFarm) match = false;
@@ -1233,7 +1219,6 @@
                         span.innerText = val;
                         span.onclick = (e) => {
                             e.stopPropagation();
-                            // Reset everything, then specifically toggle this one to filter strictly
                             clearAllFilters();
                             toggleMultiSelection(filterType, val);
                             closeModal('detailsModal');
@@ -1300,7 +1285,6 @@
             }
         }
 
-        // Decodificador de Tiempos y Cajas
         function parseBoxDataList(boxType, dataStr) {
             const segments = dataStr.split(';');
             let htmlLines = "";
@@ -1369,7 +1353,6 @@
             document.getElementById(id).classList.remove('active');
         }
 
-        // Cierra modales dando click afuera
         window.onclick = function(event) {
             if (event.target.classList.contains('modal-overlay')) {
                 event.target.classList.remove('active');
