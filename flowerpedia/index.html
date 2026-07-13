@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- Marked.js para tablas Markdown -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
-    <!-- RemixIcon (Reemplazo de FontAwesome) -->
+    <!-- RemixIcon (Iconos en formato línea) -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
     <style>
@@ -263,8 +263,9 @@
             font-family: inherit;
             height: 35px;
             box-sizing: border-box;
-            display: flex;
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
         }
         .btn:hover { background: var(--hover-bg); }
@@ -581,8 +582,9 @@
     <header id="mainHeader" style="display: none;">
         <div class="header-inner">
             <div class="header-left">
+                <!-- Se actualizó el icono a la flor en formato línea -->
                 <a href="#" class="logo" onclick="resetPage(event)">
-                    <i class="ri-leaf-line"></i> Flowerpedia
+                    <i class="ri-flower-line"></i> Flowerpedia
                 </a>
                 <div class="search-container">
                     <i class="ri-search-line search-icon"></i>
@@ -648,7 +650,8 @@
         <div id="grid" class="grid-container" style="display: none;"></div>
         
         <div class="load-more-container">
-            <button id="loadMoreBtn" class="btn" style="display: none; margin: 0 auto;">Load More</button>
+            <!-- Se llamó explícitamente a renderGrid desde el HTML y se cambió el display -->
+            <button id="loadMoreBtn" class="btn" onclick="renderGrid()" style="display: none; margin: 0 auto;">Load More</button>
         </div>
     </main>
 
@@ -665,27 +668,28 @@
                 <h2 id="mName" class="modal-title">Name</h2>
                 
                 <div>
-                    <div class="section-label"><i class="ri-plant-fill"></i> Specie</div>
+                    <!-- Iconos de subsecciones en formato "line" -->
+                    <div class="section-label"><i class="ri-plant-line"></i> Specie</div>
                     <div id="mSpecie" class="capsule-container"></div>
                 </div>
 
                 <div>
-                    <div class="section-label"><i class="ri-palette-fill"></i> Colors</div>
+                    <div class="section-label"><i class="ri-palette-line"></i> Colors</div>
                     <div id="mColor" class="capsule-container"></div>
                 </div>
 
                 <div>
-                    <div class="section-label"><i class="ri-truck-fill"></i> Farms</div>
+                    <div class="section-label"><i class="ri-truck-line"></i> Farms</div>
                     <div id="mFarm" class="capsule-container"></div>
                 </div>
 
                 <div>
-                    <div class="section-label"><i class="ri-box-3-fill"></i> Packing & Pricing</div>
+                    <div class="section-label"><i class="ri-box-3-line"></i> Packing & Pricing</div>
                     <ul id="mPacking" class="packing-list"></ul>
                 </div>
 
                 <div id="mCompSection" style="display: none;">
-                    <div class="section-label"><i class="ri-table-fill"></i> Composition</div>
+                    <div class="section-label"><i class="ri-table-line"></i> Composition</div>
                     <div id="mCompTable" class="markdown-body"></div>
                 </div>
             </div>
@@ -696,7 +700,7 @@
     <div id="loginModal" class="modal-overlay">
         <div class="login-box">
             <h3 style="margin-top:0; font-size: 1.2rem; display:flex; align-items:center; gap:8px;">
-                <i class="ri-lock-fill"></i> Staff Access
+                <i class="ri-lock-line"></i> Staff Access
             </h3>
             <input type="text" id="username" placeholder="Username">
             <input type="password" id="password" placeholder="Password">
@@ -706,7 +710,6 @@
     </div>
 
     <script>
-        // ENLACE DIRECTO (CERO PROXIES) - Funciona perfecto en servidores normales
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
         const fallbackImg = 'https://blogger.googleusercontent.com/img/a/AVvXsEgf4r0cd6cRsoR4p_6WdmSxaGrLW4eNl50WIOZnbUfshTbpUxXQ6_9wZLyJawr2JAkXc146Znf-LCwC3RLmZg4aESc8Pj39shd1Wm4irFmLRv5NxbRON-TXr9ipOcDZKx8cDSNXG0oGNwxslRCPcbi9Qj-sLQ_LbIgCXeLIf70j8Lj-SqkH1TB63itZ8Bm3=w600-h600';
 
@@ -716,7 +719,6 @@
         const itemsPerPage = 49; 
         let isLoggedIn = false;
 
-        // Arrays para guardar las selecciones múltiples
         let selectedSpecies = [];
         let selectedFarms = [];
         let selectedColors = [];
@@ -759,7 +761,6 @@
             "yellow": { dot: "#FFEB3B", bg: "#FFFDE7" }
         };
 
-        // --- SISTEMA DE AUTENTICACIÓN GLOBAL Y PERSISTENCIA ---
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('sitePassword').addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') checkSitePassword();
@@ -768,7 +769,6 @@
                 if (e.key === 'Enter') attemptStaffLogin();
             });
 
-            // Verificar si el sitio ya fue desbloqueado localmente
             if (localStorage.getItem('flowerpedia_site_access') === '2012') {
                 unlockSite();
             }
@@ -797,7 +797,7 @@
             const p = localStorage.getItem('fp_staff_pass');
             if (u && p && authUsers[u] === p) {
                 isLoggedIn = true;
-                document.getElementById('loginBtn').innerHTML = `<i class="ri-lock-unlock-fill"></i> Staff (${u})`;
+                document.getElementById('loginBtn').innerHTML = `<i class="ri-lock-unlock-line"></i> Staff (${u})`;
             }
         }
 
@@ -823,7 +823,7 @@
                 localStorage.setItem('fp_staff_user', u);
                 localStorage.setItem('fp_staff_pass', p);
                 
-                document.getElementById('loginBtn').innerHTML = `<i class="ri-lock-unlock-fill"></i> Staff (${u})`;
+                document.getElementById('loginBtn').innerHTML = `<i class="ri-lock-unlock-line"></i> Staff (${u})`;
                 closeModal('loginModal');
                 document.getElementById('username').value = '';
                 document.getElementById('password').value = '';
@@ -838,7 +838,6 @@
             }
         }
 
-        // --- SISTEMA DE RENDERIZADO VISUAL ---
         function getDropdownColorStyle(colorName) {
             const lp = colorName.trim().toLowerCase();
             if (lp === 'rainbow') {
@@ -900,9 +899,7 @@
             return html;
         }
 
-        // --- MANEJO DE DATOS Y CONEXIÓN A GOOGLE SHEETS ---
         function fetchData() {
-            // Se usa Papa.parse directamente con el enlace oficial CSV para hosts normales.
             const cacheBusterUrl = sheetUrl + '&t=' + new Date().getTime();
 
             Papa.parse(cacheBusterUrl, {
@@ -935,7 +932,7 @@
 
         function mostrarErrorBaseDatos(mensaje) {
             document.getElementById('loader').innerHTML = `
-                <i class="ri-error-warning-fill" style="color: #d32f2f; margin-bottom: 10px;"></i>
+                <i class="ri-error-warning-line" style="color: #d32f2f; margin-bottom: 10px;"></i>
                 <span style="color: #d32f2f;">${mensaje}</span>
             `;
         }
@@ -950,9 +947,7 @@
             return Array.from(items);
         }
 
-        // --- SISTEMA DE FILTROS MULTIPLES (CHECKBOXES) ---
         function populateDropdowns() {
-            // Especies
             let species = extractUnique('SPECIE');
             species.sort((a, b) => {
                 let idxA = specieOrder.indexOf(a), idxB = specieOrder.indexOf(b);
@@ -963,11 +958,9 @@
             });
             fillMultiDropdown('opts-specie', species, 'specie');
 
-            // Fincas
             let farms = extractUnique('FARM').sort();
             fillMultiDropdown('opts-farm', farms, 'farm');
 
-            // Colores
             let colors = extractUnique('COLOR').sort();
             const optsColor = document.getElementById('opts-color');
             optsColor.innerHTML = '';
@@ -1000,7 +993,6 @@
             document.getElementById(id).classList.toggle('show');
         }
 
-        // Cierra los dropdowns si se hace clic fuera
         window.addEventListener('click', function(e) {
             if (!e.target.closest('.multi-dropdown')) {
                 document.querySelectorAll('.multi-dropdown-options').forEach(el => el.classList.remove('show'));
@@ -1014,12 +1006,10 @@
             if (idx > -1) arr.splice(idx, 1);
             else arr.push(val);
 
-            // Actualizar Checkbox visual
             const cbId = `cb-${type}-${val.replace(/\s+/g, '-')}`;
             const cbElement = document.getElementById(cbId);
             if(cbElement) cbElement.checked = (idx === -1);
 
-            // Actualizar Texto del Header
             let defaultText = type === 'specie' ? 'All Species' : type === 'farm' ? 'All Farms' : 'All Colors';
             let spanId = `text-${type}`;
             
@@ -1042,21 +1032,17 @@
         }
 
         function clearAllFilters() {
-            // Limpiar buscador
             document.getElementById('searchInput').value = '';
             document.getElementById('clearSearchBtn').style.display = 'none';
 
-            // Vaciar Arrays
             selectedSpecies = [];
             selectedFarms = [];
             selectedColors = [];
 
-            // Resetear textos
             document.getElementById('text-specie').innerText = 'All Species';
             document.getElementById('text-farm').innerText = 'All Farms';
             document.getElementById('text-color').innerText = 'All Colors';
 
-            // Desmarcar todos los checkboxes
             document.querySelectorAll('.multi-dropdown-options input[type="checkbox"]').forEach(cb => cb.checked = false);
 
             applyFilters();
@@ -1065,7 +1051,7 @@
         function checkClearFiltersButton() {
             const hasSearch = document.getElementById('searchInput').value.length > 0;
             const hasFilters = selectedSpecies.length > 0 || selectedFarms.length > 0 || selectedColors.length > 0;
-            document.getElementById('clearFiltersBtn').style.display = (hasSearch || hasFilters) ? 'flex' : 'none';
+            document.getElementById('clearFiltersBtn').style.display = (hasSearch || hasFilters) ? 'inline-flex' : 'none';
         }
 
         function applyFilters() {
@@ -1076,18 +1062,15 @@
             filteredData = allData.filter(row => {
                 let match = true;
 
-                // 1. Buscador global
                 if (term) {
                     const searchStr = `${row.NAME} ${row.SPECIE} ${row.COLOR} ${row.FARM}`.toLowerCase();
                     if (!searchStr.includes(term)) match = false;
                 }
 
-                // 2. Filtro de Especie (Multi)
                 if (selectedSpecies.length > 0 && (!row.SPECIE || !selectedSpecies.includes(row.SPECIE.trim()))) {
                     match = false;
                 }
 
-                // 3. Filtro de Finca (Multi)
                 if (selectedFarms.length > 0) {
                     if (!row.FARM) {
                         match = false;
@@ -1098,7 +1081,6 @@
                     }
                 }
 
-                // 4. Lógica Estricta de Filtro de Colores (Multi)
                 if (selectedColors.length > 0) {
                     let colorMatch = false;
                     const nonSolid = ['bicolor', 'rainbow', 'tinted', 'tinited'];
@@ -1109,11 +1091,9 @@
 
                         for(let sc of selectedColors) {
                             const scLower = sc.toLowerCase();
-                            // Si es Bicolor, Rainbow o Tinted, permitimos que simplemente contenga la palabra
                             if (nonSolid.includes(scLower)) {
                                 if (rowColorLower.includes(scLower)) colorMatch = true;
                             } 
-                            // Si es color Sólido (ej. RED), exigimos que toda la celda de color sea EXACTAMENTE igual (ej. solo "Red")
                             else {
                                 if (rowColorExactLower === scLower) colorMatch = true;
                             }
@@ -1164,7 +1144,7 @@
             
             currentIndex = end;
             const loadBtn = document.getElementById('loadMoreBtn');
-            loadBtn.style.display = (currentIndex >= filteredData.length) ? 'none' : 'flex';
+            loadBtn.style.display = (currentIndex >= filteredData.length) ? 'none' : 'inline-flex';
         }
 
         function resetPage(e) {
@@ -1172,7 +1152,6 @@
             clearAllFilters();
         }
 
-        // --- SISTEMA DE POPUP (DETALLES) ---
         function openDetails(row) {
             const img = document.getElementById('mImg');
             img.src = row.IMG ? row.IMG.trim() : fallbackImg;
