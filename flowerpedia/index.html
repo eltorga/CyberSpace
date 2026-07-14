@@ -267,6 +267,7 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
+            text-decoration: none; /* Asegura que el enlace no tenga subrayado */
         }
         .btn:hover { background: var(--hover-bg); }
 
@@ -583,7 +584,7 @@
         <div class="header-inner">
             <div class="header-left">
                 <a href="#" class="logo" onclick="resetPage(event)">
-                    <i class="ri-leaf-line"></i> Flowerpedia
+                    <i class="ri-flower-line"></i> Flowerpedia
                 </a>
                 <div class="search-container">
                     <i class="ri-search-line search-icon"></i>
@@ -632,6 +633,11 @@
                     </div>
                     <div class="multi-dropdown-options" id="opts-color"></div>
                 </div>
+
+                <!-- ENLACE CREATE ART -->
+                <a href="https://eltorga.com/flowerpedia/artcreator/" target="_blank" rel="noopener noreferrer" class="btn" style="background: var(--text-color); color: white; border-color: var(--text-color);">
+                    <i class="ri-brush-line"></i> Art Creator
+                </a>
 
                 <button id="loginBtn" class="btn" onclick="handleLoginClick()">
                     <i class="ri-lock-line"></i> Log In
@@ -710,7 +716,6 @@
         // Enlaces de Google Sheets
         const baseCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
         const farmsCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=1636116794&single=true&output=csv'; 
-        
         const fallbackImg = 'https://blogger.googleusercontent.com/img/a/AVvXsEgf4r0cd6cRsoR4p_6WdmSxaGrLW4eNl50WIOZnbUfshTbpUxXQ6_9wZLyJawr2JAkXc146Znf-LCwC3RLmZg4aESc8Pj39shd1Wm4irFmLRv5NxbRON-TXr9ipOcDZKx8cDSNXG0oGNwxslRCPcbi9Qj-sLQ_LbIgCXeLIf70j8Lj-SqkH1TB63itZ8Bm3=w600-h600';
 
         let allData = [];
@@ -725,13 +730,11 @@
         let farmsArrival = {}; 
 
         const authUsers = { 'caguilar': '1995', 'dvalencia': '6969' };
-
         const specieOrder = [
             "Standard Rose", "Garden Rose", "Garden Aike Rose", 
             "David Austin Garden Rose", "Victorian Garden Rose", 
             "Garden Spray Rose", "Spray Rose"
         ];
-
         const colorPalette = {
             "bicolor": { dot: "#9C27B0", bg: "#F3E5F5" },
             "blue": { dot: "#1976D2", bg: "#E3F2FD" },
@@ -841,38 +844,23 @@
 
         function getDropdownColorStyle(colorName) {
             const lp = colorName.trim().toLowerCase();
-            if (lp === 'rainbow') {
-                return {
-                    dotHtml: `<span class="color-dot rainbow-anim"></span>`,
-                    bg: `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};`
-                };
-            }
+            if (lp === 'rainbow') return { dotHtml: `<span class="color-dot rainbow-anim"></span>`, bg: `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};` };
             if (colorPalette[lp]) {
                 const borderCss = colorPalette[lp].border ? ` border: 1px solid ${colorPalette[lp].border};` : '';
-                return {
-                    dotHtml: `<span class="color-dot" style="background-color: ${colorPalette[lp].dot};${borderCss}"></span>`,
-                    bg: `background-color: ${colorPalette[lp].bg}; border-color: ${colorPalette[lp].bg};`
-                };
+                return { dotHtml: `<span class="color-dot" style="background-color: ${colorPalette[lp].dot};${borderCss}"></span>`, bg: `background-color: ${colorPalette[lp].bg}; border-color: ${colorPalette[lp].bg};` };
             }
-            return {
-                dotHtml: `<span class="color-dot" style="background-color: #999;"></span>`,
-                bg: `background-color: #f0f0f0; border-color: #f0f0f0;`
-            };
+            return { dotHtml: `<span class="color-dot" style="background-color: #999;"></span>`, bg: `background-color: #f0f0f0; border-color: #f0f0f0;` };
         }
 
         function renderColorCapsulesHTML(dataStr) {
             if (!dataStr || !dataStr.trim()) return '';
             const parts = dataStr.split(',').map(s => s.trim());
-            const realColors = parts.filter(p => {
-                const lp = p.toLowerCase();
-                return lp !== 'bicolor' && lp !== 'tinted' && lp !== 'tinited' && lp !== 'rainbow';
-            });
+            const realColors = parts.filter(p => !['bicolor','tinted','tinited','rainbow'].includes(p.toLowerCase()));
 
             let html = '';
             parts.forEach(p => {
                 const lp = p.toLowerCase();
-                let dotHtml = '';
-                let bgStyle = '';
+                let dotHtml = '', bgStyle = '';
 
                 if (lp === 'rainbow') {
                     dotHtml = `<span class="color-dot rainbow-anim"></span>`;
@@ -882,9 +870,7 @@
                         const c1 = colorPalette[realColors[0].toLowerCase()]?.dot || '#ccc';
                         const c2 = colorPalette[realColors[1].toLowerCase()]?.dot || '#999';
                         dotHtml = `<span class="color-dot" style="background: linear-gradient(to right, ${c1} 50%, ${c2} 50%); border: none;"></span>`;
-                    } else {
-                        dotHtml = `<span class="color-dot" style="background-color: ${colorPalette['bicolor'].dot};"></span>`;
-                    }
+                    } else dotHtml = `<span class="color-dot" style="background-color: ${colorPalette['bicolor'].dot};"></span>`;
                     bgStyle = `background-color: ${colorPalette['bicolor'].bg}; border-color: ${colorPalette['bicolor'].bg};`;
                 } else if (colorPalette[lp]) {
                     const borderCss = colorPalette[lp].border ? ` border: 1px solid ${colorPalette[lp].border};` : '';
@@ -894,20 +880,16 @@
                     dotHtml = `<span class="color-dot" style="background-color: #999;"></span>`;
                     bgStyle = `background-color: #f0f0f0; border-color: #f0f0f0;`;
                 }
-
                 html += `<div class="capsule" style="${bgStyle}">${dotHtml} ${p}</div>`;
             });
             return html;
         }
 
-        // Función Helper para descargar CSV usando PapaParse
         function fetchCSV(url) {
             return new Promise((resolve, reject) => {
                 const busterUrl = url + (url.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
                 Papa.parse(busterUrl, {
-                    download: true,
-                    header: true,
-                    skipEmptyLines: true,
+                    download: true, header: true, skipEmptyLines: true,
                     complete: function(results) { resolve(results.data); },
                     error: function(err) { reject(err); }
                 });
@@ -915,18 +897,12 @@
         }
 
         function fetchData() {
-            // Descarga simultánea de ambas bases de datos
             Promise.all([fetchCSV(baseCsvUrl), fetchCSV(farmsCsvUrl)])
                 .then(([mainData, farmsDataArray]) => {
-                    
-                    // Llenar el diccionario de llegadas
                     farmsDataArray.forEach(row => {
                         let farmName = row.Nombre || row[' Nombre '] || row.NOMBRE;
                         let llegada = row.Llegada || row[' Llegada '] || row.LLEGADA;
-                        
-                        if(farmName) {
-                            farmsArrival[farmName.trim().toLowerCase()] = llegada ? llegada.trim().toLowerCase() : '';
-                        }
+                        if(farmName) farmsArrival[farmName.trim().toLowerCase()] = llegada ? llegada.trim().toLowerCase() : '';
                     });
 
                     document.getElementById('loader').style.display = 'none';
@@ -938,39 +914,28 @@
                     
                     const searchInput = document.getElementById('searchInput');
                     searchInput.addEventListener('input', () => {
-                        const clearBtn = document.getElementById('clearSearchBtn');
-                        clearBtn.style.display = searchInput.value.length > 0 ? 'block' : 'none';
+                        document.getElementById('clearSearchBtn').style.display = searchInput.value.length > 0 ? 'block' : 'none';
                         applyFilters();
                     });
                     
                     renderGrid();
                 })
                 .catch(err => {
-                    console.error("Error conectando a Google Sheets:", err);
-                    mostrarErrorBaseDatos("Error de conexión a la base de datos.");
+                    console.error("Error parseando:", err);
+                    document.getElementById('loader').innerHTML = `<i class="ri-error-warning-line" style="color: #d32f2f; margin-bottom: 10px;"></i><span style="color: #d32f2f;">Error de conexión a la base de datos.</span>`;
                 });
-        }
-
-        function mostrarErrorBaseDatos(mensaje) {
-            document.getElementById('loader').innerHTML = `
-                <i class="ri-error-warning-line" style="color: #d32f2f; margin-bottom: 10px;"></i>
-                <span style="color: #d32f2f;">${mensaje}</span>
-            `;
         }
 
         function extractUnique(field) {
             let items = new Set();
             allData.forEach(row => {
-                if(row[field]) {
-                    row[field].split(',').forEach(item => items.add(item.trim()));
-                }
+                if(row[field]) row[field].split(',').forEach(item => items.add(item.trim()));
             });
             return Array.from(items);
         }
 
         function populateDropdowns() {
-            let species = extractUnique('SPECIE');
-            species.sort((a, b) => {
+            let species = extractUnique('SPECIE').sort((a, b) => {
                 let idxA = specieOrder.indexOf(a), idxB = specieOrder.indexOf(b);
                 if(idxA !== -1 && idxB !== -1) return idxA - idxB;
                 if(idxA !== -1) return -1;
@@ -1027,27 +992,19 @@
             if (idx > -1) arr.splice(idx, 1);
             else arr.push(val);
 
-            const cbId = `cb-${type}-${val.replace(/\s+/g, '-')}`;
-            const cbElement = document.getElementById(cbId);
+            const cbElement = document.getElementById(`cb-${type}-${val.replace(/\s+/g, '-')}`);
             if(cbElement) cbElement.checked = (idx === -1);
 
-            let defaultText = type === 'specie' ? 'All Species' : type === 'farm' ? 'All Farms' : 'All Colors';
             let spanId = `text-${type}`;
-            
-            if (arr.length === 0) {
-                document.getElementById(spanId).innerText = defaultText;
-            } else if (arr.length === 1) {
-                document.getElementById(spanId).innerText = arr[0];
-            } else {
-                document.getElementById(spanId).innerText = `${arr.length} selected`;
-            }
+            if (arr.length === 0) document.getElementById(spanId).innerText = type === 'specie' ? 'All Species' : type === 'farm' ? 'All Farms' : 'All Colors';
+            else if (arr.length === 1) document.getElementById(spanId).innerText = arr[0];
+            else document.getElementById(spanId).innerText = `${arr.length} selected`;
 
             applyFilters();
         }
 
         function clearSearch() {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.value = '';
+            document.getElementById('searchInput').value = '';
             document.getElementById('clearSearchBtn').style.display = 'none';
             applyFilters();
         }
@@ -1055,17 +1012,11 @@
         function clearAllFilters() {
             document.getElementById('searchInput').value = '';
             document.getElementById('clearSearchBtn').style.display = 'none';
-
-            selectedSpecies = [];
-            selectedFarms = [];
-            selectedColors = [];
-
+            selectedSpecies = []; selectedFarms = []; selectedColors = [];
             document.getElementById('text-specie').innerText = 'All Species';
             document.getElementById('text-farm').innerText = 'All Farms';
             document.getElementById('text-color').innerText = 'All Colors';
-
             document.querySelectorAll('.multi-dropdown-options input[type="checkbox"]').forEach(cb => cb.checked = false);
-
             applyFilters();
         }
 
@@ -1077,52 +1028,38 @@
 
         function applyFilters() {
             const term = document.getElementById('searchInput').value.toLowerCase();
-            
             checkClearFiltersButton();
 
             filteredData = allData.filter(row => {
                 let match = true;
-
-                if (term) {
-                    const searchStr = `${row.NAME} ${row.SPECIE} ${row.COLOR} ${row.FARM}`.toLowerCase();
-                    if (!searchStr.includes(term)) match = false;
-                }
-
-                if (selectedSpecies.length > 0 && (!row.SPECIE || !selectedSpecies.includes(row.SPECIE.trim()))) {
-                    match = false;
-                }
-
+                if (term && !`${row.NAME} ${row.SPECIE} ${row.COLOR} ${row.FARM}`.toLowerCase().includes(term)) match = false;
+                if (selectedSpecies.length > 0 && (!row.SPECIE || !selectedSpecies.includes(row.SPECIE.trim()))) match = false;
+                
                 if (selectedFarms.length > 0) {
-                    if (!row.FARM) {
-                        match = false;
-                    } else {
+                    if (!row.FARM) match = false;
+                    else {
                         const rowFarms = row.FARM.split(',').map(f => f.trim());
-                        const hasMatchingFarm = rowFarms.some(f => selectedFarms.includes(f));
-                        if (!hasMatchingFarm) match = false;
+                        if (!rowFarms.some(f => selectedFarms.includes(f))) match = false;
                     }
                 }
 
                 if (selectedColors.length > 0) {
                     let colorMatch = false;
                     const nonSolid = ['bicolor', 'rainbow', 'tinted', 'tinited'];
-                    
                     if(row.COLOR) {
                         const rowColorLower = row.COLOR.toLowerCase();
                         const rowColorExactLower = row.COLOR.trim().toLowerCase();
-
                         for(let sc of selectedColors) {
                             const scLower = sc.toLowerCase();
                             if (nonSolid.includes(scLower)) {
                                 if (rowColorLower.includes(scLower)) colorMatch = true;
-                            } 
-                            else {
+                            } else {
                                 if (rowColorExactLower === scLower) colorMatch = true;
                             }
                         }
                     }
                     if(!colorMatch) match = false;
                 }
-
                 return match;
             });
 
@@ -1164,8 +1101,7 @@
             }
             
             currentIndex = end;
-            const loadBtn = document.getElementById('loadMoreBtn');
-            loadBtn.style.display = (currentIndex >= filteredData.length) ? 'none' : 'inline-flex';
+            document.getElementById('loadMoreBtn').style.display = (currentIndex >= filteredData.length) ? 'none' : 'inline-flex';
         }
 
         function resetPage(e) {
@@ -1186,21 +1122,15 @@
 
             let packingHtml = '';
             ['EB', 'QB', 'HB'].forEach(box => {
-                if (row[box]) {
-                    const parsed = parseBoxDataList(box, row[box]);
-                    if (parsed) packingHtml += parsed;
-                }
+                if (row[box]) packingHtml += parseBoxDataList(box, row[box]);
             });
             document.getElementById('mPacking').innerHTML = packingHtml || '<li><em>No packing info</em></li>';
 
             const compSection = document.getElementById('mCompSection');
             if (row.COMP && row.COMP.trim() !== '') {
                 compSection.style.display = 'block';
-                let secureMarkdown = processSecureMarkdown(row.COMP);
-                document.getElementById('mCompTable').innerHTML = marked.parse(secureMarkdown);
-            } else {
-                compSection.style.display = 'none';
-            }
+                document.getElementById('mCompTable').innerHTML = marked.parse(processSecureMarkdown(row.COMP));
+            } else compSection.style.display = 'none';
 
             document.getElementById('detailsModal').classList.add('active');
         }
@@ -1209,70 +1139,44 @@
             const container = document.getElementById(elementId);
             container.innerHTML = '';
             if (dataStr) {
-                const items = dataStr.split(',');
-                items.forEach(item => {
+                dataStr.split(',').forEach(item => {
                     const val = item.trim();
                     if(val) {
                         const span = document.createElement('span');
                         span.className = 'capsule';
                         span.style.background = "white";
                         span.innerText = val;
-                        span.onclick = (e) => {
-                            e.stopPropagation();
-                            clearAllFilters();
-                            toggleMultiSelection(filterType, val);
-                            closeModal('detailsModal');
-                        };
+                        span.onclick = (e) => { e.stopPropagation(); clearAllFilters(); toggleMultiSelection(filterType, val); closeModal('detailsModal'); };
                         container.appendChild(span);
                     }
                 });
-            } else {
-                container.innerHTML = '<span style="font-size:0.8rem; color:#999;">-</span>';
-            }
+            } else container.innerHTML = '<span style="font-size:0.8rem; color:#999;">-</span>';
         }
 
-        // Lógica de Pintado para Fincas y su Llegada
         function renderFarmCapsules(elementId, dataStr, filterType) {
             const container = document.getElementById(elementId);
             container.innerHTML = '';
             if (dataStr) {
-                const items = dataStr.split(',');
-                items.forEach(item => {
+                dataStr.split(',').forEach(item => {
                     const val = item.trim();
                     if(val) {
                         const status = farmsArrival[val.toLowerCase()];
                         let iconHtml = '<i class="ri-truck-line" style="color: #777; margin-right: 4px;"></i>';
                         let bgStyle = 'background: white; border-color: var(--border-color);';
 
-                        // Coloreado condicional basado en Y, N, o -
-                        if (status === 'y') {
-                            iconHtml = '<i class="ri-time-line" style="color: #4CAF50; margin-right: 4px;"></i>';
-                            bgStyle = 'background-color: #E8F5E9; border-color: #C8E6C9; color: #2E7D32;';
-                        } else if (status === 'n') {
-                            iconHtml = '<i class="ri-time-line" style="color: #F44336; margin-right: 4px;"></i>';
-                            bgStyle = 'background-color: #FFEBEE; border-color: #FFCDD2; color: #C62828;';
-                        } else if (status === '-') {
-                            iconHtml = '<i class="ri-time-line" style="color: #FF9800; margin-right: 4px;"></i>';
-                            bgStyle = 'background-color: #FFF3E0; border-color: #FFE0B2; color: #EF6C00;';
-                        }
+                        if (status === 'y') { iconHtml = '<i class="ri-time-line" style="color: #4CAF50; margin-right: 4px;"></i>'; bgStyle = 'background-color: #E8F5E9; border-color: #C8E6C9; color: #2E7D32;'; } 
+                        else if (status === 'n') { iconHtml = '<i class="ri-time-line" style="color: #F44336; margin-right: 4px;"></i>'; bgStyle = 'background-color: #FFEBEE; border-color: #FFCDD2; color: #C62828;'; } 
+                        else if (status === '-') { iconHtml = '<i class="ri-time-line" style="color: #FF9800; margin-right: 4px;"></i>'; bgStyle = 'background-color: #FFF3E0; border-color: #FFE0B2; color: #EF6C00;'; }
 
                         const span = document.createElement('span');
                         span.className = 'capsule';
                         span.style.cssText = bgStyle;
                         span.innerHTML = iconHtml + val;
-                        
-                        span.onclick = (e) => {
-                            e.stopPropagation();
-                            clearAllFilters();
-                            toggleMultiSelection(filterType, val);
-                            closeModal('detailsModal');
-                        };
+                        span.onclick = (e) => { e.stopPropagation(); clearAllFilters(); toggleMultiSelection(filterType, val); closeModal('detailsModal'); };
                         container.appendChild(span);
                     }
                 });
-            } else {
-                container.innerHTML = '<span style="font-size:0.8rem; color:#999;">-</span>';
-            }
+            } else container.innerHTML = '<span style="font-size:0.8rem; color:#999;">-</span>';
         }
 
         function renderSplitColorCapsules(elementId, dataStr) {
@@ -1280,27 +1184,19 @@
             container.innerHTML = '';
             if (dataStr && dataStr.trim()) {
                 const parts = dataStr.split(',').map(s => s.trim());
-                const realColors = parts.filter(p => {
-                    const lp = p.toLowerCase();
-                    return lp !== 'bicolor' && lp !== 'tinted' && lp !== 'tinited' && lp !== 'rainbow';
-                });
+                const realColors = parts.filter(p => !['bicolor', 'tinted', 'tinited', 'rainbow'].includes(p.toLowerCase()));
 
                 parts.forEach(p => {
                     const lp = p.toLowerCase();
-                    let dotHtml = '';
-                    let bgStyle = '';
+                    let dotHtml = '', bgStyle = '';
 
-                    if (lp === 'rainbow') {
-                        dotHtml = `<span class="color-dot rainbow-anim"></span>`;
-                        bgStyle = `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};`;
-                    } else if (lp === 'bicolor') {
+                    if (lp === 'rainbow') { dotHtml = `<span class="color-dot rainbow-anim"></span>`; bgStyle = `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};`; } 
+                    else if (lp === 'bicolor') {
                         if (realColors.length >= 2) {
                             const c1 = colorPalette[realColors[0].toLowerCase()]?.dot || '#ccc';
                             const c2 = colorPalette[realColors[1].toLowerCase()]?.dot || '#999';
                             dotHtml = `<span class="color-dot" style="background: linear-gradient(to right, ${c1} 50%, ${c2} 50%); border: none;"></span>`;
-                        } else {
-                            dotHtml = `<span class="color-dot" style="background-color: ${colorPalette['bicolor'].dot};"></span>`;
-                        }
+                        } else dotHtml = `<span class="color-dot" style="background-color: ${colorPalette['bicolor'].dot};"></span>`;
                         bgStyle = `background-color: ${colorPalette['bicolor'].bg}; border-color: ${colorPalette['bicolor'].bg};`;
                     } else if (colorPalette[lp]) {
                         const borderCss = colorPalette[lp].border ? ` border: 1px solid ${colorPalette[lp].border};` : '';
@@ -1315,61 +1211,35 @@
                     span.className = 'capsule';
                     span.style.cssText = bgStyle;
                     span.innerHTML = `${dotHtml} ${p}`;
-                    
-                    span.onclick = (e) => {
-                        e.stopPropagation();
-                        clearAllFilters();
-                        toggleMultiSelection('color', p);
-                        closeModal('detailsModal');
-                    };
+                    span.onclick = (e) => { e.stopPropagation(); clearAllFilters(); toggleMultiSelection('color', p); closeModal('detailsModal'); };
                     container.appendChild(span);
                 });
-            } else {
-                container.innerHTML = '<span style="font-size:0.8rem; color:#999;">-</span>';
-            }
+            } else container.innerHTML = '<span style="font-size:0.8rem; color:#999;">-</span>';
         }
 
         function parseBoxDataList(boxType, dataStr) {
             const segments = dataStr.split(';');
             let htmlLines = "";
-            
             const regexCm = /(\d+cm)x(\d+)(?:\s*\$([\d.]+))?/i;
             const regexNoCm = /^x(\d+)(?:\s*\$([\d.]+))?(?:\s*(per box))?/i;
 
             segments.forEach(seg => {
                 const s = seg.trim();
                 if (!s) return;
-
                 const matchCm = s.match(regexCm);
                 if (matchCm) {
-                    const length = matchCm[1];
-                    const stems = matchCm[2];
-                    const price = matchCm[3];
-
-                    let str = `<li>${boxType} x${stems} Stems ${length}`;
-                    if (price && isLoggedIn) {
-                        str += ` <strong>@ $${price}</strong>`;
-                    }
-                    str += `</li>`;
-                    htmlLines += str;
+                    let str = `<li>${boxType} x${matchCm[2]} Stems ${matchCm[1]}`;
+                    if (matchCm[3] && isLoggedIn) str += ` <strong>@ $${matchCm[3]}</strong>`;
+                    htmlLines += str + `</li>`;
                     return;
                 }
-
                 const matchNoCm = s.match(regexNoCm);
                 if (matchNoCm) {
-                    const stems = matchNoCm[1];
-                    const price = matchNoCm[2];
-                    const perBox = matchNoCm[3];
-
-                    let str = `<li>${boxType} x${stems} Stems`;
-                    if (price && isLoggedIn) {
-                        str += ` <strong>@ $${price}${perBox ? ' ' + perBox.toLowerCase() : ''}</strong>`;
-                    }
-                    str += `</li>`;
-                    htmlLines += str;
+                    let str = `<li>${boxType} x${matchNoCm[1]} Stems`;
+                    if (matchNoCm[2] && isLoggedIn) str += ` <strong>@ $${matchNoCm[2]}${matchNoCm[3] ? ' ' + matchNoCm[3].toLowerCase() : ''}</strong>`;
+                    htmlLines += str + `</li>`;
                     return;
                 }
-
                 htmlLines += `<li>${boxType}: ${s}</li>`;
             });
             return htmlLines;
@@ -1377,15 +1247,12 @@
 
         function processSecureMarkdown(md) {
             if (isLoggedIn) return md; 
-            
             const lines = md.split('\n');
             const safeLines = lines.map(line => {
                 if (line.includes('|')) {
                     const parts = line.split('|');
                     let offset = line.trim().startsWith('|') ? 1 : 0;
-                    if (parts.length > offset + 2) {
-                        parts.splice(offset + 2, 1); 
-                    }
+                    if (parts.length > offset + 2) parts.splice(offset + 2, 1); 
                     return parts.join('|');
                 }
                 return line;
@@ -1398,9 +1265,7 @@
         }
 
         window.onclick = function(event) {
-            if (event.target.classList.contains('modal-overlay')) {
-                event.target.classList.remove('active');
-            }
+            if (event.target.classList.contains('modal-overlay')) event.target.classList.remove('active');
         }
     </script>
 </body>
