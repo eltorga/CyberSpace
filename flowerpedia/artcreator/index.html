@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flower Art Creator</title>
+    <!-- PapaParse for CSV reading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- SortableJS for drag & drop -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+    <!-- html2canvas for downloading the canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- RemixIcon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <style>
+        /* Base Notion-style elegant monochrome */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #202020;
+            --border-color: #e2e2e2;
+            --hover-bg: #f9f9f9;
+            --pill-bg: #ffffff;
+            --shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 2px 4px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: #f4f4f5;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            z-index: 100;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 400px;
+            background: var(--bg-color);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            gap: 24px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #777;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        select, input[type="text"] {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        select:focus, input[type="text"]:focus { border-color: #999; }
+
+        /* Search Results */
+        .search-wrapper { position: relative; }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+            margin-top: 4px;
+        }
+
+        .search-item {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .search-item:last-child { border-bottom: none; }
+        .search-item:hover { background: var(--hover-bg); }
+        .search-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+        }
+        .search-item-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .search-item-name { font-weight: 500; font-size: 0.9rem; }
+        .search-item-meta { font-size: 0.75rem; color: #777; }
+
+        /* Selected List */
+        .selected-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .selected-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: grab;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .selected-item:active { cursor: grabbing; }
+        .selected-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .selected-item img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        .remove-btn {
+            color: #999;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+        }
+        .remove-btn:hover { color: #d32f2f; }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: auto;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: var(--hover-bg); }
+        .btn-primary { background: var(--text-color); color: white; border-color: var(--text-color); }
+        .btn-primary:hover { background: #333; }
+        .btn-danger { color: #d32f2f; }
+        .btn-danger:hover { background: #fce4ec; border-color: #fce4ec; }
+
+        /* Canvas Area */
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background-color: #e5e5e5;
+            background-image: radial-gradient(#d5d5d5 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow-y: auto;
+        }
+
+        .canvas-square {
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 1 / 1;
+            background-color: white;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            position: relative;
+            
+            /* Flexbox makes symmetrical grids easier and safer for export */
+            display: flex;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: center;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        /* Canvas Item */
+        .canvas-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px; 
+            box-sizing: border-box;
+        }
+
+        .canvas-item img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1; /* Maintains perfect square */
+            object-fit: contain; /* Prevents cropping */
+            background: transparent; 
+            border: none; 
+            box-shadow: none; 
+            border-radius: 0;
+            margin-bottom: 12px; 
+        }
+
+        /* Capsule */
+        .canvas-capsule {
+            background: var(--pill-bg);
+            border: 1px solid var(--border-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #333;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 90%;
+        }
+
+        #loader {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            font-size: 1.2rem;
+            color: #555;
+            gap: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <i class="ri-loader-4-line ri-spin" style="font-size: 3rem; color: #202020;"></i>
+        <span>Loading catalog...</span>
+    </div>
+
+    <header>
+        <i class="ri-brush-line"></i> Flower Art Creator
+    </header>
+
+    <div class="main-container">
+        
+        <aside class="sidebar">
+            <div class="control-group">
+                <div class="section-title">Canvas Settings</div>
+                <select id="bgSelect" onchange="updateCanvas()">
+                    <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgwHxM8G6cByrn2JscjGHxP2BeHfvEiNwyxCk3SQ2cTHsF2-YExGdu5DBGV4en-mouflJU3VbS6N-E0BI15voVhLvV3ADN7xm-YEcVTh_P5E5m9C09JPs32tn53EYBE0AVII-VEyddxrQmzjTlHd7iGdor1otgEHUo_8ILn1qhBK44qT4nRVoEl6FpQds59">Background A (Dark Leaves)</option>
+                    <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgGmB_AfX3_H2ih_T-0IXJKKyeQkj7_NHu-PGLnAE3lxGGf1cBBoKWb19GHugi0trGQzSLeePbokmC9qQu3pvWDkTo55xKzG9ocrt3DNQyZWs59WMLQfxyRtbE3jXSa54DiqEce0XKEajNKRnliJbsBmeSImKBLds7v_ofAHivL6cMHe-QmpUXuREry83ym">Background B (Light Flowers)</option>
+                </select>
+                <select id="labelSelect" onchange="updateCanvas()">
+                    <option value="NAME">Show: Name</option>
+                    <option value="COLOR">Show: Color</option>
+                    <option value="SPECIE">Show: Species</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <div class="section-title">Add Flowers (Max 12)</div>
+                <div class="search-wrapper" id="searchWrapper">
+                    <input type="text" id="searchInput" placeholder="Search by name, color, or species...">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+            </div>
+
+            <div class="control-group" style="flex: 1; overflow-y: auto;">
+                <div class="section-title" id="countDisplay">Flowers on Canvas (0/12)</div>
+                <ul id="selectedList" class="selected-list">
+                    <!-- Dynamic list items -->
+                </ul>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-danger" onclick="clearCanvas()">
+                    <i class="ri-delete-bin-line"></i> Clear
+                </button>
+                <button class="btn btn-primary" onclick="downloadArt()">
+                    <i class="ri-download-2-line"></i> Download
+                </button>
+            </div>
+        </aside>
+
+        <main class="canvas-container">
+            <div id="artCanvas" class="canvas-square">
+                <!-- Rendered flowers go here -->
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        const baseCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
+        const fallbackImg = 'https://blogger.googleusercontent.com/img/a/AVvXsEgf4r0cd6cRsoR4p_6WdmSxaGrLW4eNl50WIOZnbUfshTbpUxXQ6_9wZLyJawr2JAkXc146Znf-LCwC3RLmZg4aESc8Pj39shd1Wm4irFmLRv5NxbRON-TXr9ipOcDZKx8cDSNXG0oGNwxslRCPcbi9Qj-sLQ_LbIgCXeLIf70j8Lj-SqkH1TB63itZ8Bm3=w600-h600';
+
+        let allFlowers = [];
+        let selectedItems = []; 
+
+        // Function to proxy images safely via a robust CDN to bypass Blogger's strict CORS
+        function getCorsUrl(url) {
+            if (!url) return getCorsUrl(fallbackImg);
+            return 'https://wsrv.nl/?url=' + encodeURIComponent(url.trim());
+        }
+
+        // Initialize Drag & Drop
+        const listEl = document.getElementById('selectedList');
+        Sortable.create(listEl, {
+            animation: 150,
+            ghostClass: 'hover-bg',
+            onEnd: function (evt) {
+                const itemMoved = selectedItems.splice(evt.oldIndex, 1)[0];
+                selectedItems.splice(evt.newIndex, 0, itemMoved);
+                updateCanvas();
+            }
+        });
+
+        // Load Data
+        document.addEventListener("DOMContentLoaded", () => {
+            const busterUrl = baseCsvUrl + '&t=' + new Date().getTime();
+            Papa.parse(busterUrl, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    allFlowers = results.data.filter(f => f.NAME);
+                    document.getElementById('loader').style.display = 'none';
+                    updateCanvas();
+                },
+                error: function(err) {
+                    alert("Error loading the database.");
+                }
+            });
+        });
+
+        // Search logic
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            searchResults.innerHTML = '';
+            
+            if (term.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            const matches = allFlowers.filter(row => 
+                `${row.NAME} ${row.SPECIE} ${row.COLOR}`.toLowerCase().includes(term)
+            ).slice(0, 15);
+
+            if (matches.length > 0) {
+                matches.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'search-item';
+                    const listImgUrl = getCorsUrl(item.IMG);
+                    
+                    div.innerHTML = `
+                        <img src="${listImgUrl}" crossorigin="anonymous" onerror="this.onerror=null; this.src='${getCorsUrl(fallbackImg)}'">
+                        <div class="search-item-info">
+                            <span class="search-item-name">${item.NAME}</span>
+                            <span class="search-item-meta">${item.SPECIE || '-'} • ${item.COLOR || '-'}</span>
+                        </div>
+                    `;
+                    div.onclick = () => addFlowerToCanvas(item);
+                    searchResults.appendChild(div);
+                });
+                searchResults.style.display = 'block';
+            } else {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-wrapper')) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        function addFlowerToCanvas(item) {
+            if (selectedItems.length >= 12) {
+                alert("You have reached the limit of 12 flowers on the canvas!");
+                return;
+            }
+
+            selectedItems.push(JSON.parse(JSON.stringify(item)));
+            searchInput.value = '';
+            searchResults.style.display = 'none';
+            
+            updateSidebarList();
+            updateCanvas();
+        }
+
+        function removeFlower(index) {
+            selectedItems.splice(index, 1);
+            updateSidebarList();
+            updateCanvas();
+        }
+
+        function clearCanvas() {
+            selectedItems = [];
+            updateSidebarList();
+            updateCanvas();
+        }
+
+        function updateSidebarList() {
+            listEl.innerHTML = '';
+            document.getElementById('countDisplay').innerText = `Flowers on Canvas (${selectedItems.length}/12)`;
+
+            selectedItems.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'selected-item';
+                
+                const sideImg = getCorsUrl(item.IMG);
+                
+                li.innerHTML = `
+                    <div class="selected-item-left">
+                        <i class="ri-draggable" style="color: #ccc; cursor: grab;"></i>
+                        <img src="${sideImg}" crossorigin="anonymous">
+                        <span style="font-size: 0.9rem; font-weight: 500;">${item.NAME}</span>
+                    </div>
+                    <i class="ri-close-line remove-btn" onclick="removeFlower(${index})"></i>
+                `;
+                listEl.appendChild(li);
+            });
+        }
+
+        function updateCanvas() {
+            const canvas = document.getElementById('artCanvas');
+            const bgUrl = getCorsUrl(document.getElementById('bgSelect').value);
+            const labelKey = document.getElementById('labelSelect').value;
+
+            canvas.style.backgroundImage = `url('${bgUrl}')`;
+            canvas.innerHTML = '';
+
+            const count = selectedItems.length;
+            if (count === 0) return;
+
+            let flexBasis = '100%';
+            if (count === 2) flexBasis = '50%';
+            else if (count >= 3 && count <= 4) flexBasis = '50%';
+            else if (count >= 5 && count <= 6) flexBasis = '33.33%';
+            else if (count >= 7 && count <= 9) flexBasis = '33.33%';
+            else if (count >= 10 && count <= 12) flexBasis = '25%';
+
+            selectedItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'canvas-item';
+                div.style.flex = `0 0 ${flexBasis}`;
+                div.style.maxWidth = flexBasis;
+                
+                const textCapsule = item[labelKey] ? item[labelKey] : 'Unknown';
+                const finalImgUrl = getCorsUrl(item.IMG);
+
+                div.innerHTML = `
+                    <img src="${finalImgUrl}" crossorigin="anonymous" alt="${item.NAME}">
+                    <div class="canvas-capsule">${textCapsule}</div>
+                `;
+                
+                canvas.appendChild(div);
+            });
+        }
+
+        function downloadArt() {
+            if (selectedItems.length === 0) {
+                alert("Add at least one flower to the canvas before downloading.");
+                return;
+            }
+
+            const canvasElement = document.getElementById('artCanvas');
+            const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = `<i class="ri-loader-4-line ri-spin"></i> Processing...`;
+            btn.disabled = true;
+
+            html2canvas(canvasElement, {
+                useCORS: true, 
+                allowTaint: false, 
+                backgroundColor: null,
+                scale: 2 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `FlowerArt_${new Date().getTime()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }).catch(err => {
+                console.error("Error generating image:", err);
+                alert("There was a problem exporting the image. Please try again.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
