@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flowers Art Canvas</title>
+    <title>Flower Art Creator</title>
     <!-- PapaParse for CSV reading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- SortableJS for drag & drop -->
@@ -56,7 +56,7 @@
 
         /* Sidebar */
         .sidebar {
-            width: 400px;
+            width: 420px;
             background: var(--bg-color);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -79,18 +79,33 @@
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .setting-row label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+            color: #555;
         }
 
         select, input[type="text"] {
-            padding: 10px 12px;
+            padding: 8px 12px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             outline: none;
             width: 100%;
             box-sizing: border-box;
+            flex: 1;
         }
         select:focus, input[type="text"]:focus { border-color: #999; }
 
@@ -179,11 +194,26 @@
         }
         .remove-btn:hover { color: #d32f2f; }
 
+        /* Custom Text Controls */
+        .text-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: var(--hover-bg);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .font-btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
         /* Buttons */
         .btn-group {
             display: flex;
             gap: 12px;
-            margin-top: auto;
         }
         .btn {
             flex: 1;
@@ -206,7 +236,7 @@
         .btn-danger { color: #d32f2f; }
         .btn-danger:hover { background: #fce4ec; border-color: #fce4ec; }
 
-        /* Canvas Area */
+        /* Canvas Area Container */
         .canvas-container {
             flex: 1;
             display: flex;
@@ -219,6 +249,7 @@
             overflow-y: auto;
         }
 
+        /* STRICT SQUARE CANVAS */
         .canvas-square {
             width: 100%;
             max-width: 800px;
@@ -229,42 +260,62 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             position: relative;
             
-            /* Flexbox makes symmetrical grids easier and safer for export */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Guarantees it never expands beyond 1:1 */
+        }
+
+        /* Internal Flex Grid for Flowers */
+        .canvas-grid {
+            flex: 1; 
             display: flex;
             flex-wrap: wrap;
             align-content: center;
             justify-content: center;
-            padding: 40px;
+            gap: 15px; /* Reducido levemente para dar más margen vertical */
+            padding: 30px 40px 10px 40px; /* Menos padding abajo para no invadir al texto */
+            min-height: 0; 
             box-sizing: border-box;
         }
 
-        /* Canvas Item */
+        /* Footer Text Container */
+        .canvas-footer {
+            flex-shrink: 0; 
+            padding: 0 40px 30px 40px;
+            text-align: center;
+            color: #333;
+            font-weight: 600;
+            display: none; 
+            word-wrap: break-word;
+            line-height: 1.2;
+            z-index: 10;
+        }
+
+        /* Canvas Item (Dynamic Box) */
         .canvas-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 12px; 
+            justify-content: center; /* Alineación segura en el centro */
+            gap: 8px; /* Separación estricta entre imagen y cápsula */
             box-sizing: border-box;
         }
 
         .canvas-item img {
             width: 100%;
-            height: auto;
-            aspect-ratio: 1 / 1; /* Maintains perfect square */
-            object-fit: contain; /* Prevents cropping */
+            min-height: 0; /* Previene estiramientos indeseados */
+            object-fit: contain; /* Mantiene proporciones originales */
             background: transparent; 
             border: none; 
             box-shadow: none; 
-            border-radius: 0;
-            margin-bottom: 12px; 
         }
 
         /* Capsule */
         .canvas-capsule {
+            flex-shrink: 0;
             background: var(--pill-bg);
             border: 1px solid var(--border-color);
-            padding: 6px 16px;
+            padding: 4px 16px;
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 500;
@@ -274,7 +325,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 90%;
+            max-width: 95%;
         }
 
         #loader {
@@ -300,25 +351,39 @@
     </div>
 
     <header>
-        <i class="ri-brush-line"></i> Flower Art Canvas
+        <i class="ri-brush-line"></i> Flower Art Creator
     </header>
 
     <div class="main-container">
         
         <aside class="sidebar">
-            <div class="control-group">
+            <!-- CANVAS SETTINGS -->
+            <div class="control-group" style="padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
                 <div class="section-title">Canvas Settings</div>
-                <select id="bgSelect" onchange="updateCanvas()">
-                    <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgwHxM8G6cByrn2JscjGHxP2BeHfvEiNwyxCk3SQ2cTHsF2-YExGdu5DBGV4en-mouflJU3VbS6N-E0BI15voVhLvV3ADN7xm-YEcVTh_P5E5m9C09JPs32tn53EYBE0AVII-VEyddxrQmzjTlHd7iGdor1otgEHUo_8ILn1qhBK44qT4nRVoEl6FpQds59">Background A (Dark Leaves)</option>
-                    <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgGmB_AfX3_H2ih_T-0IXJKKyeQkj7_NHu-PGLnAE3lxGGf1cBBoKWb19GHugi0trGQzSLeePbokmC9qQu3pvWDkTo55xKzG9ocrt3DNQyZWs59WMLQfxyRtbE3jXSa54DiqEce0XKEajNKRnliJbsBmeSImKBLds7v_ofAHivL6cMHe-QmpUXuREry83ym">Background B (Light Flowers)</option>
-                </select>
-                <select id="labelSelect" onchange="updateCanvas()">
-                    <option value="NAME">Show: Name</option>
-                    <option value="COLOR">Show: Color</option>
-                    <option value="SPECIE">Show: Species</option>
-                </select>
+                
+                <div class="setting-row">
+                    <label for="bgSelect">Background:</label>
+                    <select id="bgSelect" onchange="updateCanvas()">
+                        <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgwHxM8G6cByrn2JscjGHxP2BeHfvEiNwyxCk3SQ2cTHsF2-YExGdu5DBGV4en-mouflJU3VbS6N-E0BI15voVhLvV3ADN7xm-YEcVTh_P5E5m9C09JPs32tn53EYBE0AVII-VEyddxrQmzjTlHd7iGdor1otgEHUo_8ILn1qhBK44qT4nRVoEl6FpQds59">1. Dark Leaves</option>
+                        <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgGmB_AfX3_H2ih_T-0IXJKKyeQkj7_NHu-PGLnAE3lxGGf1cBBoKWb19GHugi0trGQzSLeePbokmC9qQu3pvWDkTo55xKzG9ocrt3DNQyZWs59WMLQfxyRtbE3jXSa54DiqEce0XKEajNKRnliJbsBmeSImKBLds7v_ofAHivL6cMHe-QmpUXuREry83ym">2. Light Flowers</option>
+                        <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgwHxM8G6cByrn2JscjGHxP2BeHfvEiNwyxCk3SQ2cTHsF2-YExGdu5DBGV4en-mouflJU3VbS6N-E0BI15voVhLvV3ADN7xm-YEcVTh_P5E5m9C09JPs32tn53EYBE0AVII-VEyddxrQmzjTlHd7iGdor1otgEHUo_8ILn1qhBK44qT4nRVoEl6FpQds59">3. Option 3</option>
+                        <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgwHxM8G6cByrn2JscjGHxP2BeHfvEiNwyxCk3SQ2cTHsF2-YExGdu5DBGV4en-mouflJU3VbS6N-E0BI15voVhLvV3ADN7xm-YEcVTh_P5E5m9C09JPs32tn53EYBE0AVII-VEyddxrQmzjTlHd7iGdor1otgEHUo_8ILn1qhBK44qT4nRVoEl6FpQds59">4. Option 4</option>
+                        <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgwHxM8G6cByrn2JscjGHxP2BeHfvEiNwyxCk3SQ2cTHsF2-YExGdu5DBGV4en-mouflJU3VbS6N-E0BI15voVhLvV3ADN7xm-YEcVTh_P5E5m9C09JPs32tn53EYBE0AVII-VEyddxrQmzjTlHd7iGdor1otgEHUo_8ILn1qhBK44qT4nRVoEl6FpQds59">5. Option 5</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <label for="labelSelect">Show:</label>
+                    <select id="labelSelect" onchange="updateCanvas()">
+                        <option value="NAME">Name (Variety)</option>
+                        <option value="COLOR">Color</option>
+                        <option value="SPECIE">Specie</option>
+                        <option value="EMPTY">Empty</option>
+                    </select>
+                </div>
             </div>
 
+            <!-- SEARCH / ADD -->
             <div class="control-group">
                 <div class="section-title">Add Flowers (Max 12)</div>
                 <div class="search-wrapper" id="searchWrapper">
@@ -327,6 +392,7 @@
                 </div>
             </div>
 
+            <!-- DRAG & DROP LIST -->
             <div class="control-group" style="flex: 1; overflow-y: auto;">
                 <div class="section-title" id="countDisplay">Flowers on Canvas (0/12)</div>
                 <ul id="selectedList" class="selected-list">
@@ -334,6 +400,24 @@
                 </ul>
             </div>
 
+            <!-- CANVAS TEXT CONTROLS -->
+            <div class="control-group" style="margin-top: auto;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 500;">
+                    <input type="checkbox" id="enableTextCb" onchange="toggleCanvasText()" style="width:16px; height:16px; margin:0;">
+                    Enable Canvas Custom Text
+                </label>
+                
+                <div id="textControlsDiv" class="text-controls" style="display: none;">
+                    <textarea id="canvasTextInput" rows="2" placeholder="Write your custom text here..." oninput="updateCanvasText()" style="width: 100%; box-sizing: border-box; border: 1px solid var(--border-color); border-radius: 4px; padding: 8px; font-family: inherit; resize: none;"></textarea>
+                    
+                    <div class="font-btn-group">
+                        <button class="btn" onclick="adjustFontSize(-2)" title="Decrease Size">Aa -</button>
+                        <button class="btn" onclick="adjustFontSize(2)" title="Increase Size">Aa +</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
             <div class="btn-group">
                 <button class="btn btn-danger" onclick="clearCanvas()">
                     <i class="ri-delete-bin-line"></i> Clear
@@ -344,9 +428,13 @@
             </div>
         </aside>
 
+        <!-- CANVAS -->
         <main class="canvas-container">
             <div id="artCanvas" class="canvas-square">
-                <!-- Rendered flowers go here -->
+                <!-- FLEX GRID FOR FLOWERS -->
+                <div id="canvasGrid" class="canvas-grid"></div>
+                <!-- OPTIONAL FOOTER TEXT -->
+                <div id="canvasFooter" class="canvas-footer"></div>
             </div>
         </main>
 
@@ -358,14 +446,13 @@
 
         let allFlowers = [];
         let selectedItems = []; 
+        let footerFontSize = 24; 
 
-        // Function to proxy images safely via a robust CDN to bypass Blogger's strict CORS
         function getCorsUrl(url) {
             if (!url) return getCorsUrl(fallbackImg);
             return 'https://wsrv.nl/?url=' + encodeURIComponent(url.trim());
         }
 
-        // Initialize Drag & Drop
         const listEl = document.getElementById('selectedList');
         Sortable.create(listEl, {
             animation: 150,
@@ -377,7 +464,6 @@
             }
         });
 
-        // Load Data
         document.addEventListener("DOMContentLoaded", () => {
             const busterUrl = baseCsvUrl + '&t=' + new Date().getTime();
             Papa.parse(busterUrl, {
@@ -388,12 +474,34 @@
                     allFlowers = results.data.filter(f => f.NAME);
                     document.getElementById('loader').style.display = 'none';
                     updateCanvas();
+                    
+                    document.getElementById('canvasFooter').style.fontSize = footerFontSize + 'px';
                 },
                 error: function(err) {
                     alert("Error loading the database.");
                 }
             });
         });
+
+        // Custom Canvas Text
+        function toggleCanvasText() {
+            const isEnabled = document.getElementById('enableTextCb').checked;
+            document.getElementById('textControlsDiv').style.display = isEnabled ? 'flex' : 'none';
+            document.getElementById('canvasFooter').style.display = isEnabled ? 'block' : 'none';
+            updateCanvasText(); 
+        }
+
+        function updateCanvasText() {
+            const text = document.getElementById('canvasTextInput').value;
+            document.getElementById('canvasFooter').innerHTML = text.replace(/\n/g, '<br>');
+        }
+
+        function adjustFontSize(step) {
+            footerFontSize += step;
+            if (footerFontSize < 12) footerFontSize = 12; 
+            if (footerFontSize > 80) footerFontSize = 80; 
+            document.getElementById('canvasFooter').style.fontSize = footerFontSize + 'px';
+        }
 
         // Search logic
         const searchInput = document.getElementById('searchInput');
@@ -489,38 +597,52 @@
         }
 
         function updateCanvas() {
-            const canvas = document.getElementById('artCanvas');
+            const canvasSquare = document.getElementById('artCanvas');
+            const gridEl = document.getElementById('canvasGrid');
             const bgUrl = getCorsUrl(document.getElementById('bgSelect').value);
             const labelKey = document.getElementById('labelSelect').value;
 
-            canvas.style.backgroundImage = `url('${bgUrl}')`;
-            canvas.innerHTML = '';
+            canvasSquare.style.backgroundImage = `url('${bgUrl}')`;
+            gridEl.innerHTML = '';
 
             const count = selectedItems.length;
             if (count === 0) return;
 
-            let flexBasis = '100%';
-            if (count === 2) flexBasis = '50%';
-            else if (count >= 3 && count <= 4) flexBasis = '50%';
-            else if (count >= 5 && count <= 6) flexBasis = '33.33%';
-            else if (count >= 7 && count <= 9) flexBasis = '33.33%';
-            else if (count >= 10 && count <= 12) flexBasis = '25%';
+            // Flexbox dinámico y más conservador para garantizar separación con el texto
+            let itemWidth = '100%';
+            let itemHeight = '100%';
+
+            if (count === 1) { itemWidth = '70%'; itemHeight = '70%'; }
+            else if (count === 2) { itemWidth = '45%'; itemHeight = '60%'; }
+            else if (count === 3 || count === 4) { itemWidth = '45%'; itemHeight = '42%'; }
+            else if (count === 5 || count === 6) { itemWidth = '30%'; itemHeight = '42%'; }
+            else if (count >= 7 && count <= 9) { itemWidth = '30%'; itemHeight = '26%'; }
+            else if (count >= 10 && count <= 12) { itemWidth = '22%'; itemHeight = '26%'; } // Formato 4x3 asegurado
 
             selectedItems.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'canvas-item';
-                div.style.flex = `0 0 ${flexBasis}`;
-                div.style.maxWidth = flexBasis;
+                div.style.width = itemWidth;
+                div.style.height = itemHeight;
                 
-                const textCapsule = item[labelKey] ? item[labelKey] : 'Unknown';
                 const finalImgUrl = getCorsUrl(item.IMG);
 
+                let capsuleHtml = '';
+                let imgMaxHeight = '100%'; 
+
+                // Reserva espacio exacto para la cápsula para que no empuje todo hacia abajo
+                if (labelKey !== 'EMPTY') {
+                    const textCapsule = item[labelKey] ? item[labelKey] : 'Unknown';
+                    capsuleHtml = `<div class="canvas-capsule">${textCapsule}</div>`;
+                    imgMaxHeight = 'calc(100% - 35px)'; 
+                }
+
                 div.innerHTML = `
-                    <img src="${finalImgUrl}" crossorigin="anonymous" alt="${item.NAME}">
-                    <div class="canvas-capsule">${textCapsule}</div>
+                    <img src="${finalImgUrl}" crossorigin="anonymous" alt="${item.NAME}" style="max-height: ${imgMaxHeight};">
+                    ${capsuleHtml}
                 `;
                 
-                canvas.appendChild(div);
+                gridEl.appendChild(div);
             });
         }
 
@@ -540,7 +662,7 @@
             html2canvas(canvasElement, {
                 useCORS: true, 
                 allowTaint: false, 
-                backgroundColor: null,
+                backgroundColor: null, 
                 scale: 2 
             }).then(canvas => {
                 const link = document.createElement('a');
