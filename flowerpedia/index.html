@@ -267,11 +267,10 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            text-decoration: none; /* Asegura que el enlace no tenga subrayado */
+            text-decoration: none;
         }
         .btn:hover { background: var(--hover-bg); }
 
-        /* Botón especial para borrar filtros */
         .btn-clear {
             color: #d32f2f;
             border-color: #fce4ec;
@@ -713,7 +712,6 @@
     </div>
 
     <script>
-        // Enlaces de Google Sheets
         const baseCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
         const farmsCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=1636116794&single=true&output=csv'; 
         const fallbackImg = 'https://blogger.googleusercontent.com/img/a/AVvXsEgf4r0cd6cRsoR4p_6WdmSxaGrLW4eNl50WIOZnbUfshTbpUxXQ6_9wZLyJawr2JAkXc146Znf-LCwC3RLmZg4aESc8Pj39shd1Wm4irFmLRv5NxbRON-TXr9ipOcDZKx8cDSNXG0oGNwxslRCPcbi9Qj-sLQ_LbIgCXeLIf70j8Lj-SqkH1TB63itZ8Bm3=w600-h600';
@@ -730,11 +728,37 @@
         let farmsArrival = {}; 
 
         const authUsers = { 'caguilar': '1995', 'dvalencia': '6969' };
+        
+        // JERARQUÍA 1: ESPECIE (Predefinidas primero, resto alfabético)
         const specieOrder = [
-            "Standard Rose", "Garden Rose", "Garden Aike Rose", 
-            "David Austin Garden Rose", "Victorian Garden Rose", 
-            "Garden Spray Rose", "Spray Rose"
+            "Standard Rose", "Garden Rose", "David Austin Garden Rose", 
+            "Victorian Garden Rose", "Garden Spray Rose", "Spray Rose"
         ];
+        
+        function getSpecieRank(sp) {
+            if (!sp) return 999;
+            const idx = specieOrder.indexOf(sp);
+            return idx !== -1 ? idx : 999;
+        }
+
+        // JERARQUÍA 2: COLOR (De más claro a más oscuro / mezclas al final)
+        const colorRankMap = {
+            "white": 1, "cream": 2, "sand": 3, "yellow": 4, "light pink": 5, 
+            "peach": 6, "light blue": 7, "mustard": 8, "coral": 9, "orange": 10, 
+            "medium pink": 11, "lavender": 12, "spring": 13, "green": 14, 
+            "hot pink": 15, "bronze": 16, "red": 17, "burgundy": 18, 
+            "purple": 19, "blue": 20, "earth": 21, "christmas": 22, 
+            "easter": 23, "fall": 24, "tinted": 25, "tinited": 25, 
+            "bicolor": 26, "rainbow": 27
+        };
+
+        function getColorRank(colorStr) {
+            if (!colorStr) return 999;
+            const firstColor = colorStr.split(',')[0].trim().toLowerCase();
+            return colorRankMap[firstColor] || 999;
+        }
+
+        // Estilos visuales de color para las cápsulas
         const colorPalette = {
             "bicolor": { dot: "#9C27B0", bg: "#F3E5F5" },
             "blue": { dot: "#1976D2", bg: "#E3F2FD" },
@@ -903,6 +927,38 @@
                         let farmName = row.Nombre || row[' Nombre '] || row.NOMBRE;
                         let llegada = row.Llegada || row[' Llegada '] || row.LLEGADA;
                         if(farmName) farmsArrival[farmName.trim().toLowerCase()] = llegada ? llegada.trim().toLowerCase() : '';
+                    });
+
+                    // ORDENAMIENTO MULTINIVEL (1: Especie -> 2: Color -> 3: Nombre A-Z)
+                    mainData.sort((a, b) => {
+                        // 1. Sort by Specie
+                        let spA = a.SPECIE ? a.SPECIE.trim() : "";
+                        let spB = b.SPECIE ? b.SPECIE.trim() : "";
+                        let rankSpA = getSpecieRank(spA);
+                        let rankSpB = getSpecieRank(spB);
+                        
+                        if (rankSpA !== rankSpB) return rankSpA - rankSpB;
+                        if (rankSpA === 999 && rankSpB === 999) {
+                            let cmpSp = spA.localeCompare(spB);
+                            if (cmpSp !== 0) return cmpSp;
+                        }
+
+                        // 2. Sort by Color Lightness
+                        let rankColA = getColorRank(a.COLOR);
+                        let rankColB = getColorRank(b.COLOR);
+                        
+                        if (rankColA !== rankColB) return rankColA - rankColB;
+                        if (rankColA === 999 && rankColB === 999) {
+                            let colA = a.COLOR ? a.COLOR.trim().toLowerCase() : "";
+                            let colB = b.COLOR ? b.COLOR.trim().toLowerCase() : "";
+                            let cmpCol = colA.localeCompare(colB);
+                            if (cmpCol !== 0) return cmpCol;
+                        }
+
+                        // 3. Sort Alphabetically by Name
+                        let nameA = a.NAME ? a.NAME.trim().toLowerCase() : "";
+                        let nameB = b.NAME ? b.NAME.trim().toLowerCase() : "";
+                        return nameA.localeCompare(nameB);
                     });
 
                     document.getElementById('loader').style.display = 'none';
