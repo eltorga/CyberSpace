@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECF Aumento System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f7f7f5; color: #37352f; }
+        
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .notion-input { border: 1px solid transparent; border-radius: 4px; padding: 4px 8px; background: transparent; transition: background 0.2s, border 0.2s; outline: none; width: 100%; }
+        .notion-input:hover { background: #EFEFEF; }
+        .notion-input:focus { background: #fff; border: 1px solid #0B6E99; box-shadow: 0 0 0 1px #0B6E9922; }
+        
+        .table-header { font-size: 11px; color: #787774; font-weight: 500; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #e9e9e7; text-align: left; }
+        .table-cell { padding: 4px; border-bottom: 1px solid #e9e9e7; vertical-align: middle; }
+        
+        /* Contenedor redimensionable en Headers */
+        .resize-header { resize: horizontal; overflow: hidden; display: inline-flex; align-items: center; min-width: 40px; width: 100%; max-width: 600px; padding-bottom: 2px; }
+        .resize-header:hover { border-right: 2px solid #ccc; cursor: col-resize; }
+
+        .notion-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+        .btn-ghost { background: transparent; color: #787774; }
+        .btn-ghost:hover { background: #efefe6; color: #37352f; }
+        .btn-primary { background: #2383e2; color: #fff; }
+        .btn-primary:hover { background: #006bce; }
+        
+        .tag { display: inline-flex; align-items: center; background: #e3e2e0; color: #37352f; border: 1px solid #d3d2d0; border-radius: 4px; padding: 2px 6px; font-size: 12px; margin: 2px; font-weight: 500; }
+        
+        .autocomplete-list { position: absolute; z-index: 9999; background: white; border: 1px solid #e9e9e7; border-radius: 4px; max-height: 200px; overflow-y: auto; min-width: 150px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; }
+        .autocomplete-item { padding: 6px 10px; cursor: pointer; font-size: 13px; }
+        .autocomplete-item:hover { background: #f0f0f0; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn { padding: 8px 16px; border-bottom: 2px solid transparent; font-weight: 500; color: #787774; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .tab-btn.active { border-bottom-color: #37352f; color: #37352f; }
+        
+        textarea.notion-input { line-height: 1.4; vertical-align: middle; padding-top: 6px; padding-bottom: 6px; }
+    </style>
+</head>
+<body class="p-8">
+
+    <div class="max-w-[1700px] mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200 min-h-[80vh] relative flex flex-col">
+        
+        <div class="flex justify-between items-end border-b border-gray-200 mb-6 pb-2">
+            <div class="flex">
+                <div class="tab-btn active" onclick="switchTab('Aumento', this)"><i class="ri-table-line text-blue-500"></i> Aumento</div>
+                <div class="tab-btn" onclick="switchTab('Cajas', this)"><i class="ri-box-3-line text-orange-500"></i> Cajas</div>
+                <div class="tab-btn" onclick="switchTab('Guias', this)"><i class="ri-flight-takeoff-line text-green-500"></i> Guias</div>
+            </div>
+            <div class="flex items-center gap-2 bg-gray-50 px-3 py-1 border border-gray-200 rounded-md mb-1 shadow-sm">
+                <i class="ri-lock-line text-gray-500 text-sm"></i>
+                <input type="number" id="global-base-vol" value="2" class="w-8 bg-transparent outline-none font-bold text-gray-800 text-center" oninput="updateBaseVol(); interactiveCalcAllRows();">
+            </div>
+        </div>
+
+        <!-- Contenido: Tab Aumento -->
+        <div id="Aumento" class="tab-content active flex-grow">
+            <div class="overflow-visible pb-48 overflow-x-auto">
+                <table class="w-full text-sm border-collapse" id="orders-table" style="table-layout: auto;">
+                    <thead>
+                        <tr>
+                            <th class="table-header"><div class="resize-header w-[150px]">Finca</div></th>
+                            <th class="table-header"><div class="resize-header w-[60px]">Qty</div></th>
+                            <th class="table-header"><div class="resize-header w-[110px]">Box Type</div></th>
+                            <th class="table-header"><div class="resize-header w-[60px]">Stems</div></th>
+                            <th class="table-header"><div class="resize-header w-[120px]">Variety</div></th>
+                            <th class="table-header"><div class="resize-header w-[220px]">Descripcion</div></th>
+                            <th class="table-header"><div class="resize-header w-[180px]">Delivery</div></th>
+                            <th class="table-header"><div class="resize-header w-[70px]">Arrival</div></th>
+                            <th class="table-header"><div class="resize-header w-[80px]">Cost</div></th>
+                            <th class="table-header"><div class="resize-header w-[80px]">Markup</div></th>
+                            <th class="table-header"><div class="resize-header w-[80px]">Price</div></th>
+                            <th class="table-header"><div class="resize-header w-[180px]">Inventory</div></th>
+                            <th class="table-header"><div class="resize-header w-[50px] text-center">Send</div></th>
+                            <th class="table-header w-[40px]"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Filas -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 flex gap-2">
+                <button onclick="addRow()" class="notion-btn btn-ghost"><i class="ri-add-line"></i> New Row</button>
+            </div>
+
+            <div class="mt-12 border-t pt-6 flex justify-end">
+                <button onclick="exportExcel()" class="notion-btn btn-primary"><i class="ri-file-excel-2-line"></i> Export to Excel</button>
+            </div>
+        </div>
+
+        <!-- Contenido: Tab Cajas (Sheet1) -->
+        <div id="Cajas" class="tab-content">
+            <div id="boxes-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-4"></div>
+        </div>
+
+        <!-- Contenido: Tab Guias -->
+        <div id="Guias" class="tab-content">
+            <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg shadow-sm mt-4">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Fecha</th>
+                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Vuelo</th>
+                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Ecuador</th>
+                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Colombia</th>
+                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Llegada Cliente</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vuelos-body" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const fincasList = [
+            "Florana", "Ceres Farms", "Bellarosa", "Agroprim", "Holex", "Plazoleta", "Rose Conection", "Lupita Flowers", "Petaloz", "Calla Flowers",
+            "Florecot", "Sande Flowers", "US Greens", "Hanna Gardens", "Welyflor", "Bloomhaus", "Floraroma", "Hoja Verde", "Valleflor", "Magic Flowers",
+            "Flowers Party", "Nelpo", "Flor Eterna", "Neumann", "ECUADORUNIQUE", "Olimpo Flowers", "Bloomlink", "Merinoroses", "Florequisa", "Mystic Flowers",
+            "Hydra Farms", "Feel Flowers", "Florecal", "GalaxyTrade Corp", "Flower Village", "Loma Linda", "FLORSEL", "Co-op Farms", "Agroflora", "Stampsybox",
+            "Flormare", "Kiara Preserved", "Agrinag", "Agrocoex", "Ecoador Floral", "Betel Flowers", "Joysgarden", "Agrirose", "Benitflor", "La Toscana Farms",
+            "Montebello Roses", "Finca la Abuela", "Florisol", "Vabagro", "Aj Flowers", "Tumbabirro", "Christopher Flowers", "Clarivel", "Jardin Piaveri", "Sunrite Farms",
+            "Florsani", "Alinatura", "Angosacha Flowers", "Lavender World", "Latina Farms", "Flowers and Co", "Flores Verdes", "Summer Bouquet S.A.S", "Flodecol", "Campos de Aroma",
+            "Star Roses", "Agrogana", "Ikebana", "St Monica", "Anthonela Farms", "High Garden", "Optimum Flowers", "San Luis", "Rosas del Corazón", "Treasure Flowers",
+            "HydranFlowers", "Alexandra Farms", "Coordinación", "Circasia S.A.S.", "Vuelven S.A.S.", "Matina", "Naranjo", "Cultivos del Norte", "Casageo", "La Conchita",
+            "Megaflor", "Agrivaldani", "Dummen Orange", "Luxus Blumen"
+        ];
+        
+        const vendorsData = {
+            "Ana": "amiranda", "Andres": "abaquero", "Ben": "baspiazu", "Cesar": "caguilar",
+            "Daniel": "dvalencia", "Daniela": "dcordova", "Estefany": "eorces", "Fausto": "fparamo",
+            "John": "jochoa", "Joss": "cmera", "Kevin": "kruiz", "Majo": "mcabrera",
+            "Paul": "pbodley", "Ralph": "rbaquero", "Roberto": "ralvarez"
+        };
+        const vendorNames = Object.keys(vendorsData);
+        
+        const vuelosData = [
+            { id: '16803', fecha: '2026-07-15', diaStr: 'Mie. 15 de julio de 2026', dia: 'Miercoles', vueloDay: '***Error de Fecha***', ecuador: '16803', colombia: '16805', llegada: 'Mon/Tue' },
+            { id: '16802', fecha: '2026-07-16', diaStr: 'Jue. 16 de julio de 2026', dia: 'Jueves', vueloDay: 'Sabado', ecuador: '16802', colombia: '16806', llegada: 'Tue/Wed' },
+            { id: '16804', fecha: '2026-07-17', diaStr: 'Vie. 17 de julio de 2026', dia: 'Viernes', vueloDay: 'Domingo', ecuador: '16804', colombia: '16807', llegada: 'Wed/Thu' },
+            { id: '16804b', fecha: '2026-07-18', diaStr: 'Sab. 18 de julio de 2026', dia: 'Sabado', vueloDay: 'Domingo', ecuador: '16804', colombia: '16807', llegada: 'Wed/Thu' },
+            { id: '16808', fecha: '2026-07-20', diaStr: 'Lun. 20 de julio de 2026', dia: 'Lunes', vueloDay: 'Martes', ecuador: '16808', colombia: '16809', llegada: 'Thu/Fri' },
+            { id: '16810', fecha: '2026-07-21', diaStr: 'Mar. 21 de julio de 2026', dia: 'Martes', vueloDay: 'Miercoles', ecuador: '16810', colombia: '-', llegada: 'Fri' } 
+        ];
+
+        const boxesData = [
+            { name: "QB", l: 99, w: 35, h: 16, f: "Estandar" },
+            { name: "EB", l: 105, w: 17, h: 17, f: "Estandar" },
+            { name: "HB", l: 105, w: 35, h: 33, f: "Estandar" },
+            { name: "QB2", l: 85, w: 30, h: 28, f: "Estandar" },
+            { name: "EB2", l: 39, w: 30, h: 30, f: "Estandar" },
+            { name: "SB", l: 90, w: 15, h: 10, f: "Estandar" },
+            
+            { name: "Agrivaldani HB F1", l: 120, w: 35, h: 35, f: "Agrivaldani" },
+            { name: "Agrivaldani HB F2", l: 105, w: 35, h: 35, f: "Agrivaldani" },
+            { name: "Agrivaldani HB F3", l: 105, w: 30, h: 30, f: "Agrivaldani" },
+            { name: "Agrivaldani QB F4", l: 106, w: 31, h: 15, f: "Agrivaldani" },
+            { name: "Agrivaldani QB F5", l: 70, w: 31, h: 16, f: "Agrivaldani" },
+            { name: "Agrivaldani QB C1", l: 105, w: 34, h: 16, f: "Agrivaldani" },
+            { name: "Agrivaldani HB C2", l: 140, w: 35, h: 35, f: "Agrivaldani" },
+
+            { name: "Ceres EB", l: 75, w: 18, h: 15, f: "Ceres" },
+            { name: "Ceres QB Pequeño", l: 82.5, w: 32.5, h: 18, f: "Ceres" },
+            { name: "Ceres Jumbo", l: 100, w: 32, h: 30.8, f: "Ceres" },
+            { name: "Ceres Extra Jumbo", l: 108, w: 32, h: 30.8, f: "Ceres" },
+            { name: "Ceres Super Jumbo", l: 120, w: 35, h: 35, f: "Ceres" },
+            { name: "Ceres Mega Jumbo", l: 150, w: 40, h: 35, f: "Ceres" },
+            
+            { name: "Hoja Verde EB", l: 80, w: 18, h: 20, f: "Hoja Verde" },
+            { name: "Hoja Verde QB96", l: 96, w: 32, h: 20, f: "Hoja Verde" },
+            { name: "Hoja Verde QB104", l: 104, w: 30, h: 15, f: "Hoja Verde" },
+            { name: "Hoja Verde QB120", l: 120, w: 32, h: 30, f: "Hoja Verde" },
+            { name: "Hoja Verde HB25", l: 104, w: 25, h: 25, f: "Hoja Verde" },
+            { name: "Hoja Verde HB30", l: 104, w: 30, h: 30, f: "Hoja Verde" },
+            { name: "Hoja Verde HB35", l: 120, w: 35, h: 35, f: "Hoja Verde" },
+            { name: "Hoja Verde HB40", l: 120, w: 40, h: 40, f: "Hoja Verde" },
+            { name: "Hoja Verde HB120", l: 120, w: 30, h: 30, f: "Hoja Verde" },
+
+            { name: "Latina Farms QB", l: 101, w: 30, h: 20, f: "Latina Farms" },
+            { name: "Latina Farms HB 100", l: 100, w: 35, h: 35, f: "Latina Farms" },
+            { name: "Latina Farms HB 110", l: 110, w: 25, h: 25, f: "Latina Farms" },
+            { name: "Latina Farms HB 120", l: 120, w: 35, h: 35, f: "Latina Farms" },
+            { name: "Latina Farms HB 130", l: 130, w: 35, h: 35, f: "Latina Farms" },
+            
+            { name: "Cultivos del Norte QB", l: 102, w: 16, h: 30, f: "Cultivos del Norte" },
+            { name: "Cultivos del Norte HB", l: 101, w: 29, h: 33, f: "Cultivos del Norte" },
+            { name: "Dummen Orange QB", l: 104.5, w: 24, h: 15, f: "Dummen Orange" },
+            { name: "La Conchita QB Alto", l: 104, w: 24, h: 16, f: "La Conchita" },
+            { name: "La Conchita QB Normal", l: 104, w: 24, h: 12, f: "La Conchita" },
+            
+            { name: "Florisol EB", l: 86, w: 14.5, h: 12.5, f: "Florisol" },
+            { name: "Florisol EB Grande", l: 90, w: 15, h: 15, f: "Florisol" },
+            { name: "Florisol QB", l: 105, w: 29, h: 15, f: "Florisol" },
+            { name: "Florisol HB", l: 104.6, w: 25.1, h: 25.4, f: "Florisol" },
+            { name: "Florisol HB2", l: 105, w: 30, h: 30, f: "Florisol" },
+
+            { name: "Florecal EB", l: 86.8, w: 16.5, h: 13, f: "Florecal" },
+            { name: "Florecal QB", l: 88, w: 29.2, h: 17.7, f: "Florecal" },
+            { name: "Florecal HB", l: 99, w: 31.3, h: 35.5, f: "Florecal" },
+            { name: "Florecal Jumbo", l: 121, w: 36, h: 36.5, f: "Florecal" },
+            
+            { name: "Flores Verdes EB", l: 86, w: 14.5, h: 12.5, f: "Flores Verdes" },
+            { name: "Flores Verdes QB Corta", l: 87, w: 27.5, h: 17, f: "Flores Verdes" },
+            { name: "Flores Verdes QB Larga", l: 104.2, w: 27.4, h: 14.7, f: "Flores Verdes" },
+            { name: "Flores Verdes HB", l: 98, w: 29.5, h: 25.8, f: "Flores Verdes" },
+            { name: "Flores Verdes Jumbo", l: 120, w: 34, h: 34, f: "Flores Verdes" },
+            
+            { name: "Florsani EB", l: 88, w: 18, h: 14, f: "Florsani" },
+            { name: "Florsani QB", l: 105, w: 27, h: 13, f: "Florsani" },
+            { name: "Florsani QBJ", l: 105, w: 26, h: 15, f: "Florsani" },
+            { name: "Florsani HB", l: 105, w: 27, h: 21, f: "Florsani" },
+            { name: "Florsani HE", l: 105, w: 27, h: 28, f: "Florsani" },
+            { name: "Florsani HJ", l: 120, w: 30, h: 30, f: "Florsani" },
+
+            { name: "Luxus QB 104", l: 104, w: 30, h: 17, f: "Luxus" },
+            { name: "Luxus QB 105", l: 105, w: 26, h: 25, f: "Luxus" },
+            { name: "Luxus HB USA 112", l: 112, w: 30, h: 28, f: "Luxus" },
+            { name: "Luxus HB Jumbo 120", l: 120, w: 33, h: 32, f: "Luxus" },
+            { name: "Luxus HB Super Jumbo 130", l: 130, w: 36, h: 36, f: "Luxus" },
+
+            { name: "Naranjo EB", l: 15, w: 25, h: 91, f: "Naranjo" },
+            { name: "Naranjo QB Pequeño", l: 18, w: 30, h: 85, f: "Naranjo" },
+            { name: "Naranjo QB Grande", l: 18, w: 30, h: 100, f: "Naranjo" },
+            { name: "Naranjo HB Extra Grande", l: 40, w: 40, h: 120, f: "Naranjo" },
+
+            { name: "San Luis EB Pequeño", l: 78, w: 17, h: 19, f: "San Luis" },
+            { name: "San Luis EB Grande", l: 79, w: 24, h: 21, f: "San Luis" },
+            { name: "San Luis QB Pequeño", l: 90, w: 18, h: 30, f: "San Luis" },
+            { name: "San Luis QB Grande", l: 90, w: 22, h: 30, f: "San Luis" },
+            { name: "San Luis HB1", l: 110, w: 30, h: 30, f: "San Luis" },
+            { name: "San Luis HB2", l: 120, w: 35, h: 35, f: "San Luis" },
+            { name: "San Luis HB3", l: 130, w: 40, h: 40, f: "San Luis" },
+            
+            { name: "Star Roses EB", l: 95, w: 17, h: 18, f: "Star Roses" },
+            { name: "Star Roses QB Kraft", l: 95, w: 28, h: 17, f: "Star Roses" },
+            { name: "Star Roses QB Grande", l: 95, w: 40, h: 20, f: "Star Roses" },
+            { name: "Star Roses HB USA", l: 95, w: 33, h: 30, f: "Star Roses" },
+            { name: "Star Roses HB Rusa Corta", l: 105, w: 35, h: 35, f: "Star Roses" },
+
+            { name: "Tumbabiro EB", l: 105, w: 15, h: 12.5, f: "Tumbabiro" },
+            { name: "Tumbabiro QB", l: 105, w: 27, h: 12.5, f: "Tumbabiro" }
+        ];
+
+        let rowCount = 0;
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function renderSheet1() {
+            const container = document.getElementById('boxes-container');
+            container.innerHTML = '';
+            const grouped = {};
+            boxesData.forEach(b => {
+                if(b.f === "Estandar") return; 
+                if(!grouped[b.f]) grouped[b.f] = [];
+                grouped[b.f].push(b);
+            });
+
+            const baseVol = parseFloat(document.getElementById('global-base-vol').value) || 0;
+
+            Object.keys(grouped).sort().forEach(finca => {
+                let html = `<div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
+                    <h3 class="text-[15px] font-bold border-b pb-2 mb-3 text-gray-800">${finca}</h3>
+                    <table class="w-full text-xs text-left">
+                        <thead><tr class="text-gray-400"><th class="pb-2 font-medium">Nombre</th><th class="pb-2 font-medium">L</th><th class="pb-2 font-medium">W</th><th class="pb-2 font-medium">H</th><th class="pb-2 font-medium">Peso</th></tr></thead>
+                        <tbody class="divide-y divide-gray-50">`;
+                
+                grouped[finca].forEach(box => {
+                    let weight = ((box.l + baseVol) * (box.w + baseVol) * (box.h + baseVol)) / 6000;
+                    html += `<tr><td class="py-1.5 font-medium text-gray-700">${box.name}</td><td class="text-gray-500">${box.l}</td><td class="text-gray-500">${box.w}</td><td class="text-gray-500">${box.h}</td><td class="font-bold text-gray-800">${weight.toFixed(2)}</td></tr>`;
+                });
+                
+                html += `</tbody></table></div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function updateBaseVol() {
+            renderSheet1();
+        }
+
+        function renderGuias() {
+            const body = document.getElementById('vuelos-body');
+            let html = '';
+            vuelosData.forEach(v => {
+                html += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 font-medium text-gray-800">${v.diaStr}</td>
+                        <td class="p-3 text-gray-600">${v.vueloDay}</td>
+                        <td class="p-3 text-gray-600">${v.ecuador}</td>
+                        <td class="p-3 text-gray-600">${v.colombia}</td>
+                        <td class="p-3 font-medium text-gray-700">${v.llegada}</td>
+                    </tr>
+                `;
+            });
+            body.innerHTML = html;
+        }
+
+        function createAutocomplete(input, list) {
+            let div = document.createElement('div');
+            div.className = 'autocomplete-list';
+            input.parentElement.appendChild(div);
+
+            input.addEventListener('input', function() {
+                let val = this.value;
+                div.innerHTML = '';
+                if (!val) { div.style.display = 'none'; return; }
+                
+                let matches = list.filter(item => item.toLowerCase().includes(val.toLowerCase()));
+                if (matches.length > 0) {
+                    div.style.display = 'block';
+                    div.style.top = (input.offsetTop + input.offsetHeight) + 'px';
+                    div.style.left = input.offsetLeft + 'px';
+
+                    matches.forEach(match => {
+                        let divItem = document.createElement('div');
+                        divItem.className = 'autocomplete-item';
+                        divItem.innerHTML = match;
+                        divItem.addEventListener('click', function() {
+                            input.value = match;
+                            div.style.display = 'none';
+                        });
+                        div.appendChild(divItem);
+                    });
+                } else {
+                    div.style.display = 'none';
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (e.target !== input) div.style.display = 'none';
+            });
+        }
+
+        function handleBoxSelect(selectElement) {
+            if (selectElement.value === 'more') {
+                let optionsHtml = '';
+                let grouped = {};
+                boxesData.forEach(b => {
+                    if(!grouped[b.f]) grouped[b.f] = [];
+                    grouped[b.f].push(b);
+                });
+                
+                Object.keys(grouped).forEach(finca => {
+                    optionsHtml += `<optgroup label="${finca}">`;
+                    grouped[finca].forEach(box => {
+                        optionsHtml += `<option value="${box.name}">${box.name}</option>`;
+                    });
+                    optionsHtml += `</optgroup>`;
+                });
+                
+                selectElement.innerHTML = optionsHtml;
+            }
+            interactiveCalc(selectElement.closest('tr'), 'cost');
+        }
+
+        function handleDateSelection(select, arrivalSpan) {
+            let val = select.value;
+            if(!val) { arrivalSpan.innerText = ""; return; }
+            let vData = vuelosData.find(v => v.fecha === val);
+            arrivalSpan.innerText = vData ? vData.llegada : "";
+        }
+
+        function interactiveCalc(row, source) {
+            const costInp = row.querySelector('.inp-cost');
+            const priceInp = row.querySelector('.inp-price');
+            const markupInp = row.querySelector('.inp-markup');
+            
+            const cost = parseFloat(costInp.value) || 0;
+            const type = row.querySelector('.inp-boxtype').value;
+            const stems = parseFloat(row.querySelector('.inp-stems').value) || 1;
+            const baseVol = parseFloat(document.getElementById('global-base-vol').value) || 2;
+            
+            let dims = boxesData.find(b => b.name === type) || {l:100, w:30, h:20}; 
+            let vol = 0;
+            if (['QB','EB','HB','QB2','EB2','SB'].includes(type)) {
+                vol = (dims.l * dims.w * dims.h) / 6000;
+            } else {
+                vol = ((dims.l+baseVol)*(dims.w+baseVol)*(dims.h+baseVol))/6000;
+            }
+            
+            const duties = cost * 0.1586;
+            const transp2 = (vol * 5.25) * 1.36;
+            const transp = stems > 0 ? transp2 / stems : 0;
+            const totalBase = cost + duties + transp;
+
+            if (source === 'cost' || source === 'price') {
+                const p = parseFloat(priceInp.value);
+                if (p && p > 0) {
+                    let m = 1 - (totalBase / (p * 0.96));
+                    markupInp.value = (m * 100).toFixed(2);
+                }
+            }
+
+            if (source === 'markup') {
+                let mVal = markupInp.value;
+                let m = parseFloat(mVal) / 100;
+                if (!isNaN(m)) {
+                    let p = totalBase / ((1 - m) * 0.96);
+                    priceInp.value = p.toFixed(2);
+                }
+            }
+        }
+
+        function interactiveCalcAllRows() {
+            document.querySelectorAll('#table-body tr').forEach(tr => interactiveCalc(tr, 'cost'));
+        }
+
+        // --- Inventario Predictivo ---
+        function handleInvInput(input) {
+            let val = input.value;
+            let listDiv = input.nextElementSibling;
+            
+            if (val.trim().length > 0) {
+                let matchRegex = val.match(/^(\d+)\s*(.*)$/);
+                if (matchRegex) {
+                    let num = matchRegex[1];
+                    let text = matchRegex[2].toLowerCase();
+                    let matches = vendorNames.filter(v => v.toLowerCase().includes(text));
+                    
+                    if (matches.length > 0) {
+                        listDiv.innerHTML = '';
+                        listDiv.style.display = 'block';
+                        listDiv.style.top = (input.offsetTop + input.offsetHeight) + 'px';
+                        listDiv.style.left = input.offsetLeft + 'px';
+                        
+                        matches.forEach(m => {
+                            let divItem = document.createElement('div');
+                            divItem.className = 'autocomplete-item';
+                            divItem.innerHTML = num + ' ' + m;
+                            divItem.onclick = function() {
+                                input.value = num + ' ' + m;
+                                createTagFromInput(input);
+                            };
+                            listDiv.appendChild(divItem);
+                        });
+                    } else { listDiv.style.display = 'none'; }
+                } else { listDiv.style.display = 'none'; }
+            } else { listDiv.style.display = 'none'; }
+        }
+
+        function handleInvKey(event, input) {
+            if (event.key === 'Enter' || event.key === ',' || event.key === ';') {
+                event.preventDefault();
+                let listDiv = input.nextElementSibling;
+                // Auto-complete con la primera sugerencia si está visible
+                if (listDiv.style.display === 'block' && listDiv.firstChild) {
+                    input.value = listDiv.firstChild.innerText;
+                }
+                createTagFromInput(input);
+            }
+        }
+
+        function createTagFromInput(input) {
+            let val = input.value.trim();
+            if(!val) return;
+            
+            let row = input.closest('tr');
+            let mainQty = parseFloat(row.querySelector('.inp-main-qty').value) || 0;
+            let container = input.closest('.inv-container');
+            
+            let matchRegex = val.match(/^(\d+)\s+(.+)$/);
+            if (!matchRegex) {
+                alert("Formato inválido. Usa 'Número Nombre' (Ej: 1 Ben)");
+                return;
+            }
+            
+            let q = parseFloat(matchRegex[1]);
+            let v = matchRegex[2];
+
+            // Validar que el vendedor exista en la lista
+            let validVendor = vendorNames.find(name => name.toLowerCase() === v.toLowerCase());
+            if(!validVendor) {
+                alert("Vendedor no reconocido.");
+                return;
+            }
+            v = validVendor; // Usa el string correcto
+
+            let currentSum = 0;
+            container.querySelectorAll('.tag').forEach(t => currentSum += parseFloat(t.dataset.qty));
+
+            if (currentSum + q > mainQty) {
+                alert(`¡Error! El inventario (${currentSum + q}) no puede superar QTY (${mainQty}).`);
+                return;
+            }
+            
+            let tag = document.createElement('span');
+            tag.className = 'tag';
+            // User pref: Semicolon separation rule visually + plain text output later
+            tag.innerHTML = `${q} ${v} <i class="ri-close-line ml-1 cursor-pointer font-bold hover:text-gray-500" onclick="this.parentElement.remove(); updateInventoryData(this.closest('.inv-container'));"></i>`;
+            tag.dataset.val = `${q} ${v}`;
+            tag.dataset.qty = q;
+            
+            container.insertBefore(tag, input);
+            input.value = '';
+            input.nextElementSibling.style.display = 'none';
+            updateInventoryData(container);
+        }
+
+        function updateInventoryData(container) {
+            let tags = container.querySelectorAll('.tag');
+            let data = [];
+            tags.forEach(t => data.push(t.dataset.val));
+            container.querySelector('.hidden-inventory-data').value = data.join(';');
+        }
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+
+        function addRow() {
+            rowCount++;
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-gray-50 group border-b border-gray-100";
+            tr.id = 'row-' + rowCount;
+
+            let boxOpts = `
+                <option value="EB">EB</option>
+                <option value="QB">QB</option>
+                <option value="HB">HB</option>
+                <option value="EB2">EB2</option>
+                <option value="QB2">QB2</option>
+                <option value="SB">SB</option>
+                <option value="more" class="font-bold text-blue-600">Ver más...</option>
+            `;
+
+            let dateOpts = '<option value="" disabled selected>Seleccione...</option>';
+            vuelosData.forEach(v => {
+                dateOpts += `<option value="${v.fecha}">${v.diaStr}</option>`;
+            });
+
+            tr.innerHTML = `
+                <td class="table-cell relative align-top">
+                    <input type="text" class="notion-input font-medium" placeholder="Finca">
+                </td>
+                <td class="table-cell align-top"><input type="number" class="notion-input inp-main-qty font-bold" placeholder="0"></td>
+                <td class="table-cell align-top">
+                    <select class="notion-input inp-boxtype text-xs" onchange="handleBoxSelect(this)">
+                        ${boxOpts}
+                    </select>
+                </td>
+                <td class="table-cell align-top"><input type="number" class="notion-input inp-stems" placeholder="0" oninput="interactiveCalc(this.closest('tr'), 'cost')"></td>
+                <td class="table-cell align-top"><input type="text" class="notion-input" placeholder="Variety"></td>
+                <td class="table-cell align-top">
+                    <textarea class="notion-input resize-none overflow-hidden w-full min-h-[30px]" rows="1" placeholder="Descripción" oninput="autoResizeTextarea(this)"></textarea>
+                </td>
+                <td class="table-cell align-top">
+                    <select class="notion-input font-medium text-xs bg-gray-50" onchange="handleDateSelection(this, this.closest('tr').querySelector('.arr-span'))">
+                        ${dateOpts}
+                    </select>
+                </td>
+                <td class="table-cell align-top text-center text-xs font-medium text-gray-700 pt-[10px]"><span class="arr-span"></span></td>
+                <td class="table-cell align-top">
+                    <div class="flex items-center gap-1">
+                        <span class="text-gray-400 text-xs">$</span>
+                        <input type="number" step="0.01" class="notion-input inp-cost font-medium" placeholder="0.00" oninput="interactiveCalc(this.closest('tr'), 'cost')">
+                    </div>
+                </td>
+                <td class="table-cell align-top">
+                    <div class="flex items-center gap-1">
+                        <input type="number" step="0.1" class="notion-input inp-markup font-medium" placeholder="0.0" oninput="interactiveCalc(this.closest('tr'), 'markup')">
+                        <span class="text-gray-400 text-xs">%</span>
+                    </div>
+                </td>
+                <td class="table-cell align-top">
+                    <div class="flex items-center gap-1">
+                        <span class="text-gray-400 text-xs">$</span>
+                        <input type="number" step="0.01" class="notion-input inp-price font-medium" placeholder="0.00" oninput="interactiveCalc(this.closest('tr'), 'price')">
+                    </div>
+                </td>
+                <td class="table-cell align-top">
+                    <div class="flex flex-wrap items-center gap-1 inv-container bg-white border border-transparent hover:border-gray-300 rounded p-1 transition">
+                        <input type="hidden" class="hidden-inventory-data" value="">
+                        <div class="relative w-[110px]">
+                            <input type="text" class="notion-input inv-quick-input text-xs" placeholder="Ej: 1 Ben" onkeydown="handleInvKey(event, this)" oninput="handleInvInput(this)">
+                            <div class="autocomplete-list"></div>
+                        </div>
+                    </div>
+                </td>
+                <td class="table-cell align-top text-center pt-[10px]"><input type="checkbox" checked class="w-4 h-4 cursor-pointer accent-blue-600"></td>
+                <td class="table-cell align-top text-center pt-[10px]">
+                    <button class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition" onclick="this.closest('tr').remove()"><i class="ri-delete-bin-line"></i></button>
+                </td>
+            `;
+
+            document.getElementById('table-body').appendChild(tr);
+            createAutocomplete(tr.querySelector('td:nth-child(1) input'), fincasList);
+        }
+
+        // --- Exportación Plana Estricta ---
+        function exportExcel() {
+            const wb = XLSX.utils.book_new();
+            const rows = document.querySelectorAll('#table-body tr');
+            const baseVol = parseFloat(document.getElementById('global-base-vol').value) || 2;
+            
+            const ws_data = [
+                ["Finca", "Qty", "Type of Box", "Cantidad_Min", "Cantidad_QB", "Variedad", "Nombre", "Color", "Cost", "Markup", "Precio", "Guia", "FechaEntrega", "Duties", "Origen", "Box", "img", "Transport", "Largo2", "Ancho", "Alto", "Volumen", "Transport2", "Import Duties", "Total", "FincaID", "Inventarios", "SendEmail", "Comments", "Standing Orders"]
+            ];
+
+            rows.forEach((tr) => {
+                const cells = tr.querySelectorAll('td');
+                const Finca = cells[0].querySelector('input').value;
+                const Qty = parseFloat(cells[1].querySelector('input').value) || 0;
+                const Type = cells[2].querySelector('select').value;
+                const Stems = parseFloat(cells[3].querySelector('input').value) || 0;
+                const Variety = cells[4].querySelector('input').value;
+                const Name = cells[5].querySelector('textarea').value;
+                const DateVal = cells[6].querySelector('select').value; // Sale estricto YYYY-MM-DD
+                const Cost = parseFloat(cells[8].querySelector('input').value) || 0;
+                const Price = parseFloat(cells[10].querySelector('input').value) || 0;
+                const Standings = cells[11].querySelector('.hidden-inventory-data').value;
+                const Send = cells[12].querySelector('input').checked ? 'Y' : 'N';
+
+                // Cálculos en vivo 100% JS a Valores Planos
+                let vData = vuelosData.find(v => v.fecha === DateVal);
+                let GuiaStr = "ERROR F";
+                if(vData) {
+                    if (['QB2','EB2'].includes(Type)) { GuiaStr = vData.colombia; } 
+                    else { GuiaStr = vData.ecuador; }
+                }
+
+                let dims = boxesData.find(b => b.name === Type) || {l:100, w:30, h:20, f:"Estandar"}; 
+                let Vol = 0;
+                if (['QB','EB','HB','QB2','EB2','SB'].includes(Type)) { Vol = (dims.l * dims.w * dims.h) / 6000; } 
+                else { Vol = ((dims.l+baseVol)*(dims.w+baseVol)*(dims.h+baseVol))/6000; }
+                
+                let Duties = Math.ceil((Cost * 0.1586) * 100) / 100;
+                let Transport2 = Math.ceil(((Vol * 5.25) * 1.36) * 100) / 100;
+                let Transport = Stems > 0 ? Math.ceil((Transport2 / Stems) * 100) / 100 : 0;
+                let Total = Stems * Price * Qty;
+                
+                let FincaIDStr = (fincasList.indexOf(Finca) + 1).toString();
+                if(FincaIDStr === "0") FincaIDStr = ""; // Si no existe en lista
+
+                let MarkupVal = 0;
+                if (Price > 0) { MarkupVal = 1 - ((Cost + Duties + Transport) / (Price * 0.96)); }
+                let MarkupOut = MarkupVal;
+                if (MarkupVal < 0) MarkupOut = "BAJO";
+                if (MarkupVal > 1) MarkupOut = "ALTO";
+
+                // Lógica Estricta de Inventario (Traductor a IDs)
+                let InventariosStr = "";
+                if(Standings) {
+                    let stArray = Standings.split(';');
+                    stArray.forEach(t => {
+                        let matchRegex = t.trim().match(/^(\d+)\s+(.+)$/);
+                        if(matchRegex) {
+                            let invQty = parseInt(matchRegex[1]);
+                            let invName = matchRegex[2];
+                            let mappedID = vendorsData[invName];
+                            if(mappedID && !isNaN(invQty)) {
+                                InventariosStr += (mappedID + ",").repeat(invQty);
+                            }
+                        }
+                    });
+                }
+
+                // Append a fila (Texto Plano Total)
+                ws_data.push([
+                    Finca, Qty, Type, Stems, Stems, Variety, Name, "", Cost, MarkupOut, Price, GuiaStr, DateVal, 
+                    Duties, 0, 1, 0, Transport, dims.l, dims.w, dims.h, Vol, Transport2, 0.1586, Total, 
+                    FincaIDStr, InventariosStr, Send, "", Standings.replace(/;/g, "; ")
+                ]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            XLSX.utils.book_append_sheet(wb, ws, "test");
+            XLSX.writeFile(wb, "ECF_Aumento.xlsx"); // Nombre actualizado
+        }
+
+        window.onload = function() {
+            renderSheet1();
+            renderGuias();
+            addRow();
+        };
+    </script>
+</body>
+</html>
