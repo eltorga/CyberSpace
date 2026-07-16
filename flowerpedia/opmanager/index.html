@@ -30,8 +30,12 @@
         .btn-primary { background: #2383e2; color: #fff; border: 1px solid #1a73e8; }
         .btn-primary:hover { background: #006bce; }
         
+        /* Ajuste Tag y contenedor de inventario */
         .tag { display: inline-flex; align-items: center; background: #e3e2e0; color: #37352f; border: 1px solid #d3d2d0; border-radius: 4px; padding: 2px 6px; font-size: 12px; margin: 2px; font-weight: 500; }
-        
+        .inv-container { background: #fff; border: 1px solid #e9e9e7; border-radius: 4px; padding: 2px 4px; transition: border 0.2s; min-height: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; cursor: text; }
+        .inv-container:hover { border-color: #ccc; }
+        .inv-container:focus-within { border-color: #0B6E99; box-shadow: 0 0 0 1px #0B6E9922; }
+
         .autocomplete-list { position: absolute; z-index: 9999; background: white; border: 1px solid #e9e9e7; border-radius: 4px; max-height: 200px; overflow-y: auto; min-width: 100%; top: 100%; left: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; margin-top: 2px; }
         .autocomplete-item { padding: 6px 10px; cursor: pointer; font-size: 13px; }
         .autocomplete-item:hover { background: #f0f0f0; }
@@ -72,12 +76,12 @@
                         <th class="table-header"><div class="resize-header w-[60px]">Stems</div></th>
                         <th class="table-header"><div class="resize-header w-[120px]">Variety</div></th>
                         <th class="table-header"><div class="resize-header w-[220px]">Descripcion</div></th>
-                        <th class="table-header"><div class="resize-header w-[180px]">Delivery</div></th>
+                        <th class="table-header"><div class="resize-header w-[110px]">Delivery</div></th>
                         <th class="table-header"><div class="resize-header w-[70px]">Arrival</div></th>
                         <th class="table-header"><div class="resize-header w-[80px]">Cost</div></th>
                         <th class="table-header"><div class="resize-header w-[80px]">Markup</div></th>
                         <th class="table-header"><div class="resize-header w-[80px]">Price</div></th>
-                        <th class="table-header"><div class="resize-header w-[160px]">Inventory</div></th>
+                        <th class="table-header"><div class="resize-header w-[200px]">Inventory</div></th>
                         <th class="table-header"><div class="resize-header w-[50px] text-center">Send</div></th>
                         <th class="table-header w-[40px]"></th>
                     </tr>
@@ -101,12 +105,12 @@
 
     <!-- Contenido: Tab Guias -->
     <div id="Guias" class="tab-content flex-col flex-grow min-h-0 w-full overflow-auto bg-[#f7f7f5] px-6">
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm mt-6 w-full max-w-[1200px]">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm mt-6 w-full max-w-[1000px] mx-auto">
             <table class="w-full text-sm text-left">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
                         <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Fecha</th>
-                        <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Vuelo</th>
+                        <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Día Vuelo</th>
                         <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Ecuador</th>
                         <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Colombia</th>
                         <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Llegada Cliente</th>
@@ -130,6 +134,18 @@
             "HydranFlowers", "Alexandra Farms", "Coordinación", "Circasia S.A.S.", "Vuelven S.A.S.", "Matina", "Naranjo", "Cultivos del Norte", "Casageo", "La Conchita",
             "Megaflor", "Agrivaldani", "Dummen Orange", "Luxus Blumen"
         ];
+
+        const llegadaMap = {
+            "Agrivaldani": "y", "Ceres": "n", "Hoja Verde": "n", "Latina Farms": "n", 
+            "Lulu": "", "Luxus": "n", "Naranjo": "n", "Florisol": "-", "Florecal": "n", 
+            "Flores Verdes": "y", "Florecot": "n", "Florsani": "y", "Flower Village": "", 
+            "High Garden": "-", "Ikebana": "y", "Star Roses": "n", "Tumbabiro": "y", 
+            "Plazoleta": "y", "Flowers Party": "y", "HydranFlowers": "y", "Alexandra Farms": "", 
+            "Circasia S.A.S.": "", "Vuelven S.A.S.": "", "La Conchita": "-", "Bellarosa": "", 
+            "Agroprim": "n", "Holex": "", "Petaloz": "", "Bloomhaus": "", "Agrinag": "", 
+            "Anthonela": "n", "Agrogana": "y", "Alinatura": "", "Betel": "n", "Casageo": "n", 
+            "Cultivos del Norte": "y", "Dummen Orange": "n", "San Luis": "n"
+        };
         
         const vendorsData = {
             "Ana": "amiranda", "Andres": "abaquero", "Ben": "baspiazu", "Cesar": "caguilar",
@@ -268,18 +284,40 @@
             const baseVol = parseFloat(document.getElementById('global-base-vol').value) || 0;
 
             Object.keys(grouped).sort().forEach(finca => {
-                let html = `<div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-                    <h3 class="text-[15px] font-bold border-b pb-2 mb-3 text-gray-800">${finca}</h3>
-                    <table class="w-full text-xs text-left">
-                        <thead><tr class="text-gray-400"><th class="pb-2 font-medium">Nombre</th><th class="pb-2 font-medium">L</th><th class="pb-2 font-medium">W</th><th class="pb-2 font-medium">H</th><th class="pb-2 font-medium">Peso</th></tr></thead>
-                        <tbody class="divide-y divide-gray-50">`;
+                let flag = llegadaMap[finca] || "";
+                let bgClass = "bg-white";
+                let titleColor = "text-gray-800";
+                let iconHtml = "";
+
+                if(flag === "y") {
+                    bgClass = "bg-green-50";
+                    titleColor = "text-green-800";
+                    iconHtml = `<i class="ri-checkbox-circle-line text-green-600" title="Llega temprano"></i>`;
+                } else if(flag === "n") {
+                    bgClass = "bg-red-50";
+                    titleColor = "text-red-800";
+                    iconHtml = `<i class="ri-close-circle-line text-red-500" title="No llega temprano"></i>`;
+                } else if(flag === "-") {
+                    bgClass = "bg-orange-50";
+                    titleColor = "text-orange-800";
+                    iconHtml = `<i class="ri-error-warning-line text-orange-500" title="Puede variar"></i>`;
+                }
+
+                let html = `<div class="${bgClass} border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col">
+                    <div class="px-4 py-3 border-b border-gray-200/60 bg-white/50 backdrop-blur-sm flex justify-between items-center shrink-0">
+                        <h3 class="text-[15px] font-bold ${titleColor} m-0 flex items-center gap-2">${iconHtml} ${finca}</h3>
+                    </div>
+                    <div class="p-4 flex-grow overflow-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead><tr class="text-gray-400"><th class="pb-2 font-medium">Nombre</th><th class="pb-2 font-medium">L</th><th class="pb-2 font-medium">W</th><th class="pb-2 font-medium">H</th><th class="pb-2 font-medium">Peso</th></tr></thead>
+                            <tbody class="divide-y divide-gray-50/50">`;
                 
                 grouped[finca].forEach(box => {
                     let weight = ((box.l + baseVol) * (box.w + baseVol) * (box.h + baseVol)) / 6000;
                     html += `<tr><td class="py-1.5 font-medium text-gray-700">${box.name}</td><td class="text-gray-500">${box.l}</td><td class="text-gray-500">${box.w}</td><td class="text-gray-500">${box.h}</td><td class="font-bold text-gray-800">${weight.toFixed(2)}</td></tr>`;
                 });
                 
-                html += `</tbody></table></div>`;
+                html += `</tbody></table></div></div>`;
                 container.innerHTML += html;
             });
         }
@@ -293,19 +331,18 @@
             let html = '';
             vuelosData.forEach(v => {
                 html += `
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-gray-50 transition-colors">
                         <td class="p-4 font-medium text-gray-800">${v.diaStr}</td>
-                        <td class="p-4 text-gray-600">${v.vueloDay}</td>
+                        <td class="p-4 font-bold text-gray-600">${v.vueloDay}</td>
                         <td class="p-4 text-gray-600">${v.ecuador}</td>
                         <td class="p-4 text-gray-600">${v.colombia}</td>
-                        <td class="p-4 font-medium text-gray-700">${v.llegada}</td>
+                        <td class="p-4 font-bold text-blue-700">${v.llegada}</td>
                     </tr>
                 `;
             });
             body.innerHTML = html;
         }
 
-        // --- Manejo unificado de menús contextuales predictivos ---
         function createAutocomplete(input, list) {
             let div = document.createElement('div');
             div.className = 'autocomplete-list';
@@ -323,7 +360,6 @@
                         let divItem = document.createElement('div');
                         divItem.className = 'autocomplete-item';
                         divItem.innerHTML = match;
-                        // Usamos mousedown para que ejecute el clic ANTES de que el input pierda el foco por blur
                         divItem.onmousedown = function(e) {
                             e.preventDefault(); 
                             input.value = match;
@@ -336,12 +372,17 @@
                 }
             });
 
-            input.addEventListener('blur', function() {
-                div.style.display = 'none';
-            });
-            input.addEventListener('focus', function() {
-                if(this.value && div.children.length > 0) div.style.display = 'block';
-            });
+            input.addEventListener('blur', function() { div.style.display = 'none'; });
+            input.addEventListener('focus', function() { if(this.value && div.children.length > 0) div.style.display = 'block'; });
+        }
+
+        function selectCustomDate(elem, fecha, llegada) {
+            let inputWrapper = elem.closest('.relative');
+            let input = inputWrapper.querySelector('.inp-date');
+            input.value = fecha;
+            inputWrapper.querySelector('.autocomplete-list').style.display = 'none';
+            let arrSpan = inputWrapper.closest('tr').querySelector('.arr-span');
+            if(arrSpan) arrSpan.innerText = llegada;
         }
 
         function handleBoxSelect(selectElement) {
@@ -364,13 +405,6 @@
                 selectElement.innerHTML = optionsHtml;
             }
             interactiveCalc(selectElement.closest('tr'), 'cost');
-        }
-
-        function handleDateSelection(select, arrivalSpan) {
-            let val = select.value;
-            if(!val) { arrivalSpan.innerText = ""; return; }
-            let vData = vuelosData.find(v => v.fecha === val);
-            arrivalSpan.innerText = vData ? vData.llegada : "";
         }
 
         function interactiveCalc(row, source) {
@@ -418,7 +452,7 @@
             document.querySelectorAll('#table-body tr').forEach(tr => interactiveCalc(tr, 'cost'));
         }
 
-        // --- Inventario Predictivo Exclusivo con Clic ---
+        // --- Inventario con Predictivo Exclusivo de Clic ---
         function handleInvInput(input) {
             let val = input.value;
             let listDiv = input.nextElementSibling;
@@ -460,7 +494,7 @@
             let container = input.closest('.inv-container');
             
             let matchRegex = val.match(/^(\d+)\s+(.+)$/);
-            if (!matchRegex) return; // Si por alguna razón el texto no cuadra, ignoramos.
+            if (!matchRegex) return; 
             
             let q = parseFloat(matchRegex[1]);
             let v = matchRegex[2];
@@ -488,6 +522,7 @@
             input.value = '';
             input.nextElementSibling.style.display = 'none';
             updateInventoryData(container);
+            input.focus();
         }
 
         function updateInventoryData(container) {
@@ -505,7 +540,7 @@
         function addRow() {
             rowCount++;
             const tr = document.createElement('tr');
-            tr.className = "hover:bg-gray-50 group border-b border-gray-100";
+            tr.className = "hover:bg-gray-50 group border-b border-gray-100 transition-colors";
             tr.id = 'row-' + rowCount;
 
             let boxOpts = `
@@ -518,9 +553,9 @@
                 <option value="more" class="font-bold text-blue-600">Ver más...</option>
             `;
 
-            let dateOpts = '<option value="" disabled selected>Seleccione...</option>';
+            let dateOptsHtml = '';
             vuelosData.forEach(v => {
-                dateOpts += `<option value="${v.fecha}">${v.diaStr}</option>`;
+                dateOptsHtml += `<div class="autocomplete-item hover:bg-gray-100 p-2 border-b border-gray-50 last:border-0" onmousedown="event.preventDefault(); selectCustomDate(this, '${v.fecha}', '${v.llegada}')"><span class="font-medium text-gray-700">${v.diaStr}</span></div>`;
             });
 
             tr.innerHTML = `
@@ -538,14 +573,17 @@
                 <td class="table-cell align-top"><input type="number" class="notion-input inp-stems" placeholder="0" oninput="interactiveCalc(this.closest('tr'), 'cost')"></td>
                 <td class="table-cell align-top"><input type="text" class="notion-input" placeholder="Variety"></td>
                 <td class="table-cell align-top">
-                    <textarea class="notion-input resize-none overflow-hidden w-full min-h-[30px]" rows="1" placeholder="Descripción" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea class="notion-input resize-none overflow-hidden w-full min-h-[30px]" rows="1" placeholder="Descripción..." oninput="autoResizeTextarea(this)"></textarea>
                 </td>
                 <td class="table-cell align-top pt-[6px]">
-                    <select class="notion-input font-medium text-xs bg-gray-50" onchange="handleDateSelection(this, this.closest('tr').querySelector('.arr-span'))">
-                        ${dateOpts}
-                    </select>
+                    <div class="relative w-full">
+                        <input type="text" class="notion-input font-medium text-xs bg-gray-50 border border-gray-200 cursor-pointer inp-date placeholder:text-gray-600" readonly placeholder="Seleccione..." onfocus="this.nextElementSibling.style.display='block'" onblur="this.nextElementSibling.style.display='none'">
+                        <div class="autocomplete-list w-max">
+                            ${dateOptsHtml}
+                        </div>
+                    </div>
                 </td>
-                <td class="table-cell align-top text-center text-xs font-medium text-gray-700 pt-[12px]"><span class="arr-span"></span></td>
+                <td class="table-cell align-top text-center text-xs font-bold text-blue-700 pt-[12px]"><span class="arr-span"></span></td>
                 <td class="table-cell align-top">
                     <div class="flex items-center gap-1">
                         <span class="text-gray-400 text-xs">$</span>
@@ -565,10 +603,10 @@
                     </div>
                 </td>
                 <td class="table-cell align-top">
-                    <div class="flex flex-wrap items-center gap-1 inv-container bg-white border border-transparent hover:border-gray-300 rounded p-1 transition">
+                    <div class="inv-container" onclick="this.querySelector('input[type=text]').focus()">
                         <input type="hidden" class="hidden-inventory-data" value="">
-                        <div class="relative w-[100px]">
-                            <input type="text" class="notion-input inv-quick-input text-xs" placeholder="Ej: 1 B" oninput="handleInvInput(this)" onblur="this.nextElementSibling.style.display='none'" onfocus="handleInvInput(this)">
+                        <div class="relative flex-grow min-w-[50px]">
+                            <input type="text" class="w-full outline-none text-xs bg-transparent font-medium text-gray-700" placeholder="Ej: 1 B" oninput="handleInvInput(this)" onblur="this.nextElementSibling.style.display='none'" onfocus="handleInvInput(this)">
                             <div class="autocomplete-list"></div>
                         </div>
                     </div>
@@ -580,10 +618,9 @@
             `;
 
             document.getElementById('table-body').appendChild(tr);
-            createAutocomplete(tr.querySelector('td:nth-child(1) input'), fincasList);
+            createAutocomplete(tr.querySelector('td:nth-child(1) input[type=text]'), fincasList);
         }
 
-        // --- Exportación Plana de Información Calculada ---
         function exportExcel() {
             const wb = XLSX.utils.book_new();
             const rows = document.querySelectorAll('#table-body tr');
@@ -595,16 +632,13 @@
 
             rows.forEach((tr) => {
                 const cells = tr.querySelectorAll('td');
-                const Finca = cells[0].querySelector('input').value;
+                const Finca = cells[0].querySelector('input[type=text]').value;
                 const Qty = parseFloat(cells[1].querySelector('input').value) || 0;
                 const Type = cells[2].querySelector('select').value;
                 const Stems = parseFloat(cells[3].querySelector('input').value) || 0;
                 const Variety = cells[4].querySelector('input').value;
                 const Name = cells[5].querySelector('textarea').value;
-                
-                // Extrae valor directo tipo "2026-07-15"
-                const DateVal = cells[6].querySelector('select').value; 
-                
+                const DateVal = cells[6].querySelector('.inp-date').value; // Puro YYYY-MM-DD
                 const Cost = parseFloat(cells[8].querySelector('input').value) || 0;
                 const Price = parseFloat(cells[10].querySelector('input').value) || 0;
                 const Standings = cells[11].querySelector('.hidden-inventory-data').value;
@@ -636,7 +670,7 @@
                 if (MarkupVal < 0) MarkupOut = "BAJO";
                 if (MarkupVal > 1) MarkupOut = "ALTO";
 
-                // Conversión directa a Identificadores ("1 Daniel" -> "dvalencia,")
+                // Conversión directa a Identificadores
                 let InventariosStr = "";
                 if(Standings) {
                     let stArray = Standings.split(';');
@@ -653,7 +687,6 @@
                     });
                 }
 
-                // Append como valores estáticos pre-calculados (sin fórmulas)
                 ws_data.push([
                     Finca, Qty, Type, Stems, Stems, Variety, Name, "", Cost, MarkupOut, Price, GuiaStr, DateVal, 
                     Duties, 0, 1, 0, Transport, dims.l, dims.w, dims.h, Vol, Transport2, 0.1586, Total, 
