@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f7f7f5; color: #37352f; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #37352f; }
         
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -21,106 +21,100 @@
         .table-header { font-size: 11px; color: #787774; font-weight: 500; text-transform: uppercase; padding: 8px; border-bottom: 1px solid #e9e9e7; text-align: left; }
         .table-cell { padding: 4px; border-bottom: 1px solid #e9e9e7; vertical-align: middle; }
         
-        /* Contenedor redimensionable en Headers */
         .resize-header { resize: horizontal; overflow: hidden; display: inline-flex; align-items: center; min-width: 40px; width: 100%; max-width: 600px; padding-bottom: 2px; }
         .resize-header:hover { border-right: 2px solid #ccc; cursor: col-resize; }
 
         .notion-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
         .btn-ghost { background: transparent; color: #787774; }
         .btn-ghost:hover { background: #efefe6; color: #37352f; }
-        .btn-primary { background: #2383e2; color: #fff; }
+        .btn-primary { background: #2383e2; color: #fff; border: 1px solid #1a73e8; }
         .btn-primary:hover { background: #006bce; }
         
         .tag { display: inline-flex; align-items: center; background: #e3e2e0; color: #37352f; border: 1px solid #d3d2d0; border-radius: 4px; padding: 2px 6px; font-size: 12px; margin: 2px; font-weight: 500; }
         
-        .autocomplete-list { position: absolute; z-index: 9999; background: white; border: 1px solid #e9e9e7; border-radius: 4px; max-height: 200px; overflow-y: auto; min-width: 150px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; }
+        .autocomplete-list { position: absolute; z-index: 9999; background: white; border: 1px solid #e9e9e7; border-radius: 4px; max-height: 200px; overflow-y: auto; min-width: 100%; top: 100%; left: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; margin-top: 2px; }
         .autocomplete-item { padding: 6px 10px; cursor: pointer; font-size: 13px; }
         .autocomplete-item:hover { background: #f0f0f0; }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: flex; }
         .tab-btn { padding: 8px 16px; border-bottom: 2px solid transparent; font-weight: 500; color: #787774; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
         .tab-btn.active { border-bottom-color: #37352f; color: #37352f; }
         
         textarea.notion-input { line-height: 1.4; vertical-align: middle; padding-top: 6px; padding-bottom: 6px; }
     </style>
 </head>
-<body class="p-8">
+<body class="h-screen w-screen overflow-hidden flex flex-col bg-white m-0 p-0 text-[#37352f]">
 
-    <div class="max-w-[1700px] mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200 min-h-[80vh] relative flex flex-col">
+    <!-- Pestañas y Navbar Full Width -->
+    <div class="flex justify-between items-end border-b border-gray-200 px-6 pt-4 pb-2 shrink-0 w-full bg-white z-10">
+        <div class="flex">
+            <div class="tab-btn active" onclick="switchTab('Aumento', this)"><i class="ri-table-line text-blue-500"></i> Aumento</div>
+            <div class="tab-btn" onclick="switchTab('Cajas', this)"><i class="ri-box-3-line text-orange-500"></i> Cajas</div>
+            <div class="tab-btn" onclick="switchTab('Guias', this)"><i class="ri-flight-takeoff-line text-green-500"></i> Guias</div>
+        </div>
         
-        <div class="flex justify-between items-end border-b border-gray-200 mb-6 pb-2">
-            <div class="flex">
-                <div class="tab-btn active" onclick="switchTab('Aumento', this)"><i class="ri-table-line text-blue-500"></i> Aumento</div>
-                <div class="tab-btn" onclick="switchTab('Cajas', this)"><i class="ri-box-3-line text-orange-500"></i> Cajas</div>
-                <div class="tab-btn" onclick="switchTab('Guias', this)"><i class="ri-flight-takeoff-line text-green-500"></i> Guias</div>
-            </div>
-            <div class="flex items-center gap-2 bg-gray-50 px-3 py-1 border border-gray-200 rounded-md mb-1 shadow-sm">
-                <i class="ri-lock-line text-gray-500 text-sm"></i>
-                <input type="number" id="global-base-vol" value="2" class="w-8 bg-transparent outline-none font-bold text-gray-800 text-center" oninput="updateBaseVol(); interactiveCalcAllRows();">
-            </div>
+        <div class="flex items-center gap-2 bg-gray-50 px-3 py-1 border border-gray-200 rounded-md mb-1 shadow-sm">
+            <i class="ri-lock-line text-gray-500 text-sm"></i>
+            <input type="number" id="global-base-vol" value="2" class="w-8 bg-transparent outline-none font-bold text-gray-800 text-center" oninput="updateBaseVol(); interactiveCalcAllRows();">
+        </div>
+    </div>
+
+    <!-- Contenido: Tab Aumento -->
+    <div id="Aumento" class="tab-content active flex-col flex-grow min-h-0 w-full relative">
+        <div class="flex-grow overflow-auto px-6 pb-10 w-full">
+            <table class="w-full text-sm border-collapse" id="orders-table" style="table-layout: auto;">
+                <thead>
+                    <tr>
+                        <th class="table-header"><div class="resize-header w-[150px]">Finca</div></th>
+                        <th class="table-header"><div class="resize-header w-[60px]">Qty</div></th>
+                        <th class="table-header"><div class="resize-header w-[110px]">Box Type</div></th>
+                        <th class="table-header"><div class="resize-header w-[60px]">Stems</div></th>
+                        <th class="table-header"><div class="resize-header w-[120px]">Variety</div></th>
+                        <th class="table-header"><div class="resize-header w-[220px]">Descripcion</div></th>
+                        <th class="table-header"><div class="resize-header w-[180px]">Delivery</div></th>
+                        <th class="table-header"><div class="resize-header w-[70px]">Arrival</div></th>
+                        <th class="table-header"><div class="resize-header w-[80px]">Cost</div></th>
+                        <th class="table-header"><div class="resize-header w-[80px]">Markup</div></th>
+                        <th class="table-header"><div class="resize-header w-[80px]">Price</div></th>
+                        <th class="table-header"><div class="resize-header w-[160px]">Inventory</div></th>
+                        <th class="table-header"><div class="resize-header w-[50px] text-center">Send</div></th>
+                        <th class="table-header w-[40px]"></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Filas -->
+                </tbody>
+            </table>
         </div>
 
-        <!-- Contenido: Tab Aumento -->
-        <div id="Aumento" class="tab-content active flex-grow">
-            <div class="overflow-visible pb-48 overflow-x-auto">
-                <table class="w-full text-sm border-collapse" id="orders-table" style="table-layout: auto;">
-                    <thead>
-                        <tr>
-                            <th class="table-header"><div class="resize-header w-[150px]">Finca</div></th>
-                            <th class="table-header"><div class="resize-header w-[60px]">Qty</div></th>
-                            <th class="table-header"><div class="resize-header w-[110px]">Box Type</div></th>
-                            <th class="table-header"><div class="resize-header w-[60px]">Stems</div></th>
-                            <th class="table-header"><div class="resize-header w-[120px]">Variety</div></th>
-                            <th class="table-header"><div class="resize-header w-[220px]">Descripcion</div></th>
-                            <th class="table-header"><div class="resize-header w-[180px]">Delivery</div></th>
-                            <th class="table-header"><div class="resize-header w-[70px]">Arrival</div></th>
-                            <th class="table-header"><div class="resize-header w-[80px]">Cost</div></th>
-                            <th class="table-header"><div class="resize-header w-[80px]">Markup</div></th>
-                            <th class="table-header"><div class="resize-header w-[80px]">Price</div></th>
-                            <th class="table-header"><div class="resize-header w-[180px]">Inventory</div></th>
-                            <th class="table-header"><div class="resize-header w-[50px] text-center">Send</div></th>
-                            <th class="table-header w-[40px]"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <!-- Filas -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mt-4 flex gap-2">
-                <button onclick="addRow()" class="notion-btn btn-ghost"><i class="ri-add-line"></i> New Row</button>
-            </div>
-
-            <div class="mt-12 border-t pt-6 flex justify-end">
-                <button onclick="exportExcel()" class="notion-btn btn-primary"><i class="ri-file-excel-2-line"></i> Export to Excel</button>
-            </div>
+        <div class="px-6 py-4 border-t bg-gray-50 flex justify-between items-center shrink-0 w-full shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
+            <button onclick="addRow()" class="notion-btn btn-ghost"><i class="ri-add-line"></i> New Row</button>
+            <button onclick="exportExcel()" class="notion-btn btn-primary shadow-sm"><i class="ri-file-excel-2-line"></i> Export to Excel</button>
         </div>
+    </div>
 
-        <!-- Contenido: Tab Cajas (Sheet1) -->
-        <div id="Cajas" class="tab-content">
-            <div id="boxes-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-4"></div>
+    <!-- Contenido: Tab Cajas (Sheet1) -->
+    <div id="Cajas" class="tab-content flex-col flex-grow min-h-0 w-full overflow-auto bg-[#f7f7f5] px-6">
+        <div id="boxes-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 py-6"></div>
+    </div>
+
+    <!-- Contenido: Tab Guias -->
+    <div id="Guias" class="tab-content flex-col flex-grow min-h-0 w-full overflow-auto bg-[#f7f7f5] px-6">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm mt-6 w-full max-w-[1200px]">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Fecha</th>
+                        <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Vuelo</th>
+                        <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Ecuador</th>
+                        <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Colombia</th>
+                        <th class="p-4 font-semibold text-gray-600 uppercase text-xs">Llegada Cliente</th>
+                    </tr>
+                </thead>
+                <tbody id="vuelos-body" class="divide-y divide-gray-100"></tbody>
+            </table>
         </div>
-
-        <!-- Contenido: Tab Guias -->
-        <div id="Guias" class="tab-content">
-            <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg shadow-sm mt-4">
-                <table class="w-full text-sm text-left">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Fecha</th>
-                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Vuelo</th>
-                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Ecuador</th>
-                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Colombia</th>
-                            <th class="p-3 font-semibold text-gray-600 uppercase text-xs">Llegada Cliente</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vuelos-body" class="divide-y divide-gray-100"></tbody>
-                </table>
-            </div>
-        </div>
-
     </div>
 
     <script>
@@ -300,17 +294,18 @@
             vuelosData.forEach(v => {
                 html += `
                     <tr class="hover:bg-gray-50">
-                        <td class="p-3 font-medium text-gray-800">${v.diaStr}</td>
-                        <td class="p-3 text-gray-600">${v.vueloDay}</td>
-                        <td class="p-3 text-gray-600">${v.ecuador}</td>
-                        <td class="p-3 text-gray-600">${v.colombia}</td>
-                        <td class="p-3 font-medium text-gray-700">${v.llegada}</td>
+                        <td class="p-4 font-medium text-gray-800">${v.diaStr}</td>
+                        <td class="p-4 text-gray-600">${v.vueloDay}</td>
+                        <td class="p-4 text-gray-600">${v.ecuador}</td>
+                        <td class="p-4 text-gray-600">${v.colombia}</td>
+                        <td class="p-4 font-medium text-gray-700">${v.llegada}</td>
                     </tr>
                 `;
             });
             body.innerHTML = html;
         }
 
+        // --- Manejo unificado de menús contextuales predictivos ---
         function createAutocomplete(input, list) {
             let div = document.createElement('div');
             div.className = 'autocomplete-list';
@@ -324,17 +319,16 @@
                 let matches = list.filter(item => item.toLowerCase().includes(val.toLowerCase()));
                 if (matches.length > 0) {
                     div.style.display = 'block';
-                    div.style.top = (input.offsetTop + input.offsetHeight) + 'px';
-                    div.style.left = input.offsetLeft + 'px';
-
                     matches.forEach(match => {
                         let divItem = document.createElement('div');
                         divItem.className = 'autocomplete-item';
                         divItem.innerHTML = match;
-                        divItem.addEventListener('click', function() {
+                        // Usamos mousedown para que ejecute el clic ANTES de que el input pierda el foco por blur
+                        divItem.onmousedown = function(e) {
+                            e.preventDefault(); 
                             input.value = match;
                             div.style.display = 'none';
-                        });
+                        };
                         div.appendChild(divItem);
                     });
                 } else {
@@ -342,8 +336,11 @@
                 }
             });
 
-            document.addEventListener('click', function(e) {
-                if (e.target !== input) div.style.display = 'none';
+            input.addEventListener('blur', function() {
+                div.style.display = 'none';
+            });
+            input.addEventListener('focus', function() {
+                if(this.value && div.children.length > 0) div.style.display = 'block';
             });
         }
 
@@ -421,7 +418,7 @@
             document.querySelectorAll('#table-body tr').forEach(tr => interactiveCalc(tr, 'cost'));
         }
 
-        // --- Inventario Predictivo ---
+        // --- Inventario Predictivo Exclusivo con Clic ---
         function handleInvInput(input) {
             let val = input.value;
             let listDiv = input.nextElementSibling;
@@ -436,14 +433,14 @@
                     if (matches.length > 0) {
                         listDiv.innerHTML = '';
                         listDiv.style.display = 'block';
-                        listDiv.style.top = (input.offsetTop + input.offsetHeight) + 'px';
-                        listDiv.style.left = input.offsetLeft + 'px';
                         
                         matches.forEach(m => {
                             let divItem = document.createElement('div');
                             divItem.className = 'autocomplete-item';
                             divItem.innerHTML = num + ' ' + m;
-                            divItem.onclick = function() {
+                            // Generamos cápsula SÓLO si el usuario clica la opción explícitamente
+                            divItem.onmousedown = function(e) {
+                                e.preventDefault(); 
                                 input.value = num + ' ' + m;
                                 createTagFromInput(input);
                             };
@@ -452,18 +449,6 @@
                     } else { listDiv.style.display = 'none'; }
                 } else { listDiv.style.display = 'none'; }
             } else { listDiv.style.display = 'none'; }
-        }
-
-        function handleInvKey(event, input) {
-            if (event.key === 'Enter' || event.key === ',' || event.key === ';') {
-                event.preventDefault();
-                let listDiv = input.nextElementSibling;
-                // Auto-complete con la primera sugerencia si está visible
-                if (listDiv.style.display === 'block' && listDiv.firstChild) {
-                    input.value = listDiv.firstChild.innerText;
-                }
-                createTagFromInput(input);
-            }
         }
 
         function createTagFromInput(input) {
@@ -475,21 +460,14 @@
             let container = input.closest('.inv-container');
             
             let matchRegex = val.match(/^(\d+)\s+(.+)$/);
-            if (!matchRegex) {
-                alert("Formato inválido. Usa 'Número Nombre' (Ej: 1 Ben)");
-                return;
-            }
+            if (!matchRegex) return; // Si por alguna razón el texto no cuadra, ignoramos.
             
             let q = parseFloat(matchRegex[1]);
             let v = matchRegex[2];
-
-            // Validar que el vendedor exista en la lista
             let validVendor = vendorNames.find(name => name.toLowerCase() === v.toLowerCase());
-            if(!validVendor) {
-                alert("Vendedor no reconocido.");
-                return;
-            }
-            v = validVendor; // Usa el string correcto
+            if(!validVendor) return;
+
+            v = validVendor; 
 
             let currentSum = 0;
             container.querySelectorAll('.tag').forEach(t => currentSum += parseFloat(t.dataset.qty));
@@ -501,12 +479,12 @@
             
             let tag = document.createElement('span');
             tag.className = 'tag';
-            // User pref: Semicolon separation rule visually + plain text output later
             tag.innerHTML = `${q} ${v} <i class="ri-close-line ml-1 cursor-pointer font-bold hover:text-gray-500" onclick="this.parentElement.remove(); updateInventoryData(this.closest('.inv-container'));"></i>`;
             tag.dataset.val = `${q} ${v}`;
             tag.dataset.qty = q;
             
-            container.insertBefore(tag, input);
+            container.insertBefore(tag, input.parentElement);
+            
             input.value = '';
             input.nextElementSibling.style.display = 'none';
             updateInventoryData(container);
@@ -546,8 +524,10 @@
             });
 
             tr.innerHTML = `
-                <td class="table-cell relative align-top">
-                    <input type="text" class="notion-input font-medium" placeholder="Finca">
+                <td class="table-cell align-top">
+                    <div class="relative w-full h-full">
+                        <input type="text" class="notion-input font-medium" placeholder="Finca">
+                    </div>
                 </td>
                 <td class="table-cell align-top"><input type="number" class="notion-input inp-main-qty font-bold" placeholder="0"></td>
                 <td class="table-cell align-top">
@@ -560,12 +540,12 @@
                 <td class="table-cell align-top">
                     <textarea class="notion-input resize-none overflow-hidden w-full min-h-[30px]" rows="1" placeholder="Descripción" oninput="autoResizeTextarea(this)"></textarea>
                 </td>
-                <td class="table-cell align-top">
+                <td class="table-cell align-top pt-[6px]">
                     <select class="notion-input font-medium text-xs bg-gray-50" onchange="handleDateSelection(this, this.closest('tr').querySelector('.arr-span'))">
                         ${dateOpts}
                     </select>
                 </td>
-                <td class="table-cell align-top text-center text-xs font-medium text-gray-700 pt-[10px]"><span class="arr-span"></span></td>
+                <td class="table-cell align-top text-center text-xs font-medium text-gray-700 pt-[12px]"><span class="arr-span"></span></td>
                 <td class="table-cell align-top">
                     <div class="flex items-center gap-1">
                         <span class="text-gray-400 text-xs">$</span>
@@ -587,14 +567,14 @@
                 <td class="table-cell align-top">
                     <div class="flex flex-wrap items-center gap-1 inv-container bg-white border border-transparent hover:border-gray-300 rounded p-1 transition">
                         <input type="hidden" class="hidden-inventory-data" value="">
-                        <div class="relative w-[110px]">
-                            <input type="text" class="notion-input inv-quick-input text-xs" placeholder="Ej: 1 Ben" onkeydown="handleInvKey(event, this)" oninput="handleInvInput(this)">
+                        <div class="relative w-[100px]">
+                            <input type="text" class="notion-input inv-quick-input text-xs" placeholder="Ej: 1 B" oninput="handleInvInput(this)" onblur="this.nextElementSibling.style.display='none'" onfocus="handleInvInput(this)">
                             <div class="autocomplete-list"></div>
                         </div>
                     </div>
                 </td>
-                <td class="table-cell align-top text-center pt-[10px]"><input type="checkbox" checked class="w-4 h-4 cursor-pointer accent-blue-600"></td>
-                <td class="table-cell align-top text-center pt-[10px]">
+                <td class="table-cell align-top text-center pt-[12px]"><input type="checkbox" checked class="w-4 h-4 cursor-pointer accent-blue-600"></td>
+                <td class="table-cell align-top text-center pt-[12px]">
                     <button class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition" onclick="this.closest('tr').remove()"><i class="ri-delete-bin-line"></i></button>
                 </td>
             `;
@@ -603,7 +583,7 @@
             createAutocomplete(tr.querySelector('td:nth-child(1) input'), fincasList);
         }
 
-        // --- Exportación Plana Estricta ---
+        // --- Exportación Plana de Información Calculada ---
         function exportExcel() {
             const wb = XLSX.utils.book_new();
             const rows = document.querySelectorAll('#table-body tr');
@@ -621,13 +601,15 @@
                 const Stems = parseFloat(cells[3].querySelector('input').value) || 0;
                 const Variety = cells[4].querySelector('input').value;
                 const Name = cells[5].querySelector('textarea').value;
-                const DateVal = cells[6].querySelector('select').value; // Sale estricto YYYY-MM-DD
+                
+                // Extrae valor directo tipo "2026-07-15"
+                const DateVal = cells[6].querySelector('select').value; 
+                
                 const Cost = parseFloat(cells[8].querySelector('input').value) || 0;
                 const Price = parseFloat(cells[10].querySelector('input').value) || 0;
                 const Standings = cells[11].querySelector('.hidden-inventory-data').value;
                 const Send = cells[12].querySelector('input').checked ? 'Y' : 'N';
 
-                // Cálculos en vivo 100% JS a Valores Planos
                 let vData = vuelosData.find(v => v.fecha === DateVal);
                 let GuiaStr = "ERROR F";
                 if(vData) {
@@ -646,7 +628,7 @@
                 let Total = Stems * Price * Qty;
                 
                 let FincaIDStr = (fincasList.indexOf(Finca) + 1).toString();
-                if(FincaIDStr === "0") FincaIDStr = ""; // Si no existe en lista
+                if(FincaIDStr === "0") FincaIDStr = ""; 
 
                 let MarkupVal = 0;
                 if (Price > 0) { MarkupVal = 1 - ((Cost + Duties + Transport) / (Price * 0.96)); }
@@ -654,7 +636,7 @@
                 if (MarkupVal < 0) MarkupOut = "BAJO";
                 if (MarkupVal > 1) MarkupOut = "ALTO";
 
-                // Lógica Estricta de Inventario (Traductor a IDs)
+                // Conversión directa a Identificadores ("1 Daniel" -> "dvalencia,")
                 let InventariosStr = "";
                 if(Standings) {
                     let stArray = Standings.split(';');
@@ -671,7 +653,7 @@
                     });
                 }
 
-                // Append a fila (Texto Plano Total)
+                // Append como valores estáticos pre-calculados (sin fórmulas)
                 ws_data.push([
                     Finca, Qty, Type, Stems, Stems, Variety, Name, "", Cost, MarkupOut, Price, GuiaStr, DateVal, 
                     Duties, 0, 1, 0, Transport, dims.l, dims.w, dims.h, Vol, Transport2, 0.1586, Total, 
@@ -681,7 +663,7 @@
 
             const ws = XLSX.utils.aoa_to_sheet(ws_data);
             XLSX.utils.book_append_sheet(wb, ws, "test");
-            XLSX.writeFile(wb, "ECF_Aumento.xlsx"); // Nombre actualizado
+            XLSX.writeFile(wb, "ECF_Aumento.xlsx");
         }
 
         window.onload = function() {
