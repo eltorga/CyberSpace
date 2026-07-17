@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower Art Canvas</title>
+    <title>Flower Art Creator</title>
     <!-- PapaParse for CSV reading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- SortableJS for drag & drop -->
@@ -138,6 +138,13 @@
         }
         .search-item:last-child { border-bottom: none; }
         .search-item:hover { background: var(--hover-bg); }
+        
+        /* Highlight para navegación por teclado */
+        .search-item.active-item { 
+            background: var(--hover-bg); 
+            border-left: 3px solid var(--text-color);
+        }
+        
         .search-item img {
             width: 40px;
             height: 40px;
@@ -262,7 +269,7 @@
             
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Guarantees it never expands beyond 1:1 */
+            overflow: hidden; 
         }
 
         /* Internal Flex Grid for Flowers */
@@ -272,8 +279,8 @@
             flex-wrap: wrap;
             align-content: center;
             justify-content: center;
-            gap: 15px; /* Reducido levemente para dar más margen vertical */
-            padding: 30px 40px 10px 40px; /* Menos padding abajo para no invadir al texto */
+            gap: 15px; 
+            padding: 30px 40px 10px 40px; 
             min-height: 0; 
             box-sizing: border-box;
         }
@@ -296,15 +303,27 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Alineación segura en el centro */
-            gap: 8px; /* Separación estricta entre imagen y cápsula */
+            justify-content: center; 
+            gap: 10px; 
             box-sizing: border-box;
+            min-width: 0;
+            min-height: 0;
         }
 
-        .canvas-item img {
+        /* Envoltura virtual para evitar que html2canvas deforme la imagen */
+        .img-wrapper {
+            flex: 1; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            min-height: 0; /* Previene estiramientos indeseados */
-            object-fit: contain; /* Mantiene proporciones originales */
+            min-height: 0;
+        }
+
+        .img-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Bloquea la relación de aspecto */
             background: transparent; 
             border: none; 
             box-shadow: none; 
@@ -351,7 +370,7 @@
     </div>
 
     <header>
-        <i class="ri-brush-line"></i> Flower Art Canvas
+        <i class="ri-brush-line"></i> Flower Art Creator
     </header>
 
     <div class="main-container">
@@ -364,7 +383,7 @@
                 <div class="setting-row">
                     <label for="bgSelect">Background:</label>
                     <select id="bgSelect" onchange="updateCanvas()">
-                        <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgNgire689LPzBbFwe1f0ctMurcmIVUBekMVg79Bla2IhDbR164IkfueZ8CAwNsPkNiDJ2Z65eFavQidNCPDe57TdKF3GlToR1cCuEKFYTMFQk8OFm2EFryoTiphsZbUCkAh7A14sA_1V-PLKVycQStyTk8YNrMMc_z3avJFfLhn6ECJF6JUar1RmhkO6ND">1. Modern Meadow</option>
+                         <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgNgire689LPzBbFwe1f0ctMurcmIVUBekMVg79Bla2IhDbR164IkfueZ8CAwNsPkNiDJ2Z65eFavQidNCPDe57TdKF3GlToR1cCuEKFYTMFQk8OFm2EFryoTiphsZbUCkAh7A14sA_1V-PLKVycQStyTk8YNrMMc_z3avJFfLhn6ECJF6JUar1RmhkO6ND">1. Modern Meadow</option>
                         <option value="https://blogger.googleusercontent.com/img/a/AVvXsEhunSbXBlmk5aVYx7jk8W_iCNhW8HOZq9s8cVLH_Wi2kY2L9jcLfaNpUZbi6nY5nvFPDIIPIN2U-CFK2u22PowPmldKaF26P5uftoR1SUOFBmrrJ8j9OJYHSszWYYnwbGJbSkKf9Ljtf69j1WJ62tZG7s6RwVhLKubCKaNOXjz8toxeEDf0nhrimfzlf8dv">2. Botanical Bounty</option>
                         <option value="https://blogger.googleusercontent.com/img/a/AVvXsEiR9XDTUVYHyNRof6dXezmQY-gAHopriS1diZNSG6DYzSviRXuhVtzJa0Wngmj8I7TQ2EQgaUTEBVi8ZY4zmEmT9m5f0bvlnK7W3ffAA0dzaxiO5Dj9JeMmIlckBIkTIIMnQQsro15HA8XewUIkMhkziqEkYRn85zSJqBwojzFsRdjWppmxMwS-HN1ZY0vT">3. Floral Symphony</option>
                         <option value="https://blogger.googleusercontent.com/img/a/AVvXsEgjg8CcU-0AfYYe4q1kNf85f7gObzqnyqGNl_ymS_0CEYOcAaxy21Ag_tK-kNF6zalQ2zIxx3CxUu_fcQRpqh4B3_t2uKYixixqOOtVZNb0Y1xqoKsnriFSVO8PGEMrULcC4pduhXYbNmF5YHi2qcZ-jXGlvyJZOOkAsElVSo9eYVXHQZ9aclgOGxa23iLy">4. Kindness in Bloom</option>
@@ -387,7 +406,7 @@
             <div class="control-group">
                 <div class="section-title">Add Flowers (Max 12)</div>
                 <div class="search-wrapper" id="searchWrapper">
-                    <input type="text" id="searchInput" placeholder="Search by name, color, or species...">
+                    <input type="text" id="searchInput" placeholder="Search by name, color, or species..." autocomplete="off">
                     <div id="searchResults" class="search-results"></div>
                 </div>
             </div>
@@ -447,6 +466,7 @@
         let allFlowers = [];
         let selectedItems = []; 
         let footerFontSize = 24; 
+        let currentFocus = -1; // Para navegación de teclado en la búsqueda
 
         function getCorsUrl(url) {
             if (!url) return getCorsUrl(fallbackImg);
@@ -474,7 +494,6 @@
                     allFlowers = results.data.filter(f => f.NAME);
                     document.getElementById('loader').style.display = 'none';
                     updateCanvas();
-                    
                     document.getElementById('canvasFooter').style.fontSize = footerFontSize + 'px';
                 },
                 error: function(err) {
@@ -483,7 +502,7 @@
             });
         });
 
-        // Custom Canvas Text
+        // Text Controls
         function toggleCanvasText() {
             const isEnabled = document.getElementById('enableTextCb').checked;
             document.getElementById('textControlsDiv').style.display = isEnabled ? 'flex' : 'none';
@@ -503,11 +522,12 @@
             document.getElementById('canvasFooter').style.fontSize = footerFontSize + 'px';
         }
 
-        // Search logic
+        // Search & Keyboard Logic
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
 
         searchInput.addEventListener('input', (e) => {
+            currentFocus = -1; // Reinicia el foco al escribir
             const term = e.target.value.toLowerCase().trim();
             searchResults.innerHTML = '';
             
@@ -521,7 +541,7 @@
             ).slice(0, 15);
 
             if (matches.length > 0) {
-                matches.forEach(item => {
+                matches.forEach((item, index) => {
                     const div = document.createElement('div');
                     div.className = 'search-item';
                     const listImgUrl = getCorsUrl(item.IMG);
@@ -542,6 +562,42 @@
             }
         });
 
+        // Controles de teclado en el buscador
+        searchInput.addEventListener('keydown', function(e) {
+            let items = searchResults.getElementsByClassName('search-item');
+            if (e.key === 'ArrowDown') {
+                currentFocus++;
+                addActive(items);
+                e.preventDefault(); // Evita que el cursor se mueva
+            } else if (e.key === 'ArrowUp') {
+                currentFocus--;
+                addActive(items);
+                e.preventDefault(); 
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    if (items) items[currentFocus].click();
+                } else if (items.length > 0) {
+                    items[0].click(); // Si no hay nada seleccionado, agrega el primero
+                }
+            }
+        });
+
+        function addActive(items) {
+            if (!items) return false;
+            removeActive(items);
+            if (currentFocus >= items.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (items.length - 1);
+            items[currentFocus].classList.add('active-item');
+            items[currentFocus].scrollIntoView({ block: 'nearest' });
+        }
+
+        function removeActive(items) {
+            for (let i = 0; i < items.length; i++) {
+                items[i].classList.remove('active-item');
+            }
+        }
+
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.search-wrapper')) {
                 searchResults.style.display = 'none';
@@ -555,11 +611,17 @@
             }
 
             selectedItems.push(JSON.parse(JSON.stringify(item)));
+            
+            // Limpia la búsqueda y oculta resultados
             searchInput.value = '';
             searchResults.style.display = 'none';
+            currentFocus = -1;
             
             updateSidebarList();
             updateCanvas();
+
+            // Mantiene el cursor en la caja de texto para seguir escribiendo rápidamente
+            setTimeout(() => searchInput.focus(), 10);
         }
 
         function removeFlower(index) {
@@ -608,7 +670,6 @@
             const count = selectedItems.length;
             if (count === 0) return;
 
-            // Flexbox dinámico y más conservador para garantizar separación con el texto
             let itemWidth = '100%';
             let itemHeight = '100%';
 
@@ -617,7 +678,7 @@
             else if (count === 3 || count === 4) { itemWidth = '45%'; itemHeight = '42%'; }
             else if (count === 5 || count === 6) { itemWidth = '30%'; itemHeight = '42%'; }
             else if (count >= 7 && count <= 9) { itemWidth = '30%'; itemHeight = '26%'; }
-            else if (count >= 10 && count <= 12) { itemWidth = '22%'; itemHeight = '26%'; } // Formato 4x3 asegurado
+            else if (count >= 10 && count <= 12) { itemWidth = '22%'; itemHeight = '26%'; }
 
             selectedItems.forEach(item => {
                 const div = document.createElement('div');
@@ -626,19 +687,18 @@
                 div.style.height = itemHeight;
                 
                 const finalImgUrl = getCorsUrl(item.IMG);
-
                 let capsuleHtml = '';
-                let imgMaxHeight = '100%'; 
 
-                // Reserva espacio exacto para la cápsula para que no empuje todo hacia abajo
                 if (labelKey !== 'EMPTY') {
                     const textCapsule = item[labelKey] ? item[labelKey] : 'Unknown';
                     capsuleHtml = `<div class="canvas-capsule">${textCapsule}</div>`;
-                    imgMaxHeight = 'calc(100% - 35px)'; 
                 }
 
+                // El wrapper soluciona el estiramiento de html2canvas al encapsular la imagen
                 div.innerHTML = `
-                    <img src="${finalImgUrl}" crossorigin="anonymous" alt="${item.NAME}" style="max-height: ${imgMaxHeight};">
+                    <div class="img-wrapper">
+                        <img src="${finalImgUrl}" crossorigin="anonymous" alt="${item.NAME}">
+                    </div>
                     ${capsuleHtml}
                 `;
                 
