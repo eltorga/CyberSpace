@@ -727,7 +727,7 @@
         let selectedColors = [];
         let farmsArrival = {}; 
 
-        const authUsers = { 'caguilar': '1995', 'dvalencia': '6969' };
+        const authUsers = { 'caguilar': '1995', 'dvalencia': '6969', 'rbaquero': '1980' };
         
         // JERARQUÍA 1: ESPECIE (Predefinidas primero, resto alfabético)
         const specieOrder = [
@@ -1308,7 +1308,7 @@
                 if (line.includes('|')) {
                     const parts = line.split('|');
                     let offset = line.trim().startsWith('|') ? 1 : 0;
-                    if (parts.length > offset + 2) parts.splice(offset + 2, 1); 
+                    if (parts.length > offset + 2) parts.splice(offset + 2, 2); 
                     return parts.join('|');
                 }
                 return line;
