@@ -226,13 +226,21 @@
             border-radius: 6px;
             box-shadow: var(--shadow);
             z-index: 200;
-            max-height: 300px;
-            overflow-y: auto;
+            max-height: 400px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
             margin-top: 4px;
-            min-width: 200px;
+            min-width: 220px;
         }
 
-        .multi-dropdown-options.show { display: block; }
+        .multi-dropdown-options.show { display: flex; }
+
+        .options-list {
+            overflow-y: auto;
+            max-height: 250px;
+            padding-bottom: 8px;
+        }
 
         .multi-dropdown-option {
             padding: 8px 12px;
@@ -250,6 +258,40 @@
             width: 16px;
             height: 16px;
             accent-color: #333;
+        }
+
+        /* Notion-style selected pills container */
+        .notion-selected-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fafafa;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .notion-selected-container:empty {
+            display: none;
+        }
+        .notion-selected-pill {
+            background: #e2e2e2;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #333;
+        }
+        .notion-selected-pill i {
+            cursor: pointer;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        .notion-selected-pill i:hover {
+            color: #d32f2f;
         }
 
         .btn {
@@ -295,7 +337,7 @@
             color: #333;
         }
 
-        /* Main Grid */
+        /* Main Grid (8x8) */
         main {
             padding: 24px;
             max-width: 1600px;
@@ -304,7 +346,7 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(8, 1fr);
             gap: 16px;
             margin-bottom: 24px;
         }
@@ -549,8 +591,11 @@
             font-family: inherit;
         }
         
-        @media (max-width: 1200px) {
-            .grid-container { grid-template-columns: repeat(5, 1fr); }
+        @media (max-width: 1400px) {
+            .grid-container { grid-template-columns: repeat(6, 1fr); }
+        }
+        @media (max-width: 1100px) {
+            .grid-container { grid-template-columns: repeat(4, 1fr); }
         }
         @media (max-width: 900px) {
             .grid-container { grid-template-columns: repeat(3, 1fr); }
@@ -606,7 +651,10 @@
                         </span>
                         <i class="ri-arrow-down-s-line"></i>
                     </div>
-                    <div class="multi-dropdown-options" id="opts-specie"></div>
+                    <div class="multi-dropdown-options" id="opts-specie">
+                        <div class="notion-selected-container" id="sel-specie"></div>
+                        <div class="options-list" id="list-specie"></div>
+                    </div>
                 </div>
 
                 <!-- Dropdown Farm -->
@@ -618,7 +666,10 @@
                         </span>
                         <i class="ri-arrow-down-s-line"></i>
                     </div>
-                    <div class="multi-dropdown-options" id="opts-farm"></div>
+                    <div class="multi-dropdown-options" id="opts-farm">
+                        <div class="notion-selected-container" id="sel-farm"></div>
+                        <div class="options-list" id="list-farm"></div>
+                    </div>
                 </div>
                 
                 <!-- Dropdown Colors -->
@@ -630,8 +681,16 @@
                         </span>
                         <i class="ri-arrow-down-s-line"></i>
                     </div>
-                    <div class="multi-dropdown-options" id="opts-color"></div>
+                    <div class="multi-dropdown-options" id="opts-color">
+                        <div class="notion-selected-container" id="sel-color"></div>
+                        <div class="options-list" id="list-color"></div>
+                    </div>
                 </div>
+
+                <!-- BOTON FARM ARRIVAL -->
+                <button class="btn" onclick="openFarmsModal()">
+                    <i class="ri-truck-line"></i> Farm Arrival
+                </button>
 
                 <!-- ENLACE CREATE ART -->
                 <a href="https://eltorga.com/flowerpedia/artcanvas/" target="_blank" rel="noopener noreferrer" class="btn" style="background: var(--text-color); color: white; border-color: var(--text-color);">
@@ -711,6 +770,26 @@
         </div>
     </div>
 
+    <!-- Farms Arrival Modal -->
+    <div id="farmsModal" class="modal-overlay">
+        <div class="modal-content" style="width: 650px; padding: 32px; display: flex; flex-direction: column; height: auto; max-height: 80vh;">
+            <button class="close-btn" onclick="closeModal('farmsModal')"><i class="ri-close-line"></i></button>
+            <h2 style="margin-top:0; margin-bottom: 24px; font-size: 1.5rem; display: flex; align-items: center; gap: 8px;">
+                <i class="ri-truck-line"></i> Farm Arrivals
+            </h2>
+            
+            <div style="margin-bottom: 20px; display: flex; gap: 12px; font-size: 0.85rem; color: #555;">
+                <span style="display:flex; align-items:center; gap:4px;"><i class="ri-sun-line" style="color: #4CAF50;"></i> Temprano</span>
+                <span style="display:flex; align-items:center; gap:4px;"><i class="ri-moon-line" style="color: #F44336;"></i> Tarde</span>
+                <span style="display:flex; align-items:center; gap:4px;"><i class="ri-time-line" style="color: #FF9800;"></i> Variable</span>
+            </div>
+
+            <div id="farmsListGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; overflow-y: auto; padding-right: 8px;">
+                <!-- Cargado via JS -->
+            </div>
+        </div>
+    </div>
+
     <script>
         const baseCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=0&single=true&output=csv';
         const farmsCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGm1iCf2PxQ0AbyIE8zgoIQcrAHmrSTggWIxhiChz1iOz_hg68pYyRuxPdoNmW3CFRKP7HsR4H41Kx/pub?gid=1636116794&single=true&output=csv'; 
@@ -719,7 +798,7 @@
         let allData = [];
         let filteredData = [];
         let currentIndex = 0;
-        const itemsPerPage = 49; 
+        const itemsPerPage = 64; // Grid 8x8 = 64
         let isLoggedIn = false;
 
         let selectedSpecies = [];
@@ -909,6 +988,24 @@
             return html;
         }
 
+        // Lógica Global de Íconos para Fincas
+        function getFarmIconHtml(status) {
+            let iconHtml = '<i class="ri-truck-line" style="color: #777; margin-right: 4px;"></i>';
+            let bgStyle = 'background: white; border-color: var(--border-color);';
+
+            if (status === 'y') { 
+                iconHtml = '<i class="ri-sun-line" style="color: #4CAF50; margin-right: 4px;"></i>'; 
+                bgStyle = 'background-color: #E8F5E9; border-color: #C8E6C9; color: #2E7D32;'; 
+            } else if (status === 'n') { 
+                iconHtml = '<i class="ri-moon-line" style="color: #F44336; margin-right: 4px;"></i>'; 
+                bgStyle = 'background-color: #FFEBEE; border-color: #FFCDD2; color: #C62828;'; 
+            } else if (status === '-') { 
+                iconHtml = '<i class="ri-time-line" style="color: #FF9800; margin-right: 4px;"></i>'; 
+                bgStyle = 'background-color: #FFF3E0; border-color: #FFE0B2; color: #EF6C00;'; 
+            }
+            return { iconHtml, bgStyle };
+        }
+
         function fetchCSV(url) {
             return new Promise((resolve, reject) => {
                 const busterUrl = url + (url.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
@@ -931,7 +1028,6 @@
 
                     // ORDENAMIENTO MULTINIVEL (1: Especie -> 2: Color -> 3: Nombre A-Z)
                     mainData.sort((a, b) => {
-                        // 1. Sort by Specie
                         let spA = a.SPECIE ? a.SPECIE.trim() : "";
                         let spB = b.SPECIE ? b.SPECIE.trim() : "";
                         let rankSpA = getSpecieRank(spA);
@@ -943,7 +1039,6 @@
                             if (cmpSp !== 0) return cmpSp;
                         }
 
-                        // 2. Sort by Color Lightness
                         let rankColA = getColorRank(a.COLOR);
                         let rankColB = getColorRank(b.COLOR);
                         
@@ -955,7 +1050,6 @@
                             if (cmpCol !== 0) return cmpCol;
                         }
 
-                        // 3. Sort Alphabetically by Name
                         let nameA = a.NAME ? a.NAME.trim().toLowerCase() : "";
                         let nameB = b.NAME ? b.NAME.trim().toLowerCase() : "";
                         return nameA.localeCompare(nameB);
@@ -998,29 +1092,31 @@
                 if(idxB !== -1) return 1;
                 return a.localeCompare(b);
             });
-            fillMultiDropdown('opts-specie', species, 'specie');
+            fillMultiDropdown('list-specie', species, 'specie');
 
             let farms = extractUnique('FARM').sort();
-            fillMultiDropdown('opts-farm', farms, 'farm');
+            fillMultiDropdown('list-farm', farms, 'farm');
 
-            let colors = extractUnique('COLOR').sort();
-            const optsColor = document.getElementById('opts-color');
-            optsColor.innerHTML = '';
+            // Ordenamiento por rango de color también en el menú desplegable
+            let colors = extractUnique('COLOR').sort((a, b) => getColorRank(a) - getColorRank(b) || a.localeCompare(b));
+            
+            const listColor = document.getElementById('list-color');
+            listColor.innerHTML = '';
             colors.forEach(c => {
                 const style = getDropdownColorStyle(c);
-                optsColor.innerHTML += `
-                    <div class="multi-dropdown-option" onclick="toggleMultiSelection('color', '${c}')">
+                listColor.innerHTML += `
+                    <div class="multi-dropdown-option" onclick="toggleMultiSelection('color', '${c.replace(/'/g, "\\'")}')">
                         <input type="checkbox" id="cb-color-${c.replace(/\s+/g, '-')}">
                         <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">${style.dotHtml} ${c}</label>
                     </div>`;
             });
         }
 
-        function fillMultiDropdown(containerId, itemsArray, type) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
+        function fillMultiDropdown(listId, itemsArray, type) {
+            const list = document.getElementById(listId);
+            list.innerHTML = '';
             itemsArray.forEach(item => {
-                container.innerHTML += `
+                list.innerHTML += `
                     <div class="multi-dropdown-option" onclick="toggleMultiSelection('${type}', '${item.replace(/'/g, "\\'")}')">
                         <input type="checkbox" id="cb-${type}-${item.replace(/\s+/g, '-')}">
                         <label style="cursor:pointer;">${item}</label>
@@ -1041,6 +1137,28 @@
             }
         });
 
+        // Actualización y renderizado de los "Selected Pills"
+        function renderSelectedPills(type) {
+            let arr = type === 'specie' ? selectedSpecies : type === 'farm' ? selectedFarms : selectedColors;
+            const container = document.getElementById(`sel-${type}`);
+            container.innerHTML = '';
+            
+            arr.forEach(val => {
+                container.innerHTML += `
+                    <div class="notion-selected-pill">
+                        ${val} 
+                        <i class="ri-close-line" onclick="event.stopPropagation(); toggleMultiSelection('${type}', '${val.replace(/'/g, "\\'")}')"></i>
+                    </div>`;
+            });
+
+            // Sincronizar checkboxes
+            document.querySelectorAll(`input[id^="cb-${type}-"]`).forEach(cb => cb.checked = false);
+            arr.forEach(val => {
+                const cb = document.getElementById(`cb-${type}-${val.replace(/\s+/g, '-')}`);
+                if(cb) cb.checked = true;
+            });
+        }
+
         function toggleMultiSelection(type, val) {
             let arr = type === 'specie' ? selectedSpecies : type === 'farm' ? selectedFarms : selectedColors;
             let idx = arr.indexOf(val);
@@ -1048,8 +1166,7 @@
             if (idx > -1) arr.splice(idx, 1);
             else arr.push(val);
 
-            const cbElement = document.getElementById(`cb-${type}-${val.replace(/\s+/g, '-')}`);
-            if(cbElement) cbElement.checked = (idx === -1);
+            renderSelectedPills(type);
 
             let spanId = `text-${type}`;
             if (arr.length === 0) document.getElementById(spanId).innerText = type === 'specie' ? 'All Species' : type === 'farm' ? 'All Farms' : 'All Colors';
@@ -1068,11 +1185,17 @@
         function clearAllFilters() {
             document.getElementById('searchInput').value = '';
             document.getElementById('clearSearchBtn').style.display = 'none';
+            
             selectedSpecies = []; selectedFarms = []; selectedColors = [];
+            
             document.getElementById('text-specie').innerText = 'All Species';
             document.getElementById('text-farm').innerText = 'All Farms';
             document.getElementById('text-color').innerText = 'All Colors';
-            document.querySelectorAll('.multi-dropdown-options input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            renderSelectedPills('specie');
+            renderSelectedPills('farm');
+            renderSelectedPills('color');
+            
             applyFilters();
         }
 
@@ -1217,12 +1340,7 @@
                     const val = item.trim();
                     if(val) {
                         const status = farmsArrival[val.toLowerCase()];
-                        let iconHtml = '<i class="ri-truck-line" style="color: #777; margin-right: 4px;"></i>';
-                        let bgStyle = 'background: white; border-color: var(--border-color);';
-
-                        if (status === 'y') { iconHtml = '<i class="ri-time-line" style="color: #4CAF50; margin-right: 4px;"></i>'; bgStyle = 'background-color: #E8F5E9; border-color: #C8E6C9; color: #2E7D32;'; } 
-                        else if (status === 'n') { iconHtml = '<i class="ri-time-line" style="color: #F44336; margin-right: 4px;"></i>'; bgStyle = 'background-color: #FFEBEE; border-color: #FFCDD2; color: #C62828;'; } 
-                        else if (status === '-') { iconHtml = '<i class="ri-time-line" style="color: #FF9800; margin-right: 4px;"></i>'; bgStyle = 'background-color: #FFF3E0; border-color: #FFE0B2; color: #EF6C00;'; }
+                        const { iconHtml, bgStyle } = getFarmIconHtml(status);
 
                         const span = document.createElement('span');
                         span.className = 'capsule';
@@ -1314,6 +1432,26 @@
                 return line;
             });
             return safeLines.join('\n');
+        }
+
+        function openFarmsModal() {
+            const list = document.getElementById('farmsListGrid');
+            list.innerHTML = '';
+            
+            // Obtener fincas únicas directas del CSV principal
+            let farms = extractUnique('FARM').sort();
+            
+            farms.forEach(val => {
+                const status = farmsArrival[val.toLowerCase()] || '';
+                const { iconHtml, bgStyle } = getFarmIconHtml(status);
+
+                list.innerHTML += `
+                    <div class="capsule" style="${bgStyle}; justify-content: flex-start; padding: 8px 12px; font-size: 0.85rem;">
+                        ${iconHtml} ${val}
+                    </div>`;
+            });
+
+            document.getElementById('farmsModal').classList.add('active');
         }
 
         function closeModal(id) {
