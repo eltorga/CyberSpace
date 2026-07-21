@@ -223,18 +223,71 @@
             left: 0;
             background: white;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-shadow: var(--shadow);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             z-index: 200;
-            max-height: 400px;
-            overflow: hidden;
-            display: none;
+            width: 280px;
             flex-direction: column;
-            margin-top: 4px;
-            min-width: 220px;
+            margin-top: 8px;
+            padding-top: 6px;
         }
 
         .multi-dropdown-options.show { display: flex; }
+
+        /* Buscador integrado estilo Notion */
+        .dropdown-search-area {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            margin: 0 8px 8px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: text;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .dropdown-search-area:focus-within {
+            border-color: #2196F3;
+            box-shadow: 0 0 0 1px #2196F3;
+        }
+
+        .notion-selected-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .notion-selected-container:empty { display: none; }
+
+        .notion-selected-pill {
+            background: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #333;
+        }
+        .notion-selected-pill i {
+            cursor: pointer;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        .notion-selected-pill i:hover { color: #d32f2f; }
+
+        .dropdown-search-input {
+            flex: 1;
+            min-width: 80px;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 0.85rem;
+            padding: 2px;
+        }
 
         .options-list {
             overflow-y: auto;
@@ -242,8 +295,23 @@
             padding-bottom: 8px;
         }
 
+        .dropdown-separator {
+            height: 1px;
+            background: var(--border-color);
+            margin: 8px 12px;
+        }
+
+        .dropdown-section-title {
+            font-size: 0.7rem;
+            color: #999;
+            text-transform: uppercase;
+            padding: 0 12px 4px 12px;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
         .multi-dropdown-option {
-            padding: 8px 12px;
+            padding: 6px 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -252,46 +320,18 @@
             transition: background 0.1s;
         }
         .multi-dropdown-option:hover { background: var(--hover-bg); }
+        
+        /* Highlight for keyboard navigation */
+        .multi-dropdown-option.focused {
+            background: #e6f3ff;
+        }
 
         .multi-dropdown-option input[type="checkbox"] {
             cursor: pointer;
             width: 16px;
             height: 16px;
-            accent-color: #333;
-        }
-
-        /* Notion-style selected pills container */
-        .notion-selected-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border-color);
-            background: #fafafa;
-            max-height: 120px;
-            overflow-y: auto;
-        }
-        .notion-selected-container:empty {
-            display: none;
-        }
-        .notion-selected-pill {
-            background: #e2e2e2;
-            border: 1px solid #d0d0d0;
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 0.8rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #333;
-        }
-        .notion-selected-pill i {
-            cursor: pointer;
-            color: #777;
-            font-size: 0.9rem;
-        }
-        .notion-selected-pill i:hover {
-            color: #d32f2f;
+            accent-color: #2196F3;
+            pointer-events: none; /* Avoid double clicking issues when clicking row */
         }
 
         .btn {
@@ -652,7 +692,11 @@
                         <i class="ri-arrow-down-s-line"></i>
                     </div>
                     <div class="multi-dropdown-options" id="opts-specie">
-                        <div class="notion-selected-container" id="sel-specie"></div>
+                        <div class="dropdown-search-area" onclick="event.stopPropagation(); document.getElementById('search-specie').focus();">
+                            <div class="notion-selected-container" id="sel-specie"></div>
+                            <input type="text" class="dropdown-search-input" id="search-specie" placeholder="Select one or more..." 
+                                   oninput="filterDropdown('specie')" onkeydown="handleDropdownKeydown(event, 'specie')">
+                        </div>
                         <div class="options-list" id="list-specie"></div>
                     </div>
                 </div>
@@ -667,7 +711,11 @@
                         <i class="ri-arrow-down-s-line"></i>
                     </div>
                     <div class="multi-dropdown-options" id="opts-farm">
-                        <div class="notion-selected-container" id="sel-farm"></div>
+                        <div class="dropdown-search-area" onclick="event.stopPropagation(); document.getElementById('search-farm').focus();">
+                            <div class="notion-selected-container" id="sel-farm"></div>
+                            <input type="text" class="dropdown-search-input" id="search-farm" placeholder="Select one or more..." 
+                                   oninput="filterDropdown('farm')" onkeydown="handleDropdownKeydown(event, 'farm')">
+                        </div>
                         <div class="options-list" id="list-farm"></div>
                     </div>
                 </div>
@@ -682,7 +730,11 @@
                         <i class="ri-arrow-down-s-line"></i>
                     </div>
                     <div class="multi-dropdown-options" id="opts-color">
-                        <div class="notion-selected-container" id="sel-color"></div>
+                        <div class="dropdown-search-area" onclick="event.stopPropagation(); document.getElementById('search-color').focus();">
+                            <div class="notion-selected-container" id="sel-color"></div>
+                            <input type="text" class="dropdown-search-input" id="search-color" placeholder="Select one or more..." 
+                                   oninput="filterDropdown('color')" onkeydown="handleDropdownKeydown(event, 'color')">
+                        </div>
                         <div class="options-list" id="list-color"></div>
                     </div>
                 </div>
@@ -745,7 +797,7 @@
                 </div>
 
                 <div>
-                    <div class="section-label"><i class="ri-box-3-line"></i> Packing</div>
+                    <div class="section-label"><i class="ri-box-3-line"></i> Packing & Pricing</div>
                     <ul id="mPacking" class="packing-list"></ul>
                 </div>
 
@@ -798,7 +850,7 @@
         let allData = [];
         let filteredData = [];
         let currentIndex = 0;
-        const itemsPerPage = 64; // Grid 8x8 = 64
+        const itemsPerPage = 64; 
         let isLoggedIn = false;
 
         let selectedSpecies = [];
@@ -808,9 +860,9 @@
 
         const authUsers = { 'caguilar': '1995', 'dvalencia': '6969', 'rbaquero': '1980' };
         
-        // JERARQUÍA 1: ESPECIE (Predefinidas primero, resto alfabético)
+        // JERARQUÍA 1: ESPECIE 
         const specieOrder = [
-            "Standard Rose", "Garden Rose", "David Austin Garden Rose", 
+            "Standard Rose", "Garden Rose", "Garden Alike Rose", "David Austin Garden Rose", 
             "Victorian Garden Rose", "Garden Spray Rose", "Spray Rose"
         ];
         
@@ -820,16 +872,18 @@
             return idx !== -1 ? idx : 999;
         }
 
-        // JERARQUÍA 2: COLOR (De más claro a más oscuro / mezclas al final)
+        // JERARQUÍA 2: COLOR 
         const colorRankMap = {
             "white": 1, "cream": 2, "sand": 3, "yellow": 4, "light pink": 5, 
             "peach": 6, "light blue": 7, "mustard": 8, "coral": 9, "orange": 10, 
             "medium pink": 11, "lavender": 12, "spring": 13, "green": 14, 
             "hot pink": 15, "bronze": 16, "red": 17, "burgundy": 18, 
-            "purple": 19, "blue": 20, "earth": 21, "christmas": 22, 
-            "easter": 23, "fall": 24, "tinted": 25, "tinited": 25, 
-            "bicolor": 26, "rainbow": 27
+            "purple": 19, "blue": 20, "earth": 21, "bicolor": 22,
+            "christmas": 23, "easter": 24, "fall": 25, "tinted": 26, "tinited": 26, 
+            "rainbow": 27, "assorted": 28
         };
+
+        const specialColorKeys = ['christmas', 'easter', 'fall', 'tinted', 'tinited', 'rainbow', 'assorted'];
 
         function getColorRank(colorStr) {
             if (!colorStr) return 999;
@@ -837,7 +891,6 @@
             return colorRankMap[firstColor] || 999;
         }
 
-        // Estilos visuales de color para las cápsulas
         const colorPalette = {
             "bicolor": { dot: "#9C27B0", bg: "#F3E5F5" },
             "blue": { dot: "#1976D2", bg: "#E3F2FD" },
@@ -865,7 +918,8 @@
             "spring": { dot: "#66BB6A", bg: "#E8F5E9" },
             "tinted": { dot: "#00BCD4", bg: "#E0F7FA" },
             "white": { dot: "#FFFFFF", bg: "#F5F5F5", border: "#E0E0E0" },
-            "yellow": { dot: "#FFEB3B", bg: "#FFFDE7" }
+            "yellow": { dot: "#FFEB3B", bg: "#FFFDE7" },
+            "assorted": { dot: "linear-gradient(90deg, #F44336 33%, #FFEB3B 33% 66%, #2196F3 66%)", bg: "#f0f0f0", border: "#ccc" }
         };
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -948,6 +1002,7 @@
         function getDropdownColorStyle(colorName) {
             const lp = colorName.trim().toLowerCase();
             if (lp === 'rainbow') return { dotHtml: `<span class="color-dot rainbow-anim"></span>`, bg: `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};` };
+            if (lp === 'assorted') return { dotHtml: `<span class="color-dot" style="background: ${colorPalette['assorted'].dot}; border: 1px solid ${colorPalette['assorted'].border};"></span>`, bg: `background-color: ${colorPalette['assorted'].bg}; border-color: ${colorPalette['assorted'].border};` };
             if (colorPalette[lp]) {
                 const borderCss = colorPalette[lp].border ? ` border: 1px solid ${colorPalette[lp].border};` : '';
                 return { dotHtml: `<span class="color-dot" style="background-color: ${colorPalette[lp].dot};${borderCss}"></span>`, bg: `background-color: ${colorPalette[lp].bg}; border-color: ${colorPalette[lp].bg};` };
@@ -958,7 +1013,7 @@
         function renderColorCapsulesHTML(dataStr) {
             if (!dataStr || !dataStr.trim()) return '';
             const parts = dataStr.split(',').map(s => s.trim());
-            const realColors = parts.filter(p => !['bicolor','tinted','tinited','rainbow'].includes(p.toLowerCase()));
+            const realColors = parts.filter(p => !specialColorKeys.includes(p.toLowerCase()) && p.toLowerCase() !== 'bicolor');
 
             let html = '';
             parts.forEach(p => {
@@ -968,6 +1023,9 @@
                 if (lp === 'rainbow') {
                     dotHtml = `<span class="color-dot rainbow-anim"></span>`;
                     bgStyle = `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};`;
+                } else if (lp === 'assorted') {
+                    dotHtml = `<span class="color-dot" style="background: ${colorPalette['assorted'].dot}; border: 1px solid ${colorPalette['assorted'].border};"></span>`;
+                    bgStyle = `background-color: ${colorPalette['assorted'].bg}; border-color: ${colorPalette['assorted'].border};`;
                 } else if (lp === 'bicolor') {
                     if (realColors.length >= 2) {
                         const c1 = colorPalette[realColors[0].toLowerCase()]?.dot || '#ccc';
@@ -1026,7 +1084,7 @@
                         if(farmName) farmsArrival[farmName.trim().toLowerCase()] = llegada ? llegada.trim().toLowerCase() : '';
                     });
 
-                    // ORDENAMIENTO MULTINIVEL (1: Especie -> 2: Color -> 3: Nombre A-Z)
+                    // ORDENAMIENTO MULTINIVEL
                     mainData.sort((a, b) => {
                         let spA = a.SPECIE ? a.SPECIE.trim() : "";
                         let spB = b.SPECIE ? b.SPECIE.trim() : "";
@@ -1097,17 +1155,23 @@
             let farms = extractUnique('FARM').sort();
             fillMultiDropdown('list-farm', farms, 'farm');
 
-            // Ordenamiento por rango de color también en el menú desplegable
+            // Ordenamiento y Separador de colores en el Dropdown
             let colors = extractUnique('COLOR').sort((a, b) => getColorRank(a) - getColorRank(b) || a.localeCompare(b));
-            
             const listColor = document.getElementById('list-color');
             listColor.innerHTML = '';
+            let specialRendered = false;
+
             colors.forEach(c => {
+                const rank = getColorRank(c);
+                if (rank >= 23 && !specialRendered) {
+                    listColor.innerHTML += `<div class="dropdown-separator"></div><div class="dropdown-section-title">Compositions</div>`;
+                    specialRendered = true;
+                }
                 const style = getDropdownColorStyle(c);
                 listColor.innerHTML += `
-                    <div class="multi-dropdown-option" onclick="toggleMultiSelection('color', '${c.replace(/'/g, "\\'")}')">
+                    <div class="multi-dropdown-option" data-search="${c.toLowerCase()}" onclick="toggleMultiSelection('color', '${c.replace(/'/g, "\\'")}')">
                         <input type="checkbox" id="cb-color-${c.replace(/\s+/g, '-')}">
-                        <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">${style.dotHtml} ${c}</label>
+                        <label style="cursor:pointer; display:flex; align-items:center; gap:8px; margin:0;">${style.dotHtml} ${c}</label>
                     </div>`;
             });
         }
@@ -1117,18 +1181,92 @@
             list.innerHTML = '';
             itemsArray.forEach(item => {
                 list.innerHTML += `
-                    <div class="multi-dropdown-option" onclick="toggleMultiSelection('${type}', '${item.replace(/'/g, "\\'")}')">
+                    <div class="multi-dropdown-option" data-search="${item.toLowerCase()}" onclick="toggleMultiSelection('${type}', '${item.replace(/'/g, "\\'")}')">
                         <input type="checkbox" id="cb-${type}-${item.replace(/\s+/g, '-')}">
-                        <label style="cursor:pointer;">${item}</label>
+                        <label style="cursor:pointer; margin:0;">${item}</label>
                     </div>`;
             });
+        }
+
+        // Buscador interno en Dropdowns con auto-enfoque
+        function filterDropdown(type) {
+            const term = document.getElementById(`search-${type}`).value.toLowerCase();
+            const options = document.querySelectorAll(`#list-${type} .multi-dropdown-option`);
+            let firstVisible = null;
+            options.forEach(opt => {
+                opt.classList.remove('focused'); // Limpia focos previos al escribir
+                if (opt.getAttribute('data-search').includes(term)) {
+                    opt.style.display = 'flex';
+                    if(!firstVisible) firstVisible = opt;
+                } else {
+                    opt.style.display = 'none';
+                }
+            });
+            // Auto-enfoca el primero si hay texto
+            if (term && firstVisible) {
+                firstVisible.classList.add('focused');
+            }
+        }
+
+        // Navegación con Teclado
+        function handleDropdownKeydown(e, type) {
+            const list = document.getElementById(`list-${type}`);
+            const visibleOptions = Array.from(list.querySelectorAll('.multi-dropdown-option')).filter(opt => opt.style.display !== 'none');
+            
+            if (visibleOptions.length === 0) return;
+
+            let currentIndex = visibleOptions.findIndex(opt => opt.classList.contains('focused'));
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                currentIndex = currentIndex < visibleOptions.length - 1 ? currentIndex + 1 : 0;
+                updateFocus(visibleOptions, currentIndex, list);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                currentIndex = currentIndex > 0 ? currentIndex - 1 : visibleOptions.length - 1;
+                updateFocus(visibleOptions, currentIndex, list);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentIndex >= 0 && currentIndex < visibleOptions.length) {
+                    visibleOptions[currentIndex].click(); // Esto lanza el toggleMultiSelection
+                } else if (visibleOptions.length > 0) {
+                    visibleOptions[0].click(); // Si no hay foco, agarra el primero visible
+                }
+            }
+        }
+
+        function updateFocus(options, index, listContainer) {
+            options.forEach(opt => opt.classList.remove('focused'));
+            if (index >= 0 && index < options.length) {
+                const focusedOpt = options[index];
+                focusedOpt.classList.add('focused');
+                
+                // Hace scroll automático hacia la opción seleccionada
+                const optTop = focusedOpt.offsetTop;
+                const optBottom = optTop + focusedOpt.clientHeight;
+                const listScrollTop = listContainer.scrollTop;
+                const listHeight = listContainer.clientHeight;
+
+                if (optTop < listScrollTop) {
+                    listContainer.scrollTop = optTop;
+                } else if (optBottom > listScrollTop + listHeight) {
+                    listContainer.scrollTop = optBottom - listHeight;
+                }
+            }
         }
 
         function toggleDD(id) {
             document.querySelectorAll('.multi-dropdown-options').forEach(el => {
                 if (el.id !== id) el.classList.remove('show');
             });
-            document.getElementById(id).classList.toggle('show');
+            const menu = document.getElementById(id);
+            menu.classList.toggle('show');
+            
+            // Foco automático en el buscador al abrir
+            if(menu.classList.contains('show')) {
+                const input = menu.querySelector('.dropdown-search-input');
+                if(input) input.focus();
+            }
         }
 
         window.addEventListener('click', function(e) {
@@ -1151,7 +1289,6 @@
                     </div>`;
             });
 
-            // Sincronizar checkboxes
             document.querySelectorAll(`input[id^="cb-${type}-"]`).forEach(cb => cb.checked = false);
             arr.forEach(val => {
                 const cb = document.getElementById(`cb-${type}-${val.replace(/\s+/g, '-')}`);
@@ -1173,6 +1310,14 @@
             else if (arr.length === 1) document.getElementById(spanId).innerText = arr[0];
             else document.getElementById(spanId).innerText = `${arr.length} selected`;
 
+            // AUTO-LIMPIEZA DEL BUSCADOR: Para que puedas seguir tipeando rápido
+            const input = document.getElementById(`search-${type}`);
+            if(input) {
+                input.value = '';
+                filterDropdown(type); // Resetea las opciones
+                input.focus(); // Devuelve el cursor
+            }
+
             applyFilters();
         }
 
@@ -1191,6 +1336,11 @@
             document.getElementById('text-specie').innerText = 'All Species';
             document.getElementById('text-farm').innerText = 'All Farms';
             document.getElementById('text-color').innerText = 'All Colors';
+
+            document.querySelectorAll('.dropdown-search-input').forEach(inp => {
+                inp.value = '';
+                filterDropdown(inp.id.split('-')[1]);
+            });
             
             renderSelectedPills('specie');
             renderSelectedPills('farm');
@@ -1224,13 +1374,12 @@
 
                 if (selectedColors.length > 0) {
                     let colorMatch = false;
-                    const nonSolid = ['bicolor', 'rainbow', 'tinted', 'tinited'];
                     if(row.COLOR) {
                         const rowColorLower = row.COLOR.toLowerCase();
                         const rowColorExactLower = row.COLOR.trim().toLowerCase();
                         for(let sc of selectedColors) {
                             const scLower = sc.toLowerCase();
-                            if (nonSolid.includes(scLower)) {
+                            if (specialColorKeys.includes(scLower) || scLower === 'bicolor') {
                                 if (rowColorLower.includes(scLower)) colorMatch = true;
                             } else {
                                 if (rowColorExactLower === scLower) colorMatch = true;
@@ -1358,13 +1507,14 @@
             container.innerHTML = '';
             if (dataStr && dataStr.trim()) {
                 const parts = dataStr.split(',').map(s => s.trim());
-                const realColors = parts.filter(p => !['bicolor', 'tinted', 'tinited', 'rainbow'].includes(p.toLowerCase()));
+                const realColors = parts.filter(p => !specialColorKeys.includes(p.toLowerCase()) && p.toLowerCase() !== 'bicolor');
 
                 parts.forEach(p => {
                     const lp = p.toLowerCase();
                     let dotHtml = '', bgStyle = '';
 
                     if (lp === 'rainbow') { dotHtml = `<span class="color-dot rainbow-anim"></span>`; bgStyle = `background-color: ${colorPalette['rainbow'].bg}; border-color: ${colorPalette['rainbow'].bg};`; } 
+                    else if (lp === 'assorted') { dotHtml = `<span class="color-dot" style="background: ${colorPalette['assorted'].dot}; border: 1px solid ${colorPalette['assorted'].border};"></span>`; bgStyle = `background-color: ${colorPalette['assorted'].bg}; border-color: ${colorPalette['assorted'].border};`; }
                     else if (lp === 'bicolor') {
                         if (realColors.length >= 2) {
                             const c1 = colorPalette[realColors[0].toLowerCase()]?.dot || '#ccc';
