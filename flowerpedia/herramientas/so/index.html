@@ -9,6 +9,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Chart.js para el gráfico de Dona -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2canvas para copiar como imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Remix Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
@@ -44,6 +46,8 @@
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border-light);
+            flex-wrap: wrap;
+            gap: 15px;
         }
         .week-badge {
             background: var(--hover-bg);
@@ -56,6 +60,13 @@
             gap: 6px;
             color: var(--text-main);
         }
+        
+        .top-toggles {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
         .toggle-container {
             font-size: 14px;
             display: flex;
@@ -63,6 +74,7 @@
             gap: 6px;
             color: var(--text-muted);
             cursor: pointer;
+            user-select: none;
         }
 
         /* Upload Section */
@@ -139,16 +151,17 @@
 
         /* Buttons */
         .btn {
-            padding: 10px 16px;
+            padding: 8px 14px;
             border: 1px solid var(--border-light);
             border-radius: 6px;
             background: white;
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             transition: all 0.2s;
             font-weight: 500;
@@ -162,13 +175,26 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-top: 30px;
-            gap: 20px;
+            gap: 30px;
+            flex-wrap: wrap;
         }
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
+
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            min-width: 200px;
+            min-width: 380px;
+        }
+        .btn-group-title {
+            grid-column: 1 / -1;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 10px;
+            margin-bottom: -4px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 4px;
         }
 
         /* Summary Cards */
@@ -177,6 +203,7 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             flex: 1;
+            min-width: 300px;
         }
         .summary-card {
             padding: 15px;
@@ -189,7 +216,7 @@
         .summary-val { font-size: 18px; font-weight: 600; color: var(--text-main); }
 
         /* Table */
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; }
         th, td { padding: 12px 10px; border-bottom: 1px solid var(--border-light); }
         th {
             color: var(--text-muted);
@@ -217,8 +244,9 @@
         .justify-between { justify-content: space-between; }
         .gap-2 { gap: 8px; }
 
-        /* Hide PO Logic */
+        /* Hiding Logic */
         body.hide-po .col-po { display: none !important; }
+        body.compact-mode .col-admin { display: none !important; }
 
         /* Pills */
         .pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
@@ -281,10 +309,15 @@
                 <i class="ri-calendar-event-line"></i> 
                 Semana Actual: <span id="weekNumLabel"></span>
             </div>
-            <label class="toggle-container">
-                <input type="checkbox" id="togglePoCheck" checked>
-                Mostrar Columna PO
-            </label>
+            <div class="top-toggles">
+                <label class="toggle-container">
+                    <input type="checkbox" id="togglePoCheck" checked>
+                    Mostrar Columna PO
+                </label>
+                <button id="toggleViewBtn" class="btn" style="padding: 6px 12px;">
+                    <i class="ri-layout-right-2-line"></i> <span>Vista Compacta</span>
+                </button>
+            </div>
         </div>
 
         <div class="controls">
@@ -321,10 +354,10 @@
                         <th data-sort="arrival">Arrival <i class="ri-arrow-up-down-line"></i></th>
                         <th class="col-po" data-sort="po">PO <i class="ri-arrow-up-down-line"></i></th>
                         <th class="text-center" data-sort="precio">Precio <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="col-divider" data-sort="finca">Finca <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="text-center" data-sort="costo">Precio Compra <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="text-center" data-sort="markup">Markup % <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="text-center" data-sort="precioFinal">Precio Final <i class="ri-arrow-up-down-line"></i></th>
+                        <th class="col-admin col-divider" data-sort="finca">Finca <i class="ri-arrow-up-down-line"></i></th>
+                        <th class="col-admin text-center" data-sort="costo">Precio Compra <i class="ri-arrow-up-down-line"></i></th>
+                        <th class="col-admin text-center" data-sort="markup">Markup % <i class="ri-arrow-up-down-line"></i></th>
+                        <th class="col-admin text-center" data-sort="precioFinal">Precio Final <i class="ri-arrow-up-down-line"></i></th>
                     </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
@@ -334,15 +367,30 @@
                 <div class="summary-grid" id="summaryTotals">
                     <!-- Calculado por JS -->
                 </div>
-                <div class="action-buttons">
-                    <button class="btn" onclick="copyTableData('cliente')">
-                        <i class="ri-file-copy-line"></i> Copia Cliente
+                
+                <div class="action-buttons-grid">
+                    <div class="btn-group-title">Copiar Datos (Texto)</div>
+                    <button class="btn" onclick="copyTableText('usuario')">
+                        <i class="ri-file-copy-line"></i> Copia Usuario
                     </button>
-                    <button class="btn" onclick="copyTableData('todo')">
-                        <i class="ri-file-copy-fill"></i> Copia Todo
+                    <button class="btn" onclick="copyTableText('admin')">
+                        <i class="ri-file-copy-fill"></i> Copia Admin
                     </button>
-                    <button class="btn btn-primary" onclick="downloadCurrentExcel()">
-                        <i class="ri-file-excel-2-line"></i> Descargar Tabla
+
+                    <div class="btn-group-title">Capturar como Imagen</div>
+                    <button class="btn" onclick="copyTableImage('usuario')">
+                        <i class="ri-image-line"></i> Imagen Usuario
+                    </button>
+                    <button class="btn" onclick="copyTableImage('admin')">
+                        <i class="ri-image-fill"></i> Imagen Admin
+                    </button>
+
+                    <div class="btn-group-title">Exportar archivo Excel</div>
+                    <button class="btn btn-primary" onclick="downloadExcel('usuario')">
+                        <i class="ri-file-excel-2-line"></i> Descargar Usuario
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadExcel('admin')">
+                        <i class="ri-file-excel-2-fill"></i> Descargar Admin
                     </button>
                 </div>
             </div>
@@ -386,10 +434,10 @@
                             <th>Arrival</th>
                             <th class="col-po">PO</th>
                             <th class="text-center">Precio</th>
-                            <th class="col-divider">Finca</th>
-                            <th class="text-center">Precio Compra</th>
-                            <th class="text-center">Markup %</th>
-                            <th class="text-center">Precio Final</th>
+                            <th class="col-admin col-divider">Finca</th>
+                            <th class="col-admin text-center">Precio Compra</th>
+                            <th class="col-admin text-center">Markup %</th>
+                            <th class="col-admin text-center">Precio Final</th>
                         </tr>
                     </thead>
                     <tbody id="modalTableBody"></tbody>
@@ -413,12 +461,19 @@
         }
         document.getElementById('weekNumLabel').textContent = getWeekNumber(new Date());
 
-        // Toggle Columna PO
+        // Toggles y Controles de Vista
         document.getElementById('togglePoCheck').addEventListener('change', function(e) {
-            if(e.target.checked) {
-                document.body.classList.remove('hide-po');
+            if(e.target.checked) document.body.classList.remove('hide-po');
+            else document.body.classList.add('hide-po');
+        });
+
+        document.getElementById('toggleViewBtn').addEventListener('click', function() {
+            let isCompact = document.body.classList.toggle('compact-mode');
+            let span = this.querySelector('span');
+            if(isCompact) {
+                span.textContent = "Vista Completa";
             } else {
-                document.body.classList.add('hide-po');
+                span.textContent = "Vista Compacta";
             }
         });
 
@@ -613,16 +668,14 @@
         function formatCurrency(val) { return '$' + parseFloat(val).toFixed(2); }
         function formatPercent(val) { return parseFloat(val).toFixed(2) + '%'; }
 
-        // Core Filter Function
+        // Filtro Principal
         function getFilteredData() {
             let selectedVend = document.getElementById('vendedorSelect').value;
             let selectedFreq = document.getElementById('frecuenciaSelect').value;
             
             let data = globalData;
             
-            if(selectedVend) {
-                data = data.filter(d => d.vendedorFull === selectedVend);
-            }
+            if(selectedVend) data = data.filter(d => d.vendedorFull === selectedVend);
 
             if(selectedFreq === 'par') {
                 data = data.filter(d => d.freqClass === 'par' || d.freqClass === 'everyweek');
@@ -659,10 +712,10 @@
                 <td class="nowrap"><span class="pill arrival">${row.arrival}</span></td>
                 <td class="col-po">${row.po}</td>
                 <td class="text-center">${formatCurrency(row.precio)}</td>
-                <td class="col-divider">${row.finca}</td>
-                <td class="text-center">${formatCurrency(row.costo)}</td>
-                <td class="text-center ${markupCls}">${formatPercent(row.markup)}</td>
-                <td class="text-center text-bold">${formatCurrency(row.precioFinal)}</td>
+                <td class="col-admin col-divider">${row.finca}</td>
+                <td class="col-admin text-center">${formatCurrency(row.costo)}</td>
+                <td class="col-admin text-center ${markupCls}">${formatPercent(row.markup)}</td>
+                <td class="col-admin text-center text-bold">${formatCurrency(row.precioFinal)}</td>
             `;
         }
 
@@ -677,7 +730,6 @@
             let tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
             
-            // Actualizar Iconos Remix
             document.querySelectorAll('th[data-sort]').forEach(th => {
                 let col = th.getAttribute('data-sort');
                 let icon = th.querySelector('i');
@@ -786,7 +838,6 @@
             });
             document.getElementById('topClientes').innerHTML = cliHtml || '<div class="text-muted">Sin datos</div>';
 
-            // Chart
             renderChart(fincaArr);
         }
 
@@ -815,65 +866,96 @@
             });
         }
 
-        // Sistema de Sort de Cabeceras
-        document.querySelectorAll('th[data-sort]').forEach(th => {
-            th.addEventListener('click', () => {
-                let col = th.getAttribute('data-sort');
-                if (sortCol === col) { sortState = (sortState + 1) % 3; } 
-                else { sortCol = col; sortState = 1; }
-                if (sortState === 0) sortCol = 'originalIndex';
-                renderTable();
-            });
-        });
+        // --- SISTEMA DE EXPORTACIÓN (Texto, Imagen y Excel) ---
 
-        // Copiar Data al Portapapeles
-        function copyTableData(type) {
+        // 1. Exportar Texto al Portapapeles
+        function copyTableText(type) {
             let data = getFilteredData();
             let clipboardText = "";
-            let showPo = document.getElementById('togglePoCheck').checked;
+            let isUser = (type === 'usuario');
 
-            if (type === 'cliente') {
-                clipboardText += showPo ? "Frecuencia\tOrden\tCliente\tArrival\tPO\tPrecio\n" : "Frecuencia\tOrden\tCliente\tArrival\tPrecio\n";
+            if (isUser) {
+                clipboardText += "Frecuencia\tOrden\tCliente\tArrival\tPrecio\n";
                 data.forEach(r => {
-                    clipboardText += showPo 
-                        ? `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.po}\t${r.precio}\n`
-                        : `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.precio}\n`;
+                    clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.precio}\n`;
                 });
             } else {
-                clipboardText += showPo ? "Frecuencia\tOrden\tCliente\tArrival\tPO\tPrecio\tFinca\tPrecio Compra\tMarkup %\tPrecio Final\n" : "Frecuencia\tOrden\tCliente\tArrival\tPrecio\tFinca\tPrecio Compra\tMarkup %\tPrecio Final\n";
+                clipboardText += "Frecuencia\tOrden\tCliente\tArrival\tPO\tPrecio\tFinca\tPrecio Compra\tMarkup %\tPrecio Final\n";
                 data.forEach(r => {
                     let mkup = formatPercent(r.markup);
-                    clipboardText += showPo
-                        ? `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.po}\t${r.precio}\t${r.finca}\t${r.costo}\t${mkup}\t${r.precioFinal}\n`
-                        : `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.precio}\t${r.finca}\t${r.costo}\t${mkup}\t${r.precioFinal}\n`;
+                    clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.po}\t${r.precio}\t${r.finca}\t${r.costo}\t${mkup}\t${r.precioFinal}\n`;
                 });
             }
 
             navigator.clipboard.writeText(clipboardText).then(() => {
-                alert("¡Datos copiados al portapapeles con éxito!");
+                alert(`¡Datos copiados al portapapeles con éxito (Vista ${isUser ? 'Usuario' : 'Admin'})!`);
             }).catch(err => {
                 alert("Error al copiar: " + err);
             });
         }
 
-        // Descargar a Excel
-        function downloadCurrentExcel() {
-            let data = getFilteredData();
-            let showPo = document.getElementById('togglePoCheck').checked;
-            let ws_data = [];
+        // 2. Exportar Tabla como Imagen
+        async function copyTableImage(type) {
+            const table = document.querySelector('#tableView table');
+            const originalPoHidden = document.body.classList.contains('hide-po');
+            const originalCompact = document.body.classList.contains('compact-mode');
             
-            if(showPo) {
+            // Preparamos la tabla según el tipo solicitado
+            if (type === 'usuario') {
+                document.body.classList.add('hide-po');
+                document.body.classList.add('compact-mode');
+            } else {
+                document.body.classList.remove('hide-po');
+                document.body.classList.remove('compact-mode');
+            }
+
+            try {
+                // html2canvas renderiza lo visible en el DOM en ese preciso instante
+                const canvas = await html2canvas(table, { 
+                    backgroundColor: '#ffffff',
+                    scale: 2 // Mayor calidad de imagen
+                });
+                
+                canvas.toBlob(blob => {
+                    try {
+                        navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(() => {
+                            alert(`¡Tabla copiada como imagen exitosamente (Vista ${type === 'usuario' ? 'Usuario' : 'Admin'})! Puedes pegarla con Ctrl+V.`);
+                        });
+                    } catch(e) {
+                        alert("Tu navegador no soporta el copiado directo de imágenes. Por favor intenta desde otro navegador moderno.");
+                    }
+                }, 'image/png');
+                
+            } catch (err) {
+                alert("Hubo un error al generar la imagen: " + err);
+            } finally {
+                // Restauramos la interfaz como el usuario la tenía
+                if (originalPoHidden) document.body.classList.add('hide-po');
+                else document.body.classList.remove('hide-po');
+                
+                if (originalCompact) document.body.classList.add('compact-mode');
+                else document.body.classList.remove('compact-mode');
+            }
+        }
+
+        // 3. Exportar Excel
+        function downloadExcel(type) {
+            let data = getFilteredData();
+            let ws_data = [];
+            let isUser = (type === 'usuario');
+            
+            if(isUser) {
+                ws_data.push(["Frecuencia", "Orden", "Cliente", "Arrival", "Precio"]);
+                data.forEach(r => ws_data.push([r.frecuencia, r.orden, r.cliente, r.arrival, r.precio]));
+            } else {
                 ws_data.push(["Frecuencia", "Orden", "Cliente", "Arrival", "PO", "Precio", "Finca", "Precio Compra", "Markup %", "Precio Final"]);
                 data.forEach(r => ws_data.push([r.frecuencia, r.orden, r.cliente, r.arrival, r.po, r.precio, r.finca, r.costo, (r.markup/100).toFixed(4), r.precioFinal]));
-            } else {
-                ws_data.push(["Frecuencia", "Orden", "Cliente", "Arrival", "Precio", "Finca", "Precio Compra", "Markup %", "Precio Final"]);
-                data.forEach(r => ws_data.push([r.frecuencia, r.orden, r.cliente, r.arrival, r.precio, r.finca, r.costo, (r.markup/100).toFixed(4), r.precioFinal]));
             }
 
             let ws = XLSX.utils.aoa_to_sheet(ws_data);
             let wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Ordenes");
-            XLSX.writeFile(wb, "Tabla_Filtrada_Ordenes.xlsx");
+            XLSX.writeFile(wb, `Tabla_Filtrada_${isUser ? 'Usuario' : 'Admin'}.xlsx`);
         }
 
         // Modal Popups
@@ -882,7 +964,6 @@
             document.getElementById('dataModal').style.display = 'flex';
             document.getElementById('modalTitle').innerHTML = `<i class="ri-search-eye-line text-brand"></i> Órdenes de ${type === 'finca' ? 'Finca' : 'Cliente'}: ${value}`;
 
-            // Usar la base ya filtrada por Vendedor y Par/Impar para que el popup sea coherente
             let data = getFilteredData();
             if(type === 'finca') data = data.filter(d => d.finca === value);
             if(type === 'cliente') data = data.filter(d => d.cliente === value);
