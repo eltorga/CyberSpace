@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamer Odyssey - Biblioteca</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --steam-bg: #1b2838;
+            --steam-header: #171a21;
+            --steam-blue: #66c0f4; 
+            --steam-green: #4caf50; 
+            --steam-grey: #8f98a0; 
+            --steam-cyan: #00bcd4; 
+            --steam-orange: #ffca28; 
+            --steam-red: #ef5350; 
+            --steam-dark-blue: #2a475e;
+            --steam-text: #c7d5e0;
+            --steam-light: #ebebeb;
+            --border-radius: 4px;
+        }
+
+        /* REGLA ESTRICTA: SIN NEGRITAS EN TEXTOS */
+        body, h1, h2, h3, h4, h5, h6, strong, b, span, p, a, button, select, input {
+            font-weight: 400 !important;
+        }
+
+        /* CORRECCIÓN DE ICONOS: FontAwesome Solid exige 900 para no desaparecer */
+        .fa-solid, .fas {
+            font-weight: 900 !important;
+        }
+        .fa-brands, .fab, .fa-regular, .far {
+            font-weight: 400 !important;
+        }
+
+        body {
+            font-family: "Motiva Sans", Sans-serif, Arial;
+            background-color: var(--steam-bg);
+            color: var(--steam-text);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* FONDO DE VIDEO GLOBAL */
+        .bg-video-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+        }
+        .bg-video-container video {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.4;
+        }
+
+        /* HEADER ESTILO STEAM */
+        header {
+            background-color: var(--steam-header);
+            height: auto;
+            min-height: 104px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 20px;
+            text-transform: uppercase;
+            box-sizing: border-box;
+        }
+        .header-content {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .header-logo {
+            font-size: 1.8rem;
+            color: var(--steam-light);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+        .header-logo i {
+            font-size: 2.8rem;
+        }
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        .nav-item {
+            color: var(--steam-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 10px 5px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .nav-item:hover { color: var(--steam-light); }
+        .nav-item.active { color: var(--steam-blue); border-bottom: 2px solid var(--steam-blue); }
+        
+        /* DROPDOWNS */
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none; position: absolute; top: 100%; left: 0;
+            background-color: #3d4450; min-width: 160px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 100;
+            flex-direction: column; border-radius: 2px;
+        }
+        .dropdown:hover .dropdown-menu { display: flex; }
+        .dropdown-menu a {
+            color: var(--steam-text); padding: 12px 15px; text-decoration: none;
+            font-size: 0.85rem; transition: background 0.2s; display: flex; align-items: center; gap: 10px;
+        }
+        .dropdown-menu a:hover { background-color: var(--steam-blue); color: #fff; }
+
+        .main-container { max-width: 960px; margin: 40px auto; padding: 0 20px; }
+
+        /* SECCIÓN PERFIL */
+        .profile-wrapper {
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: var(--border-radius); display: flex;
+            gap: 30px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            align-items: flex-start;
+        }
+        
+        .avatar-section { position: relative; width: 166px; height: 166px; flex-shrink: 0; margin: 0 auto;}
+        .avatar-img {
+            width: 100%; height: 100%; border-radius: 10px;
+            object-fit: cover; border: 2px solid #3a404d;
+        }
+        .avatar-frame {
+            position: absolute; top: -15px; left: -15px;
+            width: calc(100% + 30px); height: calc(100% + 30px);
+            pointer-events: none; z-index: 2;
+        }
+
+        .profile-info { flex-grow: 1; display: flex; flex-direction: column;}
+        .profile-name { font-size: 2rem; color: #fff; margin: 0 0 5px 0; }
+        .profile-country {
+            font-size: 0.95rem; color: #8f98a0; margin: 0 0 15px 0;
+            display: flex; flex-direction: row; align-items: center; gap: 8px;
+        }
+        .profile-desc { font-size: 0.95rem; line-height: 1.5; color: var(--steam-text); margin-bottom: 20px; }
+
+        .profile-stats {
+            display: flex; flex-direction: column; align-items: flex-end; min-width: 200px; gap: 15px;
+        }
+        .level-container { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; color: #fff;}
+        .level-circle {
+            width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--steam-blue);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; line-height: 0; padding-top: 2px;
+        }
+        .featured-badge {
+            background: rgba(0,0,0,0.4); padding: 10px; border-radius: 5px;
+            display: flex; align-items: center; gap: 15px; width: 100%; border: 1px solid rgba(255,255,255,0.05);
+            box-sizing: border-box;
+        }
+        .featured-badge img { width: 50px; height: 50px; }
+        .badge-details { display: flex; flex-direction: column; }
+        .badge-name { color: #fff; font-size: 0.9rem; margin-bottom: 3px; }
+        .badge-xp { color: #8f98a0; font-size: 0.8rem; }
+
+        .btn-steam {
+            background: linear-gradient( to bottom, rgba(121,153,5,1) 5%, rgba(83,105,4,1) 95%);
+            color: #d2efa9; border: none; padding: 10px 15px; border-radius: 2px;
+            cursor: pointer; font-size: 0.9rem; text-decoration: none; display: flex;
+            align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
+        }
+        .btn-steam:hover { background: linear-gradient( to bottom, rgba(136,173,6,1) 5%, rgba(100,126,5,1) 95%); color: #fff; }
+
+        /* CARRUSEL DE PLATAFORMAS E INTEGRACIÓN SIMPLEICONS */
+        .simple-icon-mask {
+            display: inline-block;
+            width: 1.2rem; height: 1.2rem;
+            background-color: var(--steam-text);
+            mask-size: contain; -webkit-mask-size: contain;
+            mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+            mask-position: center; -webkit-mask-position: center;
+            transition: background-color 0.3s;
+        }
+        .icon-epic { mask-image: url('https://cdn.simpleicons.org/epicgames'); -webkit-mask-image: url('https://cdn.simpleicons.org/epicgames'); }
+        .icon-ubi { mask-image: url('https://cdn.simpleicons.org/ubisoft'); -webkit-mask-image: url('https://cdn.simpleicons.org/ubisoft'); }
+        .icon-ea { mask-image: url('https://cdn.simpleicons.org/ea'); -webkit-mask-image: url('https://cdn.simpleicons.org/ea'); }
+        .icon-gog { mask-image: url('https://cdn.simpleicons.org/gogdotcom'); -webkit-mask-image: url('https://cdn.simpleicons.org/gogdotcom'); }
+
+        .platforms-section {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); padding: 15px;
+            border-radius: var(--border-radius); box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .platforms-track {
+            display: flex; gap: 15px; overflow-x: auto; scroll-behavior: smooth;
+            scrollbar-width: none; flex-grow: 1; padding: 5px 0;
+        }
+        .platforms-track::-webkit-scrollbar { display: none; }
+        .platform-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #2a3f5a; padding: 10px 20px; border-radius: 4px; flex-shrink: 0;
+            color: var(--steam-text); font-size: 0.9rem; cursor: pointer; text-decoration: none;
+            border: 1px solid #3a404d; transition: all 0.3s ease; min-width: 180px; box-sizing: border-box;
+        }
+        .platform-btn i { font-size: 1.2rem; }
+        .platform-btn:hover { background: var(--steam-dark-blue); color: #fff; border-color: var(--steam-blue); transform: translateY(-2px);}
+        .platform-btn:hover .simple-icon-mask { background-color: #fff; }
+        
+        .platform-btn.revealed { background: var(--steam-blue); color: #fff; border-color: var(--steam-blue); }
+        .platform-btn.revealed:hover { background: var(--steam-dark-blue); }
+        .platform-btn.revealed .simple-icon-mask { background-color: #fff; }
+
+        /* ESTILOS DE LA BIBLIOTECA */
+        .library-container {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            margin-bottom: 40px;
+        }
+
+        .library-controls-wrapper {
+            display: flex; flex-direction: column;
+            border-bottom: 1px solid #3a404d;
+            margin-bottom: 20px; gap: 20px;
+        }
+
+        /* Pestañas (Tabs) Distribuidas y Temáticas */
+        .library-tabs {
+            display: flex; justify-content: space-between; align-items: stretch;
+            width: 100%; gap: 10px; padding-bottom: 15px;
+        }
+        .library-tab {
+            flex: 1 1 auto; background: none; border: none; padding: 10px 5px;
+            color: var(--steam-grey); font-size: 0.95rem; cursor: pointer; 
+            border-bottom: 3px solid transparent; transition: color 0.2s, border-color 0.2s; 
+            white-space: nowrap; display: flex; align-items: center; justify-content: center;
+        }
+        .library-tab:hover { color: var(--steam-light); }
+        
+        .count-capsule {
+            background-color: rgba(255, 255, 255, 0.1); color: #ebebeb;
+            padding: 2px 8px; border-radius: 2px; margin-left: 8px; font-size: 0.8rem;
+        }
+
+        /* Colores dinámicos por pestaña activa */
+        .tab-todo.active { border-bottom-color: var(--steam-blue); color: #fff;}
+        .tab-todo.active .count-capsule { background-color: var(--steam-blue); }
+
+        .tab-jugando.active { border-bottom-color: var(--steam-green); color: #fff;}
+        .tab-jugando.active .count-capsule { background-color: var(--steam-green); }
+
+        .tab-online.active { border-bottom-color: var(--steam-cyan); color: #fff;}
+        .tab-online.active .count-capsule { background-color: var(--steam-cyan); }
+
+        .tab-pendiente.active { border-bottom-color: var(--steam-orange); color: #fff;}
+        .tab-pendiente.active .count-capsule { background-color: var(--steam-orange); }
+
+        .tab-completado.active { border-bottom-color: var(--steam-blue); color: #fff;}
+        .tab-completado.active .count-capsule { background-color: var(--steam-blue); }
+
+        .tab-porjugar.active { border-bottom-color: var(--steam-grey); color: #fff;}
+        .tab-porjugar.active .count-capsule { background-color: var(--steam-grey); }
+
+        .tab-abandonado.active { border-bottom-color: var(--steam-red); color: #fff;}
+        .tab-abandonado.active .count-capsule { background-color: var(--steam-red); }
+
+        /* Filtros y Ordenamiento Inferior Alineados a la izquierda */
+        .library-filters-row {
+            display: flex; justify-content: flex-start; align-items: center;
+            flex-wrap: wrap; margin-bottom: 15px; gap: 15px;
+        }
+
+        .library-search {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(0,0,0,0.4); border: 1px solid #3a404d;
+            padding: 5px 30px 5px 12px; border-radius: 4px; position: relative;
+        }
+        .library-search input {
+            background: transparent; border: none; color: #fff;
+            outline: none; font-size: 0.9rem; width: 140px;
+        }
+        .library-search input::placeholder { color: var(--steam-grey); }
+        .clear-search {
+            position: absolute; right: 10px; cursor: pointer; color: var(--steam-grey); display: none;
+        }
+        .clear-search:hover { color: #fff; }
+
+        .library-sort {
+            display: flex; align-items: center; gap: 8px;
+            color: var(--steam-grey); font-size: 0.9rem;
+        }
+        .library-sort select {
+            background: #2a3f5a; color: #fff; border: 1px solid #3a404d;
+            padding: 6px 12px; border-radius: 4px; outline: none;
+            font-size: 0.9rem; cursor: pointer;
+        }
+
+        /* GRID VERTICAL */
+        .library-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 20px; margin-bottom: 30px;
+        }
+
+        .game-card {
+            background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden;
+            display: flex; flex-direction: column; border: 1px solid transparent;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .game-card:hover {
+            transform: translateY(-5px); border-color: #3a404d;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.6);
+        }
+
+        .game-media-container {
+            width: 100%; aspect-ratio: 2 / 3; background: #000;
+            position: relative; overflow: hidden;
+        }
+        .game-media-container img, .game-media-container video {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .game-info { 
+            padding: 12px 10px; display: flex; flex-direction: column; gap: 10px;
+        }
+        
+        .game-title { 
+            font-size: 0.95rem; margin: 0; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;
+        }
+
+        /* Colores dinámicos */
+        .color-completado { color: var(--steam-blue); }
+        .color-jugando { color: var(--steam-green); }
+        .color-por-jugar { color: var(--steam-grey); }
+        .color-online { color: var(--steam-cyan); }
+        .color-pendiente { color: var(--steam-orange); }
+        .color-abandonado { color: var(--steam-red); }
+
+        .game-meta { 
+            display: flex; justify-content: space-between; align-items: center; width: 100%;
+        }
+        .meta-year {
+            font-size: 0.85rem; color: var(--steam-grey); flex-grow: 1; text-align: center;
+        }
+        .meta-icon {
+            font-size: 1rem; color: var(--steam-text);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .btn-load-more {
+            background: rgba(255, 255, 255, 0.1); color: #fff;
+            border: 1px solid #3a404d; padding: 12px 30px;
+            border-radius: 2px; cursor: pointer; transition: 0.2s;
+            font-size: 0.95rem; display: block; margin: 0 auto;
+        }
+        .btn-load-more:hover { background: rgba(255, 255, 255, 0.2); border-color: var(--steam-blue);}
+
+        /* MODALES (POPUP DE JUEGO) */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000;
+            padding: 40px 20px; box-sizing: border-box; overflow-y: auto; 
+        }
+        .modal-overlay.activo { display: flex; align-items: center; justify-content: center;}
+        
+        .modal-content {
+            background: var(--steam-header); border: 1px solid #3a404d; border-radius: 8px;
+            width: 100%; max-width: 750px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            padding: 30px; box-sizing: border-box; color: var(--steam-text); margin: auto;
+        }
+        .btn-cerrar {
+            position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--steam-text);
+            font-size: 1.5rem; cursor: pointer; transition: 0.2s; z-index: 10;
+        }
+        .btn-cerrar:hover { color: #fff; transform: scale(1.1);}
+
+        .modal-game-layout { display: flex; gap: 30px; align-items: flex-start;}
+        .modal-game-left { width: 250px; flex-shrink: 0; }
+        .modal-game-left img, .modal-game-left video {
+            width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .modal-game-right { flex-grow: 1; display: flex; flex-direction: column; gap: 20px; }
+        .modal-game-title { font-size: 1.8rem; color: #fff; margin: 0; line-height: 1.3;}
+        
+        .modal-game-link { color: var(--steam-blue); cursor: pointer; text-decoration: none; transition: color 0.2s; display: inline-flex; align-items: center; gap: 8px;}
+        .modal-game-link:hover { text-decoration: none !important; color: #fff; } /* Removido el subrayado */
+
+        footer { border-top: 1px solid #3a404d; padding: 30px 20px; text-align: center; font-size: 0.85rem; color: #8f98a0; background: var(--steam-header); margin-top: auto;}
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) { 
+            .library-grid { grid-template-columns: repeat(4, 1fr); } 
+        }
+        @media (max-width: 768px) {
+            .header-content { justify-content: center; gap: 20px;}
+            .profile-wrapper { flex-direction: column; align-items: center; text-align: center; }
+            .profile-country { align-items: center; }
+            .profile-stats { align-items: center; width: 100%;}
+            .featured-badge { justify-content: center; width: 100%;}
+            .btn-steam { width: 100%; }
+            .library-grid { grid-template-columns: repeat(3, 1fr); }
+            
+            /* Lista vertical responsiva para Pestañas */
+            .library-tabs { flex-direction: column; gap: 5px; padding-bottom: 5px;}
+            .library-tab {
+                border-bottom: none !important; border-left: 3px solid transparent;
+                text-align: left; justify-content: flex-start; padding: 12px 15px;
+                background: rgba(255,255,255,0.05); border-radius: 4px;
+            }
+            .library-tab.active {
+                background: rgba(0,0,0,0.4);
+            }
+            .tab-todo.active { border-left-color: var(--steam-blue); }
+            .tab-jugando.active { border-left-color: var(--steam-green); }
+            .tab-online.active { border-left-color: var(--steam-cyan); }
+            .tab-pendiente.active { border-left-color: var(--steam-orange); }
+            .tab-completado.active { border-left-color: var(--steam-blue); }
+            .tab-porjugar.active { border-left-color: var(--steam-grey); }
+            .tab-abandonado.active { border-left-color: var(--steam-red); }
+
+            .library-filters-row { flex-direction: column; align-items: stretch; gap: 10px; }
+            .library-search input { width: 100%; }
+            .library-sort { justify-content: space-between; }
+
+            .modal-game-layout { flex-direction: column; align-items: center; text-align: center; }
+            .modal-game-left { width: 200px; }
+            .modal-game-link { justify-content: center; }
+        }
+        @media (max-width: 580px) {
+            .library-grid { grid-template-columns: repeat(2, 1fr); gap: 15px;}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-video-container">
+        <video src="https://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/1239690/dcfed8cceb3d7c74432294aec5fff49050b2ef1b.mp4" autoplay loop muted playsinline></video>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-content">
+            <div class="header-logo">
+                <i class="fa-brands fa-steam"></i> GAMER ODYSSEY
+            </div>
+            <nav class="header-nav">
+                <a href="#" class="nav-item">Blog</a>
+                <div class="dropdown">
+                    <span class="nav-item">Streams <i class="fa-solid fa-caret-down"></i></span>
+                    <div class="dropdown-menu">
+                        <a href="#"><i class="fa-brands fa-youtube"></i> YouTube</a>
+                        <a href="#"><i class="fa-brands fa-twitch"></i> Twitch</a>
+                        <a href="#"><i class="fa-brands fa-kickstarter"></i> Kick</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-item">Discord</a>
+                <div class="dropdown">
+                    <span class="nav-item">Social <i class="fa-solid fa-caret-down"></i></span>
+                    <div class="dropdown-menu">
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+                        <a href="#"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                        <a href="#"><i class="fa-brands fa-tiktok"></i> TikTok</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-item">Foro</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- SECCIÓN PERFIL -->
+        <div class="profile-wrapper">
+            <div class="avatar-section">
+                <img src="https://avatars.fastly.steamstatic.com/fe6c30d1abea5d3632a041acb1775ba7f985b392_full.jpg" alt="Avatar" class="avatar-img">
+                <img src="https://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/1263950/175875a819256fdeb4a2f4bf1b124afba6c3e2e3.png" alt="Frame" class="avatar-frame">
+            </div>
+
+            <div class="profile-info">
+                <h1 class="profile-name">eltorga</h1>
+                <div class="profile-country">
+                    <img src="https://flagcdn.com/w40/ec.png" alt="Bandera de Ecuador" style="width: 24px; border-radius: 2px;">
+                    <br>
+                    <span>Ecuador</span>
+                </div>
+                <p class="profile-desc">Aquí documento mi travesía por los videojuegos, desde clásicos hasta los últimos lanzamientos. ¡Únete a la odisea!</p>
+            </div>
+
+            <div class="profile-stats">
+                <div class="level-container">
+                    Nivel <div class="level-circle">189</div>
+                </div>
+                <div class="featured-badge">
+                    <img src="https://community.fastly.steamstatic.com/public/images/badges/48_communitycontributor/1_80.png" alt="Medalla">
+                    <div class="badge-details">
+                        <span class="badge-name">Gamer Odyssey</span>
+                        <span class="badge-xp">5,000 XP</span>
+                    </div>
+                </div>
+                <a href="#" target="_blank" class="btn-steam" style="width: 100%; box-sizing: border-box; margin-top: 5px;">
+                    <i class="fa-solid fa-gamepad"></i> Ver Biblioteca
+                </a>
+            </div>
+        </div>
+
+        <!-- CARRUSEL DE PLATAFORMAS CON SIMPLEICONS -->
+        <div class="platforms-section">
+            <button class="nav-btn" onclick="moverCarrusel('platforms-track', -1)" style="background: rgba(0,0,0,0.6); color: #fff; border: 1px solid #3a404d; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="platforms-track" id="platforms-track">
+                <a href="https://steamcommunity.com/id/eltorga/" target="_blank" class="platform-btn">
+                    <i class="fa-brands fa-steam"></i> <span class="plat-text">Steam</span>
+                </a>
+                <div class="platform-btn" onclick="toggleID(this, 'PlayStation', 'eltorgaHD')">
+                    <i class="fa-brands fa-playstation"></i> <span class="plat-text">PlayStation</span>
+                </div>
+                <a href="https://www.xbox.com/es-ES/play/user/Torgaddon3820" target="_blank" class="platform-btn">
+                    <i class="fa-brands fa-xbox"></i> <span class="plat-text">Xbox</span>
+                </a>
+                <div class="platform-btn" onclick="toggleID(this, 'Epic Games', 'eltorga')">
+                    <span class="simple-icon-mask icon-epic"></span> <span class="plat-text">Epic Games</span>
+                </div>
+                <div class="platform-btn" onclick="toggleID(this, 'Ubisoft', 'eltorga')">
+                    <span class="simple-icon-mask icon-ubi"></span> <span class="plat-text">Ubisoft</span>
+                </div>
+                <div class="platform-btn" onclick="toggleID(this, 'EA Connect', 'eltorga')">
+                    <span class="simple-icon-mask icon-ea"></span> <span class="plat-text">EA Connect</span>
+                </div>
+                <a href="https://www.gog.com/u/eltorga" target="_blank" class="platform-btn">
+                    <span class="simple-icon-mask icon-gog"></span> <span class="plat-text">GOG</span>
+                </a>
+            </div>
+            <button class="nav-btn" onclick="moverCarrusel('platforms-track', 1)" style="background: rgba(0,0,0,0.6); color: #fff; border: 1px solid #3a404d; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- SECCIÓN BIBLIOTECA                             -->
+        <!-- ============================================== -->
+        <div class="library-container" id="library-top">
+            
+            <div class="library-controls-wrapper">
+                <div class="library-tabs" id="library-tabs">
+                    <!-- Dinámico vía JS -->
+                </div>
+
+                <div class="library-filters-row">
+                    
+                    <!-- Búsqueda (Con X dinámica) -->
+                    <div class="library-search">
+                        <i class="fa-solid fa-search" style="color: var(--steam-grey);"></i>
+                        <input type="text" id="search-game" placeholder="Buscar juego..." oninput="manejarBusqueda()">
+                        <i class="fa-solid fa-xmark clear-search" id="clear-search-btn" onclick="limpiarBusqueda()"></i>
+                    </div>
+                    
+                    <!-- Plataformas -->
+                    <div class="library-sort">
+                        <span>Plataformas:</span>
+                        <select id="plat-select" onchange="aplicarFiltrosYOrden()">
+                            <option value="Todas">(Todo)</option>
+                        </select>
+                    </div>
+
+                    <!-- Ordenar -->
+                    <div class="library-sort">
+                        <span>Ordenar:</span>
+                        <select id="sort-select" onchange="aplicarFiltrosYOrden()">
+                            <option value="none">(Todo)</option>
+                            <option value="az">A - Z</option>
+                            <option value="za">Z - A</option>
+                        </select>
+                    </div>
+
+                    <!-- Año -->
+                    <div class="library-sort">
+                        <span>Año:</span>
+                        <select id="year-sort-select" onchange="aplicarFiltrosYOrden()">
+                            <option value="none">(Todo)</option>
+                            <option value="asc">Ascendente</option>
+                            <option value="desc">Descendente</option>
+                        </select>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div id="filtro-anio-aviso" style="display:none; color: var(--steam-grey); font-size: 0.9rem; margin-bottom: 15px;"></div>
+
+            <!-- Loader -->
+            <div id="loader-biblioteca" style="text-align: center; padding: 20px; color: var(--steam-blue);">
+                <i class="fa-solid fa-circle-notch fa-spin fa-3x"></i>
+                <p>Cargando juegos...</p>
+            </div>
+
+            <!-- Grid de Juegos Verticales -->
+            <div class="library-grid" id="library-grid"></div>
+
+            <button class="btn-load-more" id="btn-load-more" onclick="cargarMas()" style="display: none;">
+                Cargar más...
+            </button>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© Gamer Odyssey All Rights Reserved. 2026 Creado por César Aguilar.</p>
+        <p>Toda la información y los logos de plataformas pertenecen a sus respectivos dueños.</p>
+    </footer>
+
+    <!-- MODAL POPUP DE CADA JUEGO -->
+    <div id="modal-juego-detalle" class="modal-overlay" onclick="cerrarModal(event, 'modal-juego-detalle')">
+        <div class="modal-content">
+            <button class="btn-cerrar" onclick="cerrarModalForce('modal-juego-detalle')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="modal-game-layout">
+                <div class="modal-game-left" id="modal-game-media">
+                    <!-- Se inyecta la portada dinámicamente -->
+                </div>
+                <div class="modal-game-right">
+                    <h2 class="modal-game-title" id="modal-game-title">Cargando...</h2>
+                    
+                    <div style="color: var(--steam-grey); font-size: 0.95rem; display: flex; flex-direction: column; gap: 15px; margin-top: 10px;">
+                        <div>
+                            <span style="display:block; margin-bottom:4px;">Año de Lanzamiento:</span>
+                            <span class="modal-game-link" id="modal-game-year" title="Ver juegos de este año"><i class="fa-regular fa-calendar"></i> <span>2020</span></span>
+                        </div>
+                        <div>
+                            <span style="display:block; margin-bottom:4px;">Plataforma:</span>
+                            <span class="modal-game-link" id="modal-game-plat" title="Ver juegos de esta plataforma">PC</span>
+                        </div>
+                        <div>
+                            <span style="display:block; margin-bottom:4px;">Estado de biblioteca:</span>
+                            <span class="modal-game-link" id="modal-game-status" title="Filtrar por este estado">Jugando</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function moverCarrusel(id, direccion) {
+            const track = document.getElementById(id);
+            const scrollAmount = 225; 
+            track.scrollBy({ left: scrollAmount * direccion, behavior: 'smooth' });
+        }
+
+        function toggleID(btn, textoOriginal, idText) {
+            const textSpan = btn.querySelector('.plat-text');
+            if (btn.classList.contains('revealed')) {
+                btn.classList.remove('revealed');
+                textSpan.textContent = textoOriginal;
+            } else {
+                btn.classList.add('revealed');
+                textSpan.textContent = "id: " + idText;
+            }
+        }
+
+        function cerrarModal(e, id) { if (e.target.id === id) cerrarModalForce(id); }
+        function cerrarModalForce(id) { document.getElementById(id).classList.remove('activo'); }
+
+        // =========================================================
+        // DICCIONARIOS DE ICONOS
+        // =========================================================
+        function obtenerIconoPlataforma(plataformaCSV) {
+            if(!plataformaCSV) return '<i class="fa-solid fa-gamepad" title="Desconocido"></i>';
+            const plat = plataformaCSV.trim().toUpperCase();
+
+            const consolasPlaystation = ["PS1", "PS2", "PS3", "PS4", "PS5", "PS6", "PSP", "PS VITA"];
+            if (consolasPlaystation.includes(plat)) return `<i class="fa-brands fa-playstation" title="${plat}"></i>`;
+
+            const consolasPC = ["PC", "DOS"];
+            if (consolasPC.includes(plat)) return `<i class="fa-solid fa-desktop" title="${plat}"></i>`;
+
+            const nintendoHandhelds = ["GB", "GBC", "GBA", "NDS", "3DS", "SWITCH", "SWITCH 2"];
+            if (nintendoHandhelds.includes(plat)) return `<i class="fa-solid fa-tablet-screen-button" title="${plat}"></i>`;
+            
+            const nintendoConsolas = ["N64", "NGC", "WII", "WIIU"];
+            if (nintendoConsolas.includes(plat)) return `<i class="fa-solid fa-gamepad" title="${plat}"></i>`;
+
+            const consolasXbox = ["XBOX", "XBOX 360", "XBOX ONE", "XBOX SERIES"];
+            if (consolasXbox.includes(plat)) return `<i class="fa-brands fa-xbox" title="${plat}"></i>`;
+
+            if (plat === "JAVA") return `<i class="fa-brands fa-java" title="${plat}"></i>`;
+            if (plat === "ANDROID") return `<i class="fa-solid fa-mobile-screen-button" title="${plat}"></i>`;
+
+            return `<i class="fa-solid fa-gamepad" title="${plat}"></i>`;
+        }
+
+        function obtenerIconoEstado(estadoCSV, claseColorCSS) {
+            const estado = estadoCSV.trim().toLowerCase();
+            let claseIcono = "";
+            let tooltip = estadoCSV;
+
+            if (estado === "completado") claseIcono = "fa-solid fa-circle-check";
+            else if (estado === "jugando") claseIcono = "fa-solid fa-circle-play";
+            else if (estado === "online") claseIcono = "fa-solid fa-globe";
+            else if (estado === "pendiente") claseIcono = "fa-solid fa-pause";
+            else if (estado === "abandonado") claseIcono = "fa-solid fa-xmark";
+            else claseIcono = "fa-solid fa-clock"; // Por Jugar
+
+            return `<i class="${claseIcono} ${claseColorCSS}" title="${tooltip}"></i>`;
+        }
+
+        // ==============================================
+        // LÓGICA DE LA BÚSQUEDA X
+        // ==============================================
+        function manejarBusqueda() {
+            const input = document.getElementById('search-game');
+            const clearBtn = document.getElementById('clear-search-btn');
+            if (input.value.length > 0) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+            aplicarFiltrosYOrden();
+        }
+
+        function limpiarBusqueda() {
+            const input = document.getElementById('search-game');
+            input.value = '';
+            document.getElementById('clear-search-btn').style.display = 'none';
+            aplicarFiltrosYOrden();
+        }
+
+        // ==============================================
+        // LÓGICA DE LA BIBLIOTECA (CSV)
+        // ==============================================
+        const CSV_BIBLIOTECA = "https://docs.google.com/spreadsheets/d/1lC1_zq7sVZYMO2UtmkZ3hTm-kJaJDXOcLDHyK9mfOCE/export?format=csv";
+        
+        let bd_juegos = [];
+        let juegosFiltrados = [];
+        let juegosMostrados = 0;
+        const CARGA_INICIAL = 20; 
+        const CARGA_EXTRA = 20;   
+        
+        let filtroTab = "Todo";
+        let filtroPlataforma = "Todas";
+        let filtroAnio = "Todos";
+
+        window.onload = () => {
+            Papa.parse(CSV_BIBLIOTECA, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    bd_juegos = results.data.filter(row => {
+                        if (!row.JUEGO || row.JUEGO.trim() === '') return false;
+                        const estado = row.ESTADO ? row.ESTADO.trim().toLowerCase() : "";
+                        return estado !== "invisible";
+                    });
+
+                    document.getElementById('loader-biblioteca').style.display = 'none';
+                    popularFiltroPlataformas();
+                    cambiarFiltro('Todo');
+                },
+                error: function(err) {
+                    document.getElementById('loader-biblioteca').innerHTML = "<p style='color:red;'>Error al cargar la biblioteca.</p>";
+                }
+            });
+        };
+
+        function popularFiltroPlataformas() {
+            const platSelect = document.getElementById('plat-select');
+            const plataformas = new Set();
+            bd_juegos.forEach(j => {
+                if(j.PLATAFORMA) plataformas.add(j.PLATAFORMA.trim());
+            });
+            const platArray = Array.from(plataformas).sort();
+            
+            platSelect.innerHTML = `<option value="Todas">(Todo)</option>`;
+            platArray.forEach(p => {
+                platSelect.innerHTML += `<option value="${p}">${p}</option>`;
+            });
+        }
+
+        function cambiarFiltro(nuevoTab) {
+            filtroTab = nuevoTab;
+            filtroAnio = "Todos"; 
+            aplicarFiltrosYOrden();
+        }
+
+        function limpiarFiltroAnio() {
+            filtroAnio = "Todos";
+            document.getElementById('year-sort-select').value = "none";
+            aplicarFiltrosYOrden();
+        }
+
+        function actualizarContadores(searchStr = "") {
+            let counts = {
+                'todo': 0, 'jugando': 0, 'online': 0, 'pendiente': 0, 
+                'completado': 0, 'por jugar': 0, 'abandonado': 0
+            };
+
+            bd_juegos.forEach(j => {
+                const matchPlat = filtroPlataforma === "Todas" || j.PLATAFORMA.trim() === filtroPlataforma;
+                const matchAnio = filtroAnio === "Todos" || j.AÑO.toString() === filtroAnio;
+                const matchSearch = searchStr === "" || j.JUEGO.toLowerCase().includes(searchStr);
+                
+                if (matchPlat && matchAnio && matchSearch) {
+                    counts['todo']++;
+                    const est = j.ESTADO.toLowerCase().trim();
+                    if (counts[est] !== undefined) counts[est]++;
+                }
+            });
+
+            const tabsDiv = document.getElementById('library-tabs');
+            tabsDiv.innerHTML = `
+                <button class="library-tab tab-todo ${filtroTab==='Todo'?'active':''}" onclick="cambiarFiltro('Todo')">Todo <span class="count-capsule">${counts['todo']}</span></button>
+                <button class="library-tab tab-jugando ${filtroTab==='Jugando'?'active':''}" onclick="cambiarFiltro('Jugando')">Jugando <span class="count-capsule">${counts['jugando']}</span></button>
+                <button class="library-tab tab-online ${filtroTab==='Online'?'active':''}" onclick="cambiarFiltro('Online')">Jugando Online <span class="count-capsule">${counts['online']}</span></button>
+                <button class="library-tab tab-pendiente ${filtroTab==='Pendiente'?'active':''}" onclick="cambiarFiltro('Pendiente')">Pendientes <span class="count-capsule">${counts['pendiente']}</span></button>
+                <button class="library-tab tab-completado ${filtroTab==='Completado'?'active':''}" onclick="cambiarFiltro('Completado')">Completados <span class="count-capsule">${counts['completado']}</span></button>
+                <button class="library-tab tab-porjugar ${filtroTab==='Por Jugar'?'active':''}" onclick="cambiarFiltro('Por Jugar')">Por Jugar <span class="count-capsule">${counts['por jugar']}</span></button>
+                <button class="library-tab tab-abandonado ${filtroTab==='Abandonado'?'active':''}" onclick="cambiarFiltro('Abandonado')">Abandonados <span class="count-capsule">${counts['abandonado']}</span></button>
+            `;
+        }
+
+        function aplicarFiltrosYOrden() {
+            filtroPlataforma = document.getElementById('plat-select').value;
+            const searchStr = document.getElementById('search-game').value.toLowerCase().trim();
+            const selectSort = document.getElementById('sort-select').value;
+            const selectYearSort = document.getElementById('year-sort-select').value;
+            
+            actualizarContadores(searchStr);
+
+            const anioAviso = document.getElementById('filtro-anio-aviso');
+            if(filtroAnio !== "Todos") {
+                anioAviso.style.display = "block";
+                anioAviso.innerHTML = `Viendo juegos del año: <span>${filtroAnio}</span> <span onclick="limpiarFiltroAnio()" style="cursor:pointer; color:var(--steam-blue); margin-left: 10px;">[Quitar filtro]</span>`;
+            } else {
+                anioAviso.style.display = "none";
+            }
+
+            // Filtrar Base de Datos
+            juegosFiltrados = bd_juegos.filter(j => {
+                const matchTab = filtroTab === "Todo" || j.ESTADO.trim().toLowerCase() === filtroTab.toLowerCase();
+                const matchPlat = filtroPlataforma === "Todas" || j.PLATAFORMA.trim() === filtroPlataforma;
+                const matchAnio = filtroAnio === "Todos" || j.AÑO.toString() === filtroAnio;
+                const matchSearch = searchStr === "" || j.JUEGO.toLowerCase().includes(searchStr);
+                return matchTab && matchPlat && matchAnio && matchSearch;
+            });
+
+            // Ordenar: Combinación Año y Nombre
+            juegosFiltrados.sort((a, b) => {
+                let cmp = 0;
+                
+                if (selectYearSort === 'asc') {
+                    cmp = (parseInt(a.AÑO) || 0) - (parseInt(b.AÑO) || 0);
+                } else if (selectYearSort === 'desc') {
+                    cmp = (parseInt(b.AÑO) || 0) - (parseInt(a.AÑO) || 0);
+                }
+
+                if (cmp === 0) {
+                    if (selectSort === 'az') {
+                        cmp = (a.JUEGO||"").localeCompare(b.JUEGO||"");
+                    } else if (selectSort === 'za') {
+                        cmp = (b.JUEGO||"").localeCompare(a.JUEGO||"");
+                    }
+                }
+                
+                return cmp;
+            });
+
+            juegosMostrados = 0;
+            document.getElementById('library-grid').innerHTML = ""; 
+            cargarMas(CARGA_INICIAL);
+        }
+
+        function cargarMas(cantidad = CARGA_EXTRA) {
+            const grid = document.getElementById('library-grid');
+            const totalFiltro = juegosFiltrados.length;
+            const metaCarga = Math.min(juegosMostrados + cantidad, totalFiltro);
+
+            let htmlToAppend = "";
+
+            for (let i = juegosMostrados; i < metaCarga; i++) {
+                const juego = juegosFiltrados[i];
+                
+                let colorClase = "color-por-jugar";
+                const est = juego.ESTADO.trim().toLowerCase();
+                
+                if (est === "completado") colorClase = "color-completado";
+                else if (est === "jugando") colorClase = "color-jugando";
+                else if (est === "online") colorClase = "color-online";
+                else if (est === "pendiente") colorClase = "color-pendiente";
+                else if (est === "abandonado") colorClase = "color-abandonado";
+
+                let urlMedia = juego.PORTADA || "https://via.placeholder.com/600x900?text=Sin+Portada";
+                let mediaHTML = "";
+                if (urlMedia.toLowerCase().endsWith('.webm') || urlMedia.toLowerCase().endsWith('.mp4')) {
+                    // preload="none" evita saturar la memoria, insertAdjacentHTML previene parpadeos
+                    mediaHTML = `<video src="${urlMedia}" autoplay loop muted playsinline preload="none"></video>`;
+                } else {
+                    mediaHTML = `<img src="${urlMedia}" alt="${juego.JUEGO}" loading="lazy">`;
+                }
+
+                const iconoPlatHTML = obtenerIconoPlataforma(juego.PLATAFORMA);
+                const iconoEstHTML = obtenerIconoEstado(juego.ESTADO, colorClase);
+                
+                const juegoJsonSeguro = encodeURIComponent(JSON.stringify(juego)).replace(/'/g, "%27");
+
+                htmlToAppend += `
+                    <div class="game-card" onclick="abrirModalJuego('${juegoJsonSeguro}')">
+                        <div class="game-media-container">
+                            ${mediaHTML}
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title ${colorClase}" title="${juego.JUEGO}">${juego.JUEGO}</h3>
+                            <div class="game-meta">
+                                <div class="meta-icon">${iconoPlatHTML}</div>
+                                <div class="meta-year">${juego.AÑO || "-"}</div>
+                                <div class="meta-icon">${iconoEstHTML}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Inyecta sin recargar el DOM actual (Súper Rápido, Cero Parpadeos)
+            grid.insertAdjacentHTML('beforeend', htmlToAppend);
+            juegosMostrados = metaCarga;
+
+            const btnLoadMore = document.getElementById('btn-load-more');
+            if (juegosMostrados < totalFiltro) {
+                btnLoadMore.style.display = "block";
+            } else {
+                btnLoadMore.style.display = "none";
+            }
+        }
+
+        // ==============================================
+        // LÓGICA DEL POPUP DE CADA JUEGO Y FILTROS
+        // ==============================================
+        function abrirModalJuego(juegoJsonEncoded) {
+            const juego = JSON.parse(decodeURIComponent(juegoJsonEncoded));
+            
+            let colorClase = "color-por-jugar";
+            const est = juego.ESTADO.trim().toLowerCase();
+            if (est === "completado") colorClase = "color-completado";
+            else if (est === "jugando") colorClase = "color-jugando";
+            else if (est === "online") colorClase = "color-online";
+            else if (est === "pendiente") colorClase = "color-pendiente";
+            else if (est === "abandonado") colorClase = "color-abandonado";
+
+            let urlMedia = juego.PORTADA || "https://via.placeholder.com/600x900?text=Sin+Portada";
+            const mediaCont = document.getElementById('modal-game-media');
+            if (urlMedia.toLowerCase().endsWith('.webm') || urlMedia.toLowerCase().endsWith('.mp4')) {
+                mediaCont.innerHTML = `<video src="${urlMedia}" autoplay loop muted playsinline preload="auto"></video>`;
+            } else {
+                mediaCont.innerHTML = `<img src="${urlMedia}" alt="${juego.JUEGO}">`;
+            }
+
+            document.getElementById('modal-game-title').textContent = juego.JUEGO;
+            
+            // Link de Año
+            const yrLink = document.getElementById('modal-game-year');
+            yrLink.innerHTML = `<i class="fa-regular fa-calendar"></i> <span>${juego.AÑO || "Desconocido"}</span>`;
+            if(juego.AÑO) {
+                yrLink.onclick = () => filtrarDesdePopup('anio', juego.AÑO);
+            } else {
+                yrLink.onclick = null;
+            }
+
+            // Link de Plataforma
+            const platLink = document.getElementById('modal-game-plat');
+            const iconoPlatHTML = obtenerIconoPlataforma(juego.PLATAFORMA);
+            platLink.innerHTML = `${iconoPlatHTML} <span>${juego.PLATAFORMA || "Desconocida"}</span>`;
+            if(juego.PLATAFORMA) {
+                platLink.onclick = () => filtrarDesdePopup('plat', juego.PLATAFORMA);
+            } else {
+                platLink.onclick = null;
+            }
+
+            // Link de Estado
+            const estLink = document.getElementById('modal-game-status');
+            const iconoEstHTML = obtenerIconoEstado(juego.ESTADO, colorClase);
+            estLink.innerHTML = `${iconoEstHTML} <span class="${colorClase}">${juego.ESTADO}</span>`;
+            estLink.onclick = () => filtrarDesdePopup('estado', juego.ESTADO);
+
+            document.getElementById('modal-juego-detalle').classList.add('activo');
+        }
+
+        // Filtra al hacer click dentro del Modal y sube a los botones
+        function filtrarDesdePopup(tipo, valor) {
+            if(!valor) return;
+            cerrarModalForce('modal-juego-detalle');
+            
+            if(tipo === 'anio') {
+                filtroAnio = valor.toString().trim();
+                aplicarFiltrosYOrden();
+                document.getElementById('library-top').scrollIntoView({behavior: 'smooth'});
+            } else if (tipo === 'plat') {
+                document.getElementById('plat-select').value = valor.trim();
+                aplicarFiltrosYOrden();
+                document.getElementById('library-top').scrollIntoView({behavior: 'smooth'});
+            } else if (tipo === 'estado') {
+                cambiarFiltro(valor.trim()); 
+                document.getElementById('library-top').scrollIntoView({behavior: 'smooth'});
+            }
+        }
+    </script>
+</body>
+</html>
