@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamer Odyssey - Perfil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --steam-bg: #1b2838;
+            --steam-header: #171a21;
+            --steam-blue: #66c0f4;
+            --steam-dark-blue: #2a475e;
+            --steam-text: #c7d5e0;
+            --steam-light: #ebebeb;
+            --border-radius: 4px;
+            --completado: #4caf50;
+            --jugando: #2196f3;
+        }
+
+        body {
+            font-family: "Motiva Sans", Sans-serif, Arial;
+            background-color: var(--steam-bg);
+            color: var(--steam-text);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* FONDO DE VIDEO GLOBAL */
+        .bg-video-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+        }
+        .bg-video-container video {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.4;
+        }
+
+        /* HEADER ESTILO STEAM (Alineado a la izquierda) */
+        header {
+            background-color: var(--steam-header);
+            height: auto;
+            min-height: 104px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 20px;
+            text-transform: uppercase;
+            box-sizing: border-box;
+        }
+        .header-content {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Alineación estilo Steam */
+            gap: 40px; /* Separación entre el logo y los menús */
+            flex-wrap: wrap;
+        }
+        .header-logo {
+            font-size: 1.8rem;
+            font-weight: 400; 
+            color: var(--steam-light);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+        .header-logo i {
+            font-size: 2.8rem; /* Ícono de Steam más grande */
+        }
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        .nav-item {
+            color: var(--steam-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 400; 
+            padding: 10px 5px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .nav-item:hover { color: var(--steam-light); }
+        .nav-item.active { color: var(--steam-blue); border-bottom: 2px solid var(--steam-blue); }
+        
+        /* DROPDOWNS */
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none; position: absolute; top: 100%; left: 0;
+            background-color: #3d4450; min-width: 160px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 100;
+            flex-direction: column; border-radius: 2px;
+        }
+        .dropdown:hover .dropdown-menu { display: flex; }
+        .dropdown-menu a {
+            color: var(--steam-text); padding: 12px 15px; text-decoration: none;
+            font-size: 0.85rem; transition: background 0.2s; display: flex; align-items: center; gap: 10px;
+        }
+        .dropdown-menu a:hover { background-color: var(--steam-blue); color: #fff; }
+
+        .main-container { max-width: 960px; margin: 40px auto; padding: 0 20px; }
+
+        /* SECCIÓN PERFIL */
+        .profile-wrapper {
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: var(--border-radius); display: flex;
+            gap: 30px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            align-items: flex-start;
+        }
+        
+        .avatar-section { position: relative; width: 166px; height: 166px; flex-shrink: 0; margin: 0 auto;}
+        .avatar-img {
+            width: 100%; height: 100%; border-radius: 10px;
+            object-fit: cover; border: 2px solid #3a404d;
+        }
+        .avatar-frame {
+            position: absolute; top: -15px; left: -15px;
+            width: calc(100% + 30px); height: calc(100% + 30px);
+            pointer-events: none; z-index: 2;
+        }
+
+        .profile-info { flex-grow: 1; display: flex; flex-direction: column;}
+        .profile-name { font-size: 2rem; color: #fff; margin: 0 0 5px 0; font-weight: 300; }
+        .profile-country {
+            font-size: 0.95rem; color: #8f98a0; margin: 0 0 15px 0; 
+            display: flex; align-items: center; gap: 8px;
+        }
+        .profile-desc { font-size: 0.95rem; line-height: 1.5; color: var(--steam-text); margin-bottom: 20px; }
+
+        .profile-stats {
+            display: flex; flex-direction: column; align-items: flex-end; min-width: 200px; gap: 15px;
+        }
+        .level-container { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; color: #fff;}
+        .level-circle {
+            width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--steam-blue);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 400; 
+            font-size: 1.1rem; line-height: 0; padding-top: 2px;
+        }
+        .featured-badge {
+            background: rgba(0,0,0,0.4); padding: 10px; border-radius: 5px;
+            display: flex; align-items: center; gap: 15px; width: 100%; border: 1px solid rgba(255,255,255,0.05);
+            box-sizing: border-box;
+        }
+        .featured-badge img { width: 50px; height: 50px; }
+        .badge-details { display: flex; flex-direction: column; }
+        .badge-name { color: #fff; font-size: 0.9rem; margin-bottom: 3px; }
+        .badge-xp { color: #8f98a0; font-size: 0.8rem; }
+
+        .btn-steam {
+            background: linear-gradient( to bottom, rgba(121,153,5,1) 5%, rgba(83,105,4,1) 95%);
+            color: #d2efa9; border: none; padding: 10px 15px; border-radius: 2px;
+            cursor: pointer; font-size: 0.9rem; text-decoration: none; display: flex;
+            align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
+        }
+        .btn-steam:hover { background: linear-gradient( to bottom, rgba(136,173,6,1) 5%, rgba(100,126,5,1) 95%); color: #fff; }
+
+        /* CARRUSEL DE PLATAFORMAS */
+        .platforms-section {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 40px;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); padding: 15px;
+            border-radius: var(--border-radius); box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .platforms-track {
+            display: flex; gap: 15px; overflow-x: auto; scroll-behavior: smooth;
+            scrollbar-width: none; flex-grow: 1; padding: 5px 0;
+        }
+        .platforms-track::-webkit-scrollbar { display: none; }
+        .platform-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #2a3f5a; padding: 10px 20px; border-radius: 4px; flex-shrink: 0;
+            color: var(--steam-text); font-size: 0.9rem; cursor: pointer; text-decoration: none;
+            border: 1px solid #3a404d; transition: all 0.3s ease; min-width: 180px; box-sizing: border-box;
+        }
+        .platform-btn i { font-size: 1.2rem; }
+        .platform-btn:hover { background: var(--steam-dark-blue); color: #fff; border-color: var(--steam-blue); transform: translateY(-2px);}
+        
+        .platform-btn.revealed { background: var(--steam-blue); color: #fff; border-color: var(--steam-blue); }
+        .platform-btn.revealed:hover { background: var(--steam-dark-blue); }
+
+        /* SECCIÓN PLAYLISTS */
+        .playlist-row {
+            margin-bottom: 40px; border-radius: 8px; overflow: hidden; background-size: cover;
+            background-position: center; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            border: 3px solid #3a404d;
+            transition: border-color 0.3s ease; 
+        }
+        .playlist-row.completado:hover { border-color: var(--completado); }
+        .playlist-row.jugando:hover { border-color: var(--jugando); }
+
+        .playlist-overlay {
+            background: linear-gradient(to right, rgba(23,26,33,1) 0%, rgba(23,26,33,0.85) 50%, rgba(23,26,33,0.5) 100%);
+            padding: 20px; width: 100%; height: 100%; box-sizing: border-box;
+        }
+        .playlist-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;}
+        .playlist-icon { width: 40px; height: 40px; object-fit: contain; }
+        .playlist-title { margin: 0; color: #fff; font-size: 1.5rem; font-weight: 300; flex-grow: 1;}
+        .btn-play-all {
+            background: rgba(0,0,0,0.6); color: var(--steam-text); text-decoration: none; padding: 8px 15px;
+            border-radius: 4px; font-size: 0.9rem; border: 1px solid #3a404d; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        }
+        .btn-play-all:hover { color: #fff; background: var(--steam-dark-blue); border-color: var(--steam-blue);}
+
+        /* CARRUSEL DE VIDEOS */
+        .carousel-wrapper { position: relative; display: flex; align-items: center; gap: 10px;}
+        
+        /* Ajuste de padding/margin para evitar cortes en hover */
+        .carousel-track {
+            display: flex; gap: 15px; overflow-x: auto; scroll-behavior: smooth;
+            padding-top: 10px; margin-top: -10px; /* Compensa el espacio del hover */
+            padding-bottom: 10px; scrollbar-width: none; flex-grow: 1;
+        }
+        .carousel-track::-webkit-scrollbar { display: none; }
+        
+        .video-card {
+            min-width: 210px; width: 210px; flex-shrink: 0;
+            background: rgba(0,0,0,0.5); border-radius: 6px; cursor: pointer;
+            transition: transform 0.2s; position: relative; 
+        }
+        .video-card:hover { transform: translateY(-5px); background: rgba(0,0,0,0.8); }
+        .video-thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px 6px 0 0; }
+        .video-info { padding: 12px 10px; }
+        
+        .video-title { 
+            font-size: 0.85rem; font-weight: 400; margin: 0; color: #fff; display: -webkit-box; 
+            -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;
+        }
+        
+        .nav-btn {
+            background: rgba(0,0,0,0.6); color: #fff; border: 1px solid #3a404d;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s; font-size: 1.2rem; flex-shrink: 0;
+        }
+        .nav-btn:hover { background: var(--steam-blue); border-color: var(--steam-blue);}
+
+        /* MODALES */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000;
+            padding: 40px 20px; box-sizing: border-box; overflow-y: auto; 
+        }
+        .modal-overlay.activo { display: flex; align-items: flex-start; justify-content: center;}
+        
+        .modal-content {
+            background: var(--steam-header); border: 1px solid #3a404d; border-radius: 8px;
+            width: 100%; max-width: 850px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            padding: 30px; box-sizing: border-box; color: var(--steam-text); margin: auto;
+        }
+        .btn-cerrar {
+            position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--steam-text);
+            font-size: 1.5rem; cursor: pointer; transition: 0.2s; z-index: 10;
+        }
+        .btn-cerrar:hover { color: #fff; transform: scale(1.1);}
+
+        /* REPRODUCTOR DE VIDEO MODAL */
+        .video-player-container { 
+            position: relative; width: 100%; padding-bottom: 56.25%; background: #000; 
+            margin-bottom: 20px; border-radius: 6px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .video-player-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; 
+        }
+        .video-meta { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #3a404d; padding-bottom: 15px; gap: 20px;}
+        
+        .video-meta-left h2 { margin: 0 0 10px 0; color: #fff; font-size: 1.2rem; font-weight: 400; line-height: 1.4;}
+        .video-stats { display: flex; gap: 15px; font-size: 0.9rem; color: #8f98a0; flex-wrap: wrap;}
+        .btn-subscribe { 
+            background: #ff0000; color: #fff; text-decoration: none; padding: 10px 20px; 
+            border-radius: 20px; font-weight: 400; transition: 0.2s; white-space: nowrap; flex-shrink: 0;
+        }
+        .btn-subscribe:hover { background: #cc0000; }
+        
+        .video-desc { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 6px; font-size: 0.95rem; line-height: 1.5; }
+        
+        /* Ajuste de límite de líneas (Elimina espacios muertos) */
+        #vid-desc-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: pre-line; /* Mantiene saltos pero colapsa múltiples espacios */
+            color: var(--steam-text);
+        }
+        #vid-desc-text.expanded {
+            -webkit-line-clamp: unset;
+        }
+
+        .btn-mostrar-mas { background: none; border: none; color: var(--steam-blue); cursor: pointer; margin-top: 10px; font-size: 0.9rem; font-weight: 400; padding: 0;}
+        .btn-mostrar-mas:hover { text-decoration: underline; }
+        
+        /* Sección de Comentarios Integrada */
+        .comments-section { margin-top: 20px; display: none; padding-top: 15px; border-top: 1px dashed #3a404d;}
+        .comments-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
+        .comment-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .comment-author { color: #fff; font-weight: 400; font-size: 0.9rem; margin-bottom: 3px; display: block; }
+        .comment-text { font-size: 0.85rem; color: var(--steam-text); line-height: 1.4; }
+
+        .btn-comentar { display: inline-flex; align-items: center; gap: 8px; background: var(--steam-dark-blue); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 4px; transition: 0.2s; border: 1px solid var(--steam-blue); font-size: 0.9rem;}
+        .btn-comentar:hover { background: var(--steam-blue); }
+
+        /* FOOTER ESTILO STEAM */
+        footer { border-top: 1px solid #3a404d; padding: 30px 20px; text-align: center; font-size: 0.85rem; color: #8f98a0; background: var(--steam-header); margin-top: auto;}
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .header-content { justify-content: center; gap: 20px;}
+            .profile-wrapper { flex-direction: column; align-items: center; text-align: center; }
+            .profile-country { justify-content: center; }
+            .profile-stats { align-items: center; width: 100%;}
+            .featured-badge { justify-content: center; width: 100%;}
+            .btn-steam { width: 100%; }
+            .video-meta { flex-direction: column; align-items: stretch; }
+            .btn-subscribe { text-align: center; }
+            .playlist-header { justify-content: center; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-video-container">
+        <video src="https://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/1239690/dcfed8cceb3d7c74432294aec5fff49050b2ef1b.mp4" autoplay loop muted playsinline></video>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-content">
+            <div class="header-logo">
+                <i class="fa-brands fa-steam"></i> GAMER ODYSSEY
+            </div>
+            <nav class="header-nav">
+                <a href="#" class="nav-item">Blog</a>
+                <div class="dropdown">
+                    <span class="nav-item">Streams <i class="fa-solid fa-caret-down"></i></span>
+                    <div class="dropdown-menu">
+                        <a href="#"><i class="fa-brands fa-youtube"></i> YouTube</a>
+                        <a href="#"><i class="fa-brands fa-twitch"></i> Twitch</a>
+                        <a href="#"><i class="fa-brands fa-kickstarter"></i> Kick</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-item">Discord</a>
+                <div class="dropdown">
+                    <span class="nav-item">Social <i class="fa-solid fa-caret-down"></i></span>
+                    <div class="dropdown-menu">
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+                        <a href="#"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                        <a href="#"><i class="fa-brands fa-tiktok"></i> TikTok</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-item">Foro</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- SECCIÓN PERFIL -->
+        <div class="profile-wrapper">
+            <div class="avatar-section">
+                <img src="https://avatars.fastly.steamstatic.com/fe6c30d1abea5d3632a041acb1775ba7f985b392_full.jpg" alt="Avatar" class="avatar-img">
+                <img src="https://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/1263950/175875a819256fdeb4a2f4bf1b124afba6c3e2e3.png" alt="Frame" class="avatar-frame">
+            </div>
+
+            <div class="profile-info">
+                <h1 class="profile-name">eltorga</h1>
+                <p class="profile-country">
+                    <img src="https://flagcdn.com/w40/ec.png" alt="Bandera de Ecuador" style="width: 24px; vertical-align: middle; border-radius: 2px;">
+                    Ecuador
+                </p>
+                <p class="profile-desc">Aquí documento mi travesía por los videojuegos, desde clásicos hasta los últimos lanzamientos. ¡Únete a la odisea!</p>
+            </div>
+
+            <div class="profile-stats">
+                <div class="level-container">
+                    Nivel <div class="level-circle">189</div>
+                </div>
+                <div class="featured-badge">
+                    <img src="https://community.fastly.steamstatic.com/public/images/badges/48_communitycontributor/1_80.png" alt="Medalla">
+                    <div class="badge-details">
+                        <span class="badge-name">Gamer Odyssey</span>
+                        <span class="badge-xp">5,000 XP</span>
+                    </div>
+                </div>
+                <a href="#" target="_blank" class="btn-steam" style="width: 100%; box-sizing: border-box; margin-top: 5px;">
+                    <i class="fa-solid fa-gamepad"></i> Ver Biblioteca
+                </a>
+            </div>
+        </div>
+
+        <!-- CARRUSEL DE PLATAFORMAS CON TOGGLE -->
+        <div class="platforms-section">
+            <button class="nav-btn" onclick="moverCarrusel('platforms-track', -1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="platforms-track" id="platforms-track">
+                <a href="https://steamcommunity.com/id/eltorga/" target="_blank" class="platform-btn">
+                    <i class="fa-brands fa-steam"></i> <span class="plat-text">Steam</span>
+                </a>
+                <div class="platform-btn" onclick="toggleID(this, 'PlayStation', 'eltorgaHD')">
+                    <i class="fa-brands fa-playstation"></i> <span class="plat-text">PlayStation</span>
+                </div>
+                <a href="https://www.xbox.com/es-ES/play/user/Torgaddon3820" target="_blank" class="platform-btn">
+                    <i class="fa-brands fa-xbox"></i> <span class="plat-text">Xbox</span>
+                </a>
+                <div class="platform-btn" onclick="toggleID(this, 'Epic Games', 'eltorga')">
+                    <i class="fa-solid fa-e"></i> <span class="plat-text">Epic Games</span>
+                </div>
+                <div class="platform-btn" onclick="toggleID(this, 'Ubisoft', 'eltorga')">
+                    <i class="fa-solid fa-gamepad"></i> <span class="plat-text">Ubisoft</span>
+                </div>
+                <div class="platform-btn" onclick="toggleID(this, 'EA Connect', 'eltorga')">
+                    <i class="fa-solid fa-compact-disc"></i> <span class="plat-text">EA Connect</span>
+                </div>
+                <a href="https://www.gog.com/u/eltorga" target="_blank" class="platform-btn">
+                    <i class="fa-solid fa-rocket"></i> <span class="plat-text">GOG</span>
+                </a>
+            </div>
+            <button class="nav-btn" onclick="moverCarrusel('platforms-track', 1)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <div id="loader-pantalla" style="text-align: center; padding: 40px; color: var(--steam-blue);">
+            <i class="fa-solid fa-circle-notch fa-spin fa-3x"></i>
+            <p>Sincronizando listas de reproducción...</p>
+        </div>
+
+        <!-- CONTENEDOR DE PLAYLISTS -->
+        <div id="playlists-container"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© Gamer Odyssey All Rights Reserved. 2026 Creado por César Aguilar.</p>
+        <p>Toda la información y los logos de plataformas pertenecen a sus respectivos dueños.</p>
+    </footer>
+
+    <!-- MODAL REPRODUCTOR YOUTUBE -->
+    <div id="modal-video" class="modal-overlay" onclick="cerrarModal(event, 'modal-video')">
+        <div class="modal-content">
+            <button class="btn-cerrar" onclick="cerrarModalForce('modal-video')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="video-player-container" id="yt-iframe-wrapper">
+                <!-- Se inyecta el iframe dinámicamente -->
+            </div>
+
+            <div class="video-meta">
+                <div class="video-meta-left">
+                    <h2 id="vid-title">Cargando video...</h2>
+                    <div class="video-stats" id="vid-stats-container">
+                        <!-- Las estadísticas se inyectan aquí con la API -->
+                    </div>
+                </div>
+                <a href="https://www.youtube.com/@gamerodyssey?sub_confirmation=1" target="_blank" class="btn-subscribe">
+                    Suscribirse
+                </a>
+            </div>
+
+            <div class="video-desc">
+                <div id="vid-desc-text">Cargando descripción...</div>
+                <button class="btn-mostrar-mas" id="btn-toggle-desc" onclick="toggleComentarios()">Mostrar más...</button>
+                
+                <div class="comments-section" id="comentarios-seccion">
+                    <h3 style="color:#fff; margin-bottom: 15px; font-weight: 400; font-size: 1.1rem;">Comentarios Destacados</h3>
+                    
+                    <div id="lista-comentarios" class="comments-list">
+                        <!-- Los comentarios se inyectan aquí -->
+                    </div>
+
+                    <a href="#" id="link-comentar-yt" target="_blank" class="btn-comentar"><i class="fa-brands fa-youtube" style="font-size: 1.2rem;"></i> Ver más comentarios en YouTube</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const YOUTUBE_API_KEY = "AIzaSyAOEBYg7hlL3TeO5pc3O1C7NPpjptixFnM"; 
+
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/1qbeczwfyXU-AGefa3YL0pLfD4zWx7ZqKPWbLNLjmLNI/export?format=csv";
+        let baseDatos = [];
+
+        window.onload = () => {
+            Papa.parse(SHEET_URL, {
+                download: true,
+                header: true,
+                complete: async function(results) {
+                    const rows = results.data.filter(row => {
+                        if (!row.JUEGO || row.JUEGO.trim() === '') return false;
+                        const estado = row.ESTADO ? row.ESTADO.trim().toLowerCase() : "";
+                        return estado !== "invisible";
+                    });
+
+                    await procesarPlaylists(rows);
+                },
+                error: function(err) {
+                    document.getElementById('loader-pantalla').innerHTML = "<p style='color:red;'>Error al conectar con la base de datos CSV.</p>";
+                }
+            });
+        };
+
+        function extraerPlaylistId(url) {
+            try {
+                const params = new URLSearchParams(new URL(url).search);
+                return params.get("list");
+            } catch(e) { return null; }
+        }
+
+        async function procesarPlaylists(rows) {
+            for(let juego of rows) {
+                const pid = extraerPlaylistId(juego.PLAYLIST);
+                juego.videos = [];
+                
+                if (pid && YOUTUBE_API_KEY) {
+                    const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${pid}&key=${YOUTUBE_API_KEY}`;
+                    
+                    try {
+                        const res = await fetch(apiUrl);
+                        const data = await res.json();
+                        
+                        if (data.items) {
+                            const validItems = data.items.filter(item => item.snippet.title !== 'Private video' && item.snippet.title !== 'Deleted video');
+
+                            juego.videos = validItems.map(item => {
+                                const snippet = item.snippet;
+                                const vidId = snippet.resourceId.videoId;
+                                
+                                const thumb = snippet.thumbnails.maxres ? snippet.thumbnails.maxres.url : 
+                                              snippet.thumbnails.high ? snippet.thumbnails.high.url : 
+                                              snippet.thumbnails.medium ? snippet.thumbnails.medium.url : 
+                                              snippet.thumbnails.default.url;
+                                              
+                                return {
+                                    id: vidId,
+                                    title: snippet.title,
+                                    thumb: thumb,
+                                    link: `https://www.youtube.com/watch?v=${vidId}`,
+                                    desc: snippet.description || "Video de la travesía de Gamer Odyssey."
+                                };
+                            });
+                        }
+                    } catch(e) { console.error("Error cargando playlist", pid, e); }
+                }
+            }
+            
+            document.getElementById('loader-pantalla').style.display = 'none';
+            renderizarPlaylists(rows);
+        }
+
+        function renderizarPlaylists(rows) {
+            const container = document.getElementById("playlists-container");
+            container.innerHTML = "";
+
+            rows.forEach((juego, index) => {
+                const estadoClass = juego.ESTADO.toLowerCase().trim();
+                const idCarrusel = `carousel-${index}`;
+
+                // Verifica si existe plataforma en el CSV y la añade
+                const plataformaTexto = juego.PLATAFORMA ? ` - ${juego.PLATAFORMA}` : "";
+
+                let videosHTML = "";
+                
+                if(juego.videos.length === 0) {
+                    videosHTML = `<p style="color:#8f98a0; font-style:italic; padding-left:10px;">No se encontraron videos públicos en esta playlist o revisa los permisos.</p>`;
+                } else {
+                    juego.videos.forEach(vid => {
+                        // FIX: Reemplaza las comillas simples por su código %27 para evitar que se rompa el onclick HTML
+                        const vidJson = encodeURIComponent(JSON.stringify(vid)).replace(/'/g, "%27");
+                        videosHTML += `
+                            <div class="video-card" onclick="abrirVideoReal('${vidJson}')">
+                                <img src="${vid.thumb}" alt="Video" class="video-thumb" onerror="this.src='https://img.youtube.com/vi/${vid.id}/hqdefault.jpg'">
+                                <div class="video-info">
+                                    <h4 class="video-title" title="${vid.title}">${vid.title}</h4>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                const filaHTML = `
+                    <div class="playlist-row ${estadoClass}" style="background-image: url('${juego.FONDO}');">
+                        <div class="playlist-overlay">
+                            <div class="playlist-header">
+                                <img src="${juego.ICONO}" alt="Icono" class="playlist-icon">
+                                <h2 class="playlist-title">${juego.JUEGO} <span style="color:#8f98a0; font-size:1.2rem;">(${juego.AÑO}${plataformaTexto})</span> <span style="font-size:0.9rem; background:rgba(0,0,0,0.5); padding:3px 8px; border-radius:10px; margin-left:10px;">${juego.videos.length} videos</span></h2>
+                                <a href="${juego.PLAYLIST}" target="_blank" class="btn-play-all">
+                                    <i class="fa-solid fa-play"></i> Reproducir todo
+                                </a>
+                            </div>
+
+                            <div class="carousel-wrapper">
+                                <button class="nav-btn" onclick="moverCarrusel('${idCarrusel}', -1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                <div class="carousel-track" id="${idCarrusel}">
+                                    ${videosHTML}
+                                </div>
+                                <button class="nav-btn" onclick="moverCarrusel('${idCarrusel}', 1)"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += filaHTML;
+            });
+        }
+
+        function moverCarrusel(id, direccion) {
+            const track = document.getElementById(id);
+            const scrollAmount = 225; 
+            track.scrollBy({ left: scrollAmount * direccion, behavior: 'smooth' });
+        }
+
+        function toggleID(btn, textoOriginal, idText) {
+            const textSpan = btn.querySelector('.plat-text');
+            if (btn.classList.contains('revealed')) {
+                btn.classList.remove('revealed');
+                textSpan.textContent = textoOriginal;
+            } else {
+                btn.classList.add('revealed');
+                textSpan.textContent = "id: " + idText;
+            }
+        }
+
+        function abrirModal(id) { document.getElementById(id).classList.add('activo'); }
+        function cerrarModal(e, id) { if (e.target.id === id) cerrarModalForce(id); }
+        function cerrarModalForce(id) { 
+            document.getElementById(id).classList.remove('activo'); 
+            if(id === 'modal-video') {
+                document.getElementById('yt-iframe-wrapper').innerHTML = ""; 
+                reiniciarDescripcion();
+            }
+        }
+
+        async function abrirVideoReal(vidJsonEncoded) {
+            // Decodifica asegurando las comillas
+            const vid = JSON.parse(decodeURIComponent(vidJsonEncoded));
+            
+            const iframeHTML = `<iframe src="https://www.youtube.com/embed/${vid.id}?autoplay=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+            
+            document.getElementById('yt-iframe-wrapper').innerHTML = iframeHTML;
+            document.getElementById('vid-title').textContent = vid.title;
+            document.getElementById('link-comentar-yt').href = `https://www.youtube.com/watch?v=${vid.id}`;
+            document.getElementById('vid-desc-text').textContent = vid.desc;
+            
+            const statsContainer = document.getElementById('vid-stats-container');
+            const comentariosContainer = document.getElementById('lista-comentarios');
+            
+            if (YOUTUBE_API_KEY !== "") {
+                statsContainer.innerHTML = `<span>Cargando estadísticas...</span>`;
+                comentariosContainer.innerHTML = `<p style="color:#8f98a0; font-size:0.9rem;">Cargando comentarios...</p>`;
+                
+                try {
+                    // Petición para Estadísticas
+                    const resStats = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${vid.id}&key=${YOUTUBE_API_KEY}`);
+                    const dataStats = await resStats.json();
+                    
+                    if(dataStats.items && dataStats.items.length > 0) {
+                        const stats = dataStats.items[0].statistics;
+                        const snippet = dataStats.items[0].snippet;
+                        
+                        document.getElementById('vid-desc-text').textContent = snippet.description; 
+                        
+                        const views = parseInt(stats.viewCount || 0).toLocaleString('es-ES');
+                        const likes = parseInt(stats.likeCount || 0).toLocaleString('es-ES');
+                        
+                        statsContainer.innerHTML = `
+                            <span><i class="fa-solid fa-eye"></i> <span>${views}</span> visualizaciones</span>
+                            <span><i class="fa-solid fa-thumbs-up"></i> <span>${likes}</span></span>
+                        `;
+                    }
+                    
+                    // Petición para Comentarios
+                    const resComments = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${vid.id}&maxResults=3&key=${YOUTUBE_API_KEY}`);
+                    const dataComments = await resComments.json();
+                    
+                    if(dataComments.items && dataComments.items.length > 0) {
+                        comentariosContainer.innerHTML = '';
+                        dataComments.items.forEach(item => {
+                            const comment = item.snippet.topLevelComment.snippet;
+                            comentariosContainer.innerHTML += `
+                                <div class="comment-item">
+                                    <span class="comment-author">${comment.authorDisplayName}</span>
+                                    <div class="comment-text">${comment.textDisplay}</div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        comentariosContainer.innerHTML = `<p style="color:#8f98a0; font-size:0.9rem;">No hay comentarios en este video aún.</p>`;
+                    }
+                    
+                } catch(e) {
+                    statsContainer.innerHTML = ""; 
+                    comentariosContainer.innerHTML = `<p style="color:#8f98a0; font-size:0.9rem;">Los comentarios están desactivados para este video.</p>`;
+                }
+            } else {
+                statsContainer.innerHTML = ``;
+                comentariosContainer.innerHTML = ``;
+                document.getElementById('vid-desc-text').textContent = document.getElementById('vid-desc-text').innerText;
+            }
+
+            abrirModal('modal-video');
+        }
+
+        function toggleComentarios() {
+            const descContainer = document.getElementById('vid-desc-text');
+            const seccion = document.getElementById('comentarios-seccion');
+            const btn = document.getElementById('btn-toggle-desc');
+            
+            if(seccion.style.display === 'block') {
+                seccion.style.display = 'none';
+                descContainer.classList.remove('expanded');
+                btn.textContent = "Mostrar más...";
+            } else {
+                seccion.style.display = 'block';
+                descContainer.classList.add('expanded');
+                btn.textContent = "Mostrar menos";
+            }
+        }
+
+        function reiniciarDescripcion() {
+            document.getElementById('comentarios-seccion').style.display = 'none';
+            document.getElementById('vid-desc-text').classList.remove('expanded');
+            document.getElementById('btn-toggle-desc').textContent = "Mostrar más...";
+        }
+    </script>
+</body>
+</html>
