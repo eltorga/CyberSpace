@@ -41,7 +41,7 @@
             opacity: 0.4;
         }
 
-        /* HEADER ESTILO STEAM (Alineado a la izquierda) */
+        /* HEADER ESTILO STEAM */
         header {
             background-color: var(--steam-header);
             height: auto;
@@ -58,8 +58,8 @@
             max-width: 960px;
             display: flex;
             align-items: center;
-            justify-content: flex-start; /* Alineación estilo Steam */
-            gap: 40px; /* Separación entre el logo y los menús */
+            justify-content: flex-start;
+            gap: 40px;
             flex-wrap: wrap;
         }
         .header-logo {
@@ -73,7 +73,7 @@
             letter-spacing: 1px;
         }
         .header-logo i {
-            font-size: 2.8rem; /* Ícono de Steam más grande */
+            font-size: 2.8rem;
         }
         .header-nav {
             display: flex;
@@ -219,10 +219,9 @@
         /* CARRUSEL DE VIDEOS */
         .carousel-wrapper { position: relative; display: flex; align-items: center; gap: 10px;}
         
-        /* Ajuste de padding/margin para evitar cortes en hover */
         .carousel-track {
             display: flex; gap: 15px; overflow-x: auto; scroll-behavior: smooth;
-            padding-top: 10px; margin-top: -10px; /* Compensa el espacio del hover */
+            padding-top: 10px; margin-top: -10px; 
             padding-bottom: 10px; scrollbar-width: none; flex-grow: 1;
         }
         .carousel-track::-webkit-scrollbar { display: none; }
@@ -287,23 +286,15 @@
         
         .video-desc { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 6px; font-size: 0.95rem; line-height: 1.5; }
         
-        /* Ajuste de límite de líneas (Elimina espacios muertos) */
         #vid-desc-text {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            white-space: pre-line; /* Mantiene saltos pero colapsa múltiples espacios */
-            color: var(--steam-text);
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+            white-space: pre-line; color: var(--steam-text);
         }
-        #vid-desc-text.expanded {
-            -webkit-line-clamp: unset;
-        }
+        #vid-desc-text.expanded { -webkit-line-clamp: unset; }
 
         .btn-mostrar-mas { background: none; border: none; color: var(--steam-blue); cursor: pointer; margin-top: 10px; font-size: 0.9rem; font-weight: 400; padding: 0;}
         .btn-mostrar-mas:hover { text-decoration: underline; }
         
-        /* Sección de Comentarios Integrada */
         .comments-section { margin-top: 20px; display: none; padding-top: 15px; border-top: 1px dashed #3a404d;}
         .comments-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
         .comment-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
@@ -313,10 +304,8 @@
         .btn-comentar { display: inline-flex; align-items: center; gap: 8px; background: var(--steam-dark-blue); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 4px; transition: 0.2s; border: 1px solid var(--steam-blue); font-size: 0.9rem;}
         .btn-comentar:hover { background: var(--steam-blue); }
 
-        /* FOOTER ESTILO STEAM */
         footer { border-top: 1px solid #3a404d; padding: 30px 20px; text-align: center; font-size: 0.85rem; color: #8f98a0; background: var(--steam-header); margin-top: auto;}
 
-        /* RESPONSIVE DESIGN */
         @media (max-width: 768px) {
             .header-content { justify-content: center; gap: 20px;}
             .profile-wrapper { flex-direction: column; align-items: center; text-align: center; }
@@ -394,13 +383,13 @@
                         <span class="badge-xp">5,000 XP</span>
                     </div>
                 </div>
-                <a href="https://eltorga.com/go/juegos/" target="_blank" class="btn-steam" style="width: 100%; box-sizing: border-box; margin-top: 5px;">
+                <a href="#" target="_blank" class="btn-steam" style="width: 100%; box-sizing: border-box; margin-top: 5px;">
                     <i class="fa-solid fa-gamepad"></i> Ver Biblioteca
                 </a>
             </div>
         </div>
 
-        <!-- CARRUSEL DE PLATAFORMAS CON TOGGLE -->
+        <!-- CARRUSEL DE PLATAFORMAS -->
         <div class="platforms-section">
             <button class="nav-btn" onclick="moverCarrusel('platforms-track', -1)"><i class="fa-solid fa-chevron-left"></i></button>
             <div class="platforms-track" id="platforms-track">
@@ -429,13 +418,20 @@
             <button class="nav-btn" onclick="moverCarrusel('platforms-track', 1)"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
 
-        <div id="loader-pantalla" style="text-align: center; padding: 40px; color: var(--steam-blue);">
+        <div id="loader-pantalla" style="text-align: center; padding: 40px; color: var(--steam-blue); display: none;">
             <i class="fa-solid fa-circle-notch fa-spin fa-3x"></i>
-            <p>Sincronizando listas de reproducción...</p>
+            <p>Sincronizando videos de YouTube...</p>
         </div>
 
         <!-- CONTENEDOR DE PLAYLISTS -->
         <div id="playlists-container"></div>
+        
+        <!-- BOTÓN VER MÁS STREAMS -->
+        <div id="btn-cargar-mas-container" style="text-align: center; margin: 30px 0; display: none;">
+            <button class="btn-steam" onclick="cargarMasStreams()" style="display: inline-flex; width: auto; padding: 12px 24px; font-size: 1.1rem; margin: 0 auto;">
+                <i class="fa-solid fa-plus"></i> Ver más streams
+            </button>
+        </div>
     </div>
 
     <!-- FOOTER -->
@@ -471,11 +467,9 @@
                 
                 <div class="comments-section" id="comentarios-seccion">
                     <h3 style="color:#fff; margin-bottom: 15px; font-weight: 400; font-size: 1.1rem;">Comentarios Destacados</h3>
-                    
                     <div id="lista-comentarios" class="comments-list">
                         <!-- Los comentarios se inyectan aquí -->
                     </div>
-
                     <a href="#" id="link-comentar-yt" target="_blank" class="btn-comentar"><i class="fa-brands fa-youtube" style="font-size: 1.2rem;"></i> Ver más comentarios en YouTube</a>
                 </div>
             </div>
@@ -484,22 +478,29 @@
 
     <script>
         const YOUTUBE_API_KEY = "AIzaSyAOEBYg7hlL3TeO5pc3O1C7NPpjptixFnM"; 
-
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/1qbeczwfyXU-AGefa3YL0pLfD4zWx7ZqKPWbLNLjmLNI/export?format=csv";
+        
+        // Variables para la paginación
         let baseDatos = [];
+        let indiceActual = 0;
+        const ITEMS_POR_PAGINA = 10;
+        let estaCargando = false;
 
         window.onload = () => {
+            document.getElementById('loader-pantalla').style.display = 'block';
+            
             Papa.parse(SHEET_URL, {
                 download: true,
                 header: true,
-                complete: async function(results) {
-                    const rows = results.data.filter(row => {
+                complete: function(results) {
+                    baseDatos = results.data.filter(row => {
                         if (!row.JUEGO || row.JUEGO.trim() === '') return false;
                         const estado = row.ESTADO ? row.ESTADO.trim().toLowerCase() : "";
                         return estado !== "invisible";
                     });
-
-                    await procesarPlaylists(rows);
+                    
+                    // En lugar de procesar todo de golpe, cargamos solo los primeros 10
+                    cargarMasStreams();
                 },
                 error: function(err) {
                     document.getElementById('loader-pantalla').innerHTML = "<p style='color:red;'>Error al conectar con la base de datos CSV.</p>";
@@ -507,6 +508,7 @@
             });
         };
 
+        // Detecta si es Playlist
         function extraerPlaylistId(url) {
             try {
                 const params = new URLSearchParams(new URL(url).search);
@@ -514,65 +516,114 @@
             } catch(e) { return null; }
         }
 
-        async function procesarPlaylists(rows) {
-            for(let juego of rows) {
-                const pid = extraerPlaylistId(juego.PLAYLIST);
+        // Detecta si es un video individual (youtube.com/watch?v=... o youtu.be/...)
+        function extraerVideoId(url) {
+            try {
+                const urlObj = new URL(url);
+                if (urlObj.hostname.includes('youtube.com')) {
+                    return urlObj.searchParams.get("v");
+                } else if (urlObj.hostname === 'youtu.be') {
+                    return urlObj.pathname.substring(1);
+                }
+            } catch(e) { return null; }
+            return null;
+        }
+
+        // Función para cargar el siguiente bloque de 10
+        async function cargarMasStreams() {
+            if (estaCargando) return;
+            estaCargando = true;
+
+            const btnContainer = document.getElementById('btn-cargar-mas-container');
+            btnContainer.style.display = 'none'; // Oculta botón mientras carga
+            document.getElementById('loader-pantalla').style.display = 'block'; // Muestra loader
+
+            // Obtenemos los siguientes 10 juegos
+            const chunk = baseDatos.slice(indiceActual, indiceActual + ITEMS_POR_PAGINA);
+            
+            if (chunk.length > 0) {
+                await procesarChunk(chunk, indiceActual);
+                indiceActual += ITEMS_POR_PAGINA;
+            }
+
+            document.getElementById('loader-pantalla').style.display = 'none';
+            estaCargando = false;
+
+            // Si aún quedan juegos en la base, mostramos el botón
+            if (indiceActual < baseDatos.length) {
+                btnContainer.style.display = 'block';
+            }
+        }
+
+        // Procesa solo el bloque actual
+        async function procesarChunk(chunk, startIndex) {
+            for(let juego of chunk) {
                 juego.videos = [];
+                const urlYoutube = juego.PLAYLIST; // Se asume que en esta columna viene la URL
+                if(!urlYoutube) continue;
+
+                const pid = extraerPlaylistId(urlYoutube);
+                const vidId = extraerVideoId(urlYoutube);
                 
+                // Si es una PLAYLIST
                 if (pid && YOUTUBE_API_KEY) {
                     const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${pid}&key=${YOUTUBE_API_KEY}`;
-                    
                     try {
                         const res = await fetch(apiUrl);
                         const data = await res.json();
                         
                         if (data.items) {
                             const validItems = data.items.filter(item => item.snippet.title !== 'Private video' && item.snippet.title !== 'Deleted video');
-
-                            juego.videos = validItems.map(item => {
-                                const snippet = item.snippet;
-                                const vidId = snippet.resourceId.videoId;
-                                
-                                const thumb = snippet.thumbnails.maxres ? snippet.thumbnails.maxres.url : 
-                                              snippet.thumbnails.high ? snippet.thumbnails.high.url : 
-                                              snippet.thumbnails.medium ? snippet.thumbnails.medium.url : 
-                                              snippet.thumbnails.default.url;
-                                              
-                                return {
-                                    id: vidId,
-                                    title: snippet.title,
-                                    thumb: thumb,
-                                    link: `https://www.youtube.com/watch?v=${vidId}`,
-                                    desc: snippet.description || "Video de la travesía de Gamer Odyssey."
-                                };
-                            });
+                            juego.videos = validItems.map(item => mapearDatosVideo(item.snippet, item.snippet.resourceId.videoId));
                         }
                     } catch(e) { console.error("Error cargando playlist", pid, e); }
+                } 
+                // Si es un VIDEO INDIVIDUAL
+                else if (vidId && YOUTUBE_API_KEY) {
+                    const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vidId}&key=${YOUTUBE_API_KEY}`;
+                    try {
+                        const res = await fetch(apiUrl);
+                        const data = await res.json();
+                        if (data.items && data.items.length > 0) {
+                            juego.videos = [mapearDatosVideo(data.items[0].snippet, vidId)];
+                        }
+                    } catch(e) { console.error("Error cargando video", vidId, e); }
                 }
             }
             
-            document.getElementById('loader-pantalla').style.display = 'none';
-            renderizarPlaylists(rows);
+            // Renderizamos justo después de procesar el chunk
+            renderizarPlaylists(chunk, startIndex);
         }
 
-        function renderizarPlaylists(rows) {
+        function mapearDatosVideo(snippet, vidId) {
+            const thumb = snippet.thumbnails?.maxres?.url || 
+                          snippet.thumbnails?.high?.url || 
+                          snippet.thumbnails?.medium?.url || 
+                          snippet.thumbnails?.default?.url || `https://img.youtube.com/vi/${vidId}/hqdefault.jpg`;
+            return {
+                id: vidId,
+                title: snippet.title,
+                thumb: thumb,
+                link: `https://www.youtube.com/watch?v=${vidId}`,
+                desc: snippet.description || "Video de la travesía de Gamer Odyssey."
+            };
+        }
+
+        // Renderiza añadiendo al contenedor existente (no lo limpia)
+        function renderizarPlaylists(rows, startIndex) {
             const container = document.getElementById("playlists-container");
-            container.innerHTML = "";
 
             rows.forEach((juego, index) => {
                 const estadoClass = juego.ESTADO.toLowerCase().trim();
-                const idCarrusel = `carousel-${index}`;
-
-                // Verifica si existe plataforma en el CSV y la añade
+                const idCarrusel = `carousel-${startIndex + index}`;
                 const plataformaTexto = juego.PLATAFORMA ? ` - ${juego.PLATAFORMA}` : "";
 
                 let videosHTML = "";
                 
                 if(juego.videos.length === 0) {
-                    videosHTML = `<p style="color:#8f98a0; font-style:italic; padding-left:10px;">No se encontraron videos públicos en esta playlist o revisa los permisos.</p>`;
+                    videosHTML = `<p style="color:#8f98a0; font-style:italic; padding-left:10px;">No se encontraron videos públicos o revisa los permisos.</p>`;
                 } else {
                     juego.videos.forEach(vid => {
-                        // FIX: Reemplaza las comillas simples por su código %27 para evitar que se rompa el onclick HTML
                         const vidJson = encodeURIComponent(JSON.stringify(vid)).replace(/'/g, "%27");
                         videosHTML += `
                             <div class="video-card" onclick="abrirVideoReal('${vidJson}')">
@@ -585,14 +636,20 @@
                     });
                 }
 
+                // Si tiene 1 solo video, el botón dice "Reproducir video", si es playlist dice "Reproducir todo"
+                const esPlaylist = juego.videos.length > 1;
+                const textoBtn = esPlaylist ? "<i class='fa-solid fa-play'></i> Reproducir todo" : "<i class='fa-solid fa-play'></i> Ver video";
+                const textoEtiquetaVid = esPlaylist ? `${juego.videos.length} videos` : `1 video`;
+                const urlPlay = esPlaylist ? juego.PLAYLIST : (juego.videos[0] ? juego.videos[0].link : juego.PLAYLIST);
+
                 const filaHTML = `
                     <div class="playlist-row ${estadoClass}" style="background-image: url('${juego.FONDO}');">
                         <div class="playlist-overlay">
                             <div class="playlist-header">
                                 <img src="${juego.ICONO}" alt="Icono" class="playlist-icon">
-                                <h2 class="playlist-title">${juego.JUEGO} <span style="color:#8f98a0; font-size:1.2rem;">(${juego.AÑO}${plataformaTexto})</span> <span style="font-size:0.9rem; background:rgba(0,0,0,0.5); padding:3px 8px; border-radius:10px; margin-left:10px;">${juego.videos.length} videos</span></h2>
-                                <a href="${juego.PLAYLIST}" target="_blank" class="btn-play-all">
-                                    <i class="fa-solid fa-play"></i> Reproducir todo
+                                <h2 class="playlist-title">${juego.JUEGO} <span style="color:#8f98a0; font-size:1.2rem;">(${juego.AÑO}${plataformaTexto})</span> <span style="font-size:0.9rem; background:rgba(0,0,0,0.5); padding:3px 8px; border-radius:10px; margin-left:10px;">${textoEtiquetaVid}</span></h2>
+                                <a href="${urlPlay}" target="_blank" class="btn-play-all">
+                                    ${textoBtn}
                                 </a>
                             </div>
 
@@ -606,7 +663,8 @@
                         </div>
                     </div>
                 `;
-                container.innerHTML += filaHTML;
+                
+                container.innerHTML += filaHTML; // IMPORTANTE: += para no sobreescribir al usar el paginador
             });
         }
 
@@ -638,7 +696,6 @@
         }
 
         async function abrirVideoReal(vidJsonEncoded) {
-            // Decodifica asegurando las comillas
             const vid = JSON.parse(decodeURIComponent(vidJsonEncoded));
             
             const iframeHTML = `<iframe src="https://www.youtube.com/embed/${vid.id}?autoplay=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
@@ -656,7 +713,6 @@
                 comentariosContainer.innerHTML = `<p style="color:#8f98a0; font-size:0.9rem;">Cargando comentarios...</p>`;
                 
                 try {
-                    // Petición para Estadísticas
                     const resStats = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${vid.id}&key=${YOUTUBE_API_KEY}`);
                     const dataStats = await resStats.json();
                     
@@ -675,7 +731,6 @@
                         `;
                     }
                     
-                    // Petición para Comentarios
                     const resComments = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${vid.id}&maxResults=3&key=${YOUTUBE_API_KEY}`);
                     const dataComments = await resComments.json();
                     
