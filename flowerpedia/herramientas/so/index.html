@@ -49,6 +49,10 @@
             flex-wrap: wrap;
             gap: 15px;
         }
+        .week-badges {
+            display: flex;
+            gap: 15px;
+        }
         .week-badge {
             background: var(--hover-bg);
             padding: 6px 12px;
@@ -92,7 +96,37 @@
         .upload-section input { display: none; }
         .upload-section i { font-size: 32px; color: var(--text-muted); margin-bottom: 10px; display: block; }
 
-        /* Tabs */
+        /* Main Navigation Tabs */
+        .main-tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .main-tab {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            background: transparent;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .main-tab:hover { background: var(--hover-bg); }
+        .main-tab.active {
+            background: var(--brand);
+            color: white;
+            border-color: var(--brand);
+        }
+
+        /* Sections */
+        .main-section { display: none; }
+        .main-section.active { display: block; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        /* Sub Tabs */
         .tabs {
             display: flex;
             gap: 20px;
@@ -109,10 +143,7 @@
             transition: color 0.2s;
         }
         .tab:hover { color: var(--text-main); }
-        .tab.active {
-            color: var(--text-main);
-            border-bottom-color: var(--brand);
-        }
+        .tab.active { color: var(--text-main); border-bottom-color: var(--brand); }
 
         /* Controls */
         .controls {
@@ -122,126 +153,48 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .control-group label {
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        .control-group label { color: var(--text-muted); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
         select {
-            padding: 8px 12px;
-            border-radius: 4px;
-            border: 1px solid var(--border-light);
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            color: var(--text-main);
-            background: white;
-            cursor: pointer;
-            outline: none;
-            min-width: 250px;
+            padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-light);
+            font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-main);
+            background: white; cursor: pointer; outline: none; min-width: 250px;
         }
         select:focus { border-color: var(--brand); }
 
         /* Buttons */
         .btn {
-            padding: 8px 14px;
-            border: 1px solid var(--border-light);
-            border-radius: 6px;
-            background: white;
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s;
-            font-weight: 500;
+            padding: 8px 14px; border: 1px solid var(--border-light); border-radius: 6px;
+            background: white; color: var(--text-main); font-family: 'Inter', sans-serif;
+            font-size: 13px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; gap: 6px; transition: all 0.2s; font-weight: 500;
         }
         .btn:hover { background: var(--hover-bg); }
-        
-        /* Custom Button Colors */
         .btn-primary { background: var(--brand); color: white; border-color: var(--brand); }
         .btn-primary:hover { background: #1a73e8; }
-        
         .btn-black { background: #202020; color: white; border-color: #202020; }
         .btn-black:hover { background: #000000; color: white; }
-
         .btn-green { background: #2ea043; color: white; border-color: #2ea043; }
         .btn-green:hover { background: #238636; color: white; }
-
-        /* Success Animation Class */
-        .btn-success-state {
-            background: #2ea043 !important;
-            color: white !important;
-            border-color: #2ea043 !important;
-            transform: scale(0.97);
-        }
+        .btn-success-state { background: #2ea043 !important; color: white !important; border-color: #2ea043 !important; transform: scale(0.97); }
         
-        .action-area {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-top: 30px;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .action-buttons-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            min-width: 380px;
-        }
+        .action-area { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 30px; gap: 30px; flex-wrap: wrap; }
+        .action-buttons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-width: 380px; }
         .btn-group-title {
-            grid-column: 1 / -1;
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-top: 10px;
-            margin-bottom: -4px;
-            border-bottom: 1px solid var(--border-light);
-            padding-bottom: 4px;
+            grid-column: 1 / -1; font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+            font-weight: 600; margin-top: 10px; margin-bottom: -4px; border-bottom: 1px solid var(--border-light); padding-bottom: 4px;
         }
 
         /* Summary Cards */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            flex: 1;
-            min-width: 300px;
-        }
-        .summary-card {
-            padding: 15px;
-            background: #f9f9f8;
-            border-radius: 6px;
-            border: 1px solid var(--border-light);
-            font-size: 14px;
-        }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; flex: 1; min-width: 300px; }
+        .summary-card { padding: 15px; background: #f9f9f8; border-radius: 6px; border: 1px solid var(--border-light); font-size: 14px; }
         .summary-card strong { color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-bottom: 5px;}
         .summary-val { font-size: 18px; font-weight: 600; color: var(--text-main); }
 
         /* Table */
         table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; }
         th, td { padding: 12px 10px; border-bottom: 1px solid var(--border-light); }
-        th {
-            color: var(--text-muted);
-            font-weight: 500;
-            cursor: pointer;
-            user-select: none;
-            white-space: nowrap;
-            text-align: left;
-        }
+        th { color: var(--text-muted); font-weight: 500; cursor: pointer; user-select: none; white-space: nowrap; text-align: left; }
         th i { margin-left: 4px; font-size: 14px; vertical-align: middle; }
         th:hover { background: var(--hover-bg); border-radius: 4px 4px 0 0; }
         tr:hover td { background-color: var(--hover-bg); }
@@ -257,35 +210,27 @@
         .pointer:hover { opacity: 0.7; }
         .d-flex { display: flex; }
         .align-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
         .gap-2 { gap: 8px; }
 
         /* Hiding Logic */
         body.hide-po .col-po { display: none !important; }
         body.compact-mode .col-admin { display: none !important; }
-
-        /* Pills */
+        
         .pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
         .pill.everyweek { background: #d3e5ef; color: #183347; }
         .pill.par { background: #fdecc8; color: #402c1b; }
         .pill.impar { background: #e8deee; color: #412454; }
         .pill.arrival { background: #e3e2e0; color: #32302c; }
 
-        /* Views */
         #dashboard { display: none; }
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-
-        /* Stats Blocks */
         .stats-container { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 20px; }
         .stats-box { border: 1px solid var(--border-light); border-radius: 6px; padding: 20px; background: white; }
         .stats-box h3 { margin-top: 0; font-size: 15px; border-bottom: 1px solid var(--border-light); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 6px; }
-        
         .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f2f1ee; font-size: 13px; align-items: center; }
         .stat-row:last-child { border-bottom: none; }
         .chart-wrapper { position: relative; height: 280px; width: 100%; }
 
-        /* Modal / Popup */
+        /* Modal */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5); display: none;
@@ -296,10 +241,7 @@
             max-height: 90vh; display: flex; flex-direction: column;
             box-shadow: 0 4px 24px rgba(0,0,0,0.2);
         }
-        .modal-header {
-            padding: 20px; border-bottom: 1px solid var(--border-light);
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
         .modal-header h3 { margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px; }
         .modal-header i.close-btn { font-size: 24px; cursor: pointer; color: var(--text-muted); }
         .modal-header i.close-btn:hover { color: var(--text-main); }
@@ -321,12 +263,19 @@
     <div id="dashboard">
         
         <div class="top-info-bar">
-            <div class="week-badge">
-                <i class="ri-calendar-event-line"></i> 
-                Semana Actual: <span id="weekNumLabel"></span>
+            <div class="week-badges">
+                <div class="week-badge">
+                    <i class="ri-calendar-event-line"></i> 
+                    Semana Actual: <span id="weekNumLabel"></span>
+                </div>
+                <div class="week-badge">
+                    <i class="ri-folder-open-line"></i> 
+                    Semana de Archivo: <span id="fileWeekLabel">-</span>
+                </div>
             </div>
+            
             <div class="top-toggles">
-                <label class="toggle-container">
+                <label class="toggle-container" id="togglePoContainer">
                     <input type="checkbox" id="togglePoCheck" checked>
                     Mostrar Columna PO
                 </label>
@@ -336,113 +285,160 @@
             </div>
         </div>
 
-        <div class="controls">
-            <div class="control-group">
-                <label for="vendedorSelect"><i class="ri-user-line"></i> Vendedor</label>
-                <select id="vendedorSelect">
-                    <option value="">Vista General (Todos)</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label for="frecuenciaSelect"><i class="ri-filter-3-line"></i> Filtro Par/Impar</label>
-                <select id="frecuenciaSelect">
-                    <option value="todos">Todos (Par e Impar)</option>
-                    <option value="par">Par (+ Everyweek)</option>
-                    <option value="impar">Impar (+ Everyweek)</option>
-                </select>
-            </div>
-            <div id="statsInfo" style="font-size: 14px; color: var(--text-muted); margin-left: auto; align-self: flex-end; padding-bottom: 10px;"></div>
+        <div class="main-tabs-container">
+            <button class="main-tab active" data-target="vendedoresSection">
+                <i class="ri-user-star-line"></i> Vendedores
+            </button>
+            <button class="main-tab" data-target="fincasSection">
+                <i class="ri-plant-line"></i> Fincas
+            </button>
         </div>
 
-        <div class="tabs">
-            <div class="tab active" data-target="tableView"><i class="ri-table-line"></i> Tabla de Órdenes</div>
-            <div class="tab" data-target="statsView"><i class="ri-pie-chart-line"></i> Estadísticas y Análisis</div>
-        </div>
-
-        <!-- VISTA TABLA PRINCIPAL -->
-        <div id="tableView" class="view-section active">
-            <table>
-                <thead>
-                    <tr>
-                        <th data-sort="frecuencia">Frecuencia <i class="ri-arrow-up-down-line"></i></th>
-                        <th data-sort="orden">Orden <i class="ri-arrow-up-down-line"></i></th>
-                        <th data-sort="cliente">Cliente <i class="ri-arrow-up-down-line"></i></th>
-                        <th data-sort="arrival">Arrival <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="col-po" data-sort="po">PO <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="text-center" data-sort="precio">Precio <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="col-admin col-divider" data-sort="finca">Finca <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="col-admin text-center" data-sort="costo">Precio Compra <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="col-admin text-center" data-sort="markup">Markup % <i class="ri-arrow-up-down-line"></i></th>
-                        <th class="col-admin text-center" data-sort="precioFinal">Precio Final <i class="ri-arrow-up-down-line"></i></th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-
-            <div class="action-area">
-                <div class="summary-grid" id="summaryTotals">
-                    <!-- Calculado por JS -->
+        <!-- ================= MÓDULO VENDEDORES ================= -->
+        <div id="vendedoresSection" class="main-section active">
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="vendedorSelect"><i class="ri-user-line"></i> Vendedor</label>
+                    <select id="vendedorSelect">
+                        <option value="">Vista General (Todos)</option>
+                    </select>
                 </div>
-                
-                <div class="action-buttons-grid">
-                    
-                    <div class="btn-group-title">Generar Correo</div>
-                    <button class="btn" onclick="openEmailModal('vendedor')">
-                        <i class="ri-mail-send-line"></i> <span>Correo Vendedor</span>
-                    </button>
-                    <button class="btn btn-black" onclick="openEmailModal('admin')">
-                        <i class="ri-mail-star-line"></i> <span>Correo Admin</span>
-                    </button>
-
-                    <div class="btn-group-title">Copiar Datos (Texto)</div>
-                    <button class="btn" onclick="copyTableText('usuario', this)">
-                        <i class="ri-file-copy-line"></i> <span>Copia Usuario</span>
-                    </button>
-                    <button class="btn btn-black" onclick="copyTableText('admin', this)">
-                        <i class="ri-file-copy-fill"></i> <span>Copia Admin</span>
-                    </button>
-
-                    <div class="btn-group-title">Capturar como Imagen</div>
-                    <button class="btn" onclick="copyTableImage('usuario', this)">
-                        <i class="ri-image-line"></i> <span>Imagen Usuario</span>
-                    </button>
-                    <button class="btn btn-black" onclick="copyTableImage('admin', this)">
-                        <i class="ri-image-fill"></i> <span>Imagen Admin</span>
-                    </button>
-
-                    <div class="btn-group-title">Exportar archivo Excel</div>
-                    <button class="btn btn-green" onclick="downloadExcel('usuario')">
-                        <i class="ri-file-excel-2-line"></i> <span>Descargar Usuario</span>
-                    </button>
-                    <button class="btn btn-primary" onclick="downloadExcel('admin')">
-                        <i class="ri-file-excel-2-fill"></i> <span>Descargar Admin</span>
-                    </button>
+                <div class="control-group">
+                    <label for="frecuenciaSelect"><i class="ri-filter-3-line"></i> Filtro Par/Impar</label>
+                    <select id="frecuenciaSelect">
+                        <option value="todos">Todos (Par e Impar)</option>
+                        <option value="par">Par (+ Everyweek)</option>
+                        <option value="impar">Impar (+ Everyweek)</option>
+                    </select>
                 </div>
+                <div id="statsInfoVendedores" style="font-size: 14px; color: var(--text-muted); margin-left: auto; align-self: flex-end; padding-bottom: 10px;"></div>
             </div>
-        </div>
 
-        <!-- VISTA ESTADÍSTICAS -->
-        <div id="statsView" class="view-section">
-            <div class="stats-container">
-                <div class="stats-box">
-                    <h3><i class="ri-donut-chart-line"></i> Distribución por Fincas</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="fincasChart"></canvas>
+            <div class="tabs">
+                <div class="tab active" data-target="tableViewVendedores"><i class="ri-table-line"></i> Tabla de Órdenes</div>
+                <div class="tab" data-target="statsViewVendedores"><i class="ri-pie-chart-line"></i> Estadísticas y Análisis</div>
+            </div>
+
+            <!-- TABLA VENDEDORES -->
+            <div id="tableViewVendedores" class="view-section active">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-sort="frecuencia">Frecuencia <i class="ri-arrow-up-down-line"></i></th>
+                            <th data-sort="orden">Orden <i class="ri-arrow-up-down-line"></i></th>
+                            <th data-sort="cliente">Cliente <i class="ri-arrow-up-down-line"></i></th>
+                            <th data-sort="arrival">Arrival <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="col-po" data-sort="po">PO <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="text-center" data-sort="precio">Precio <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="col-admin col-divider" data-sort="finca">Finca <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="col-admin text-center" data-sort="costo">Precio Compra <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="col-admin text-center" data-sort="markup">Markup % <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="col-admin text-center" data-sort="precioFinal">Precio Final <i class="ri-arrow-up-down-line"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBodyVendedores"></tbody>
+                </table>
+
+                <div class="action-area">
+                    <div class="summary-grid" id="summaryTotalsVendedores"></div>
+                    <div class="action-buttons-grid">
+                        <div class="btn-group-title">Generar Correo</div>
+                        <button class="btn" onclick="openEmailModal('vendedor')"><i class="ri-mail-send-line"></i> <span>Correo Vendedor</span></button>
+                        <button class="btn btn-black" onclick="openEmailModal('admin')"><i class="ri-mail-star-line"></i> <span>Correo Admin</span></button>
+
+                        <div class="btn-group-title">Copiar Datos (Texto)</div>
+                        <button class="btn" onclick="copyTableText('usuario', this, 'vendedor')"><i class="ri-file-copy-line"></i> <span>Copia Usuario</span></button>
+                        <button class="btn btn-black" onclick="copyTableText('admin', this, 'vendedor')"><i class="ri-file-copy-fill"></i> <span>Copia Admin</span></button>
+
+                        <div class="btn-group-title">Capturar como Imagen</div>
+                        <button class="btn" onclick="copyTableImage('usuario', this, 'vendedor')"><i class="ri-image-line"></i> <span>Imagen Usuario</span></button>
+                        <button class="btn btn-black" onclick="copyTableImage('admin', this, 'vendedor')"><i class="ri-image-fill"></i> <span>Imagen Admin</span></button>
+
+                        <div class="btn-group-title">Exportar archivo Excel</div>
+                        <button class="btn btn-green" onclick="downloadExcel('usuario', 'vendedor')"><i class="ri-file-excel-2-line"></i> <span>Descargar Usuario</span></button>
+                        <button class="btn btn-primary" onclick="downloadExcel('admin', 'vendedor')"><i class="ri-file-excel-2-fill"></i> <span>Descargar Admin</span></button>
                     </div>
                 </div>
-                <div class="stats-box">
-                    <h3><i class="ri-plant-line"></i> Top Fincas (Por Cajas)</h3>
-                    <div id="topFincas"></div>
+            </div>
+
+            <!-- ESTADÍSTICAS VENDEDORES -->
+            <div id="statsViewVendedores" class="view-section">
+                <div class="stats-container">
+                    <div class="stats-box">
+                        <h3><i class="ri-donut-chart-line"></i> Distribución por Fincas</h3>
+                        <div class="chart-wrapper"><canvas id="fincasChart"></canvas></div>
+                    </div>
+                    <div class="stats-box">
+                        <h3><i class="ri-plant-line"></i> Top Fincas (Por Cajas)</h3>
+                        <div id="topFincas"></div>
+                    </div>
+                    <div class="stats-box">
+                        <h3><i class="ri-group-line"></i> Análisis por Cliente</h3>
+                        <div id="topClientes"></div>
+                    </div>
                 </div>
-                <div class="stats-box">
-                    <h3><i class="ri-group-line"></i> Análisis por Cliente</h3>
-                    <div id="topClientes"></div>
+            </div>
+        </div>
+
+        <!-- ================= MÓDULO FINCAS ================= -->
+        <div id="fincasSection" class="main-section">
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="fincaSelect"><i class="ri-plant-line"></i> Finca</label>
+                    <select id="fincaSelect">
+                        <option value="">Vista General (Todas)</option>
+                    </select>
+                </div>
+                <div id="statsInfoFincas" style="font-size: 14px; color: var(--text-muted); margin-left: auto; align-self: flex-end; padding-bottom: 10px;"></div>
+            </div>
+
+            <!-- TABLA FINCAS -->
+            <div id="tableViewFincas">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-sort-finca="qty" class="text-center">Qty <i class="ri-arrow-up-down-line"></i></th>
+                            <th data-sort-finca="typeBox">Box <i class="ri-arrow-up-down-line"></i></th>
+                            <th data-sort-finca="cantMin" class="text-center">Stems <i class="ri-arrow-up-down-line"></i></th>
+                            <th data-sort-finca="producto">Variedad + Nombre <i class="ri-arrow-up-down-line"></i></th>
+                            <th data-sort-finca="fechaTS">Fecha Entrega <i class="ri-arrow-up-down-line"></i></th>
+                            <th data-sort-finca="po">PO <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="col-admin col-divider text-center" data-sort-finca="costo">Cost <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="col-admin text-center" data-sort-finca="markup">Markup % <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="col-admin text-center" data-sort-finca="precio">Precio <i class="ri-arrow-up-down-line"></i></th>
+                            <th class="col-admin text-center" data-sort-finca="precioFinalFinca">Precio Final <i class="ri-arrow-up-down-line"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBodyFincas"></tbody>
+                </table>
+
+                <div class="action-area">
+                    <div class="summary-grid" id="summaryTotalsFincas"></div>
+                    <div class="action-buttons-grid">
+                        <div class="btn-group-title">Generar Correo</div>
+                        <button class="btn" onclick="openEmailModalFinca('finca')"><i class="ri-mail-send-line"></i> <span>Correo Finca</span></button>
+                        <button class="btn btn-black" onclick="openEmailModalFinca('admin')"><i class="ri-mail-star-line"></i> <span>Correo Admin</span></button>
+
+                        <div class="btn-group-title">Copiar Datos (Texto)</div>
+                        <button class="btn" onclick="copyTableText('usuario', this, 'finca')"><i class="ri-file-copy-line"></i> <span>Copia Finca</span></button>
+                        <button class="btn btn-black" onclick="copyTableText('admin', this, 'finca')"><i class="ri-file-copy-fill"></i> <span>Copia Admin</span></button>
+
+                        <div class="btn-group-title">Capturar como Imagen</div>
+                        <button class="btn" onclick="copyTableImage('usuario', this, 'finca')"><i class="ri-image-line"></i> <span>Imagen Finca</span></button>
+                        <button class="btn btn-black" onclick="copyTableImage('admin', this, 'finca')"><i class="ri-image-fill"></i> <span>Imagen Admin</span></button>
+
+                        <div class="btn-group-title">Exportar archivo Excel</div>
+                        <button class="btn btn-green" onclick="downloadExcel('usuario', 'finca')"><i class="ri-file-excel-2-line"></i> <span>Descargar Finca</span></button>
+                        <button class="btn btn-primary" onclick="downloadExcel('admin', 'finca')"><i class="ri-file-excel-2-fill"></i> <span>Descargar Admin</span></button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL POPUP DE DETALLES -->
+    <!-- MODAL POPUP DE DETALLES (VENDEDORES) -->
     <div id="dataModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -479,35 +475,39 @@
                 <i class="ri-close-line close-btn" onclick="closeEmailModal()"></i>
             </div>
             <div class="modal-body">
-                <div id="emailContentRaw" contenteditable="true" style="padding: 25px; border: 1px solid var(--border-light); border-radius: 6px; outline: none; background: #fff; min-height: 200px; line-height: 1.5;">
-                    <!-- Se inyecta dinámicamente -->
-                </div>
+                <div id="emailContentRaw" contenteditable="true" style="padding: 25px; border: 1px solid var(--border-light); border-radius: 6px; outline: none; background: #fff; min-height: 200px; line-height: 1.5;"></div>
                 <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 15px;">
                     <button class="btn" onclick="closeEmailModal()">Cancelar</button>
-                    <button class="btn btn-primary" onclick="copyEmailToClipboard(this)">
-                        <i class="ri-clipboard-line"></i> <span>Copiar Correo al Portapapeles</span>
-                    </button>
+                    <button class="btn btn-primary" onclick="copyEmailToClipboard(this)"><i class="ri-clipboard-line"></i> <span>Copiar Correo al Portapapeles</span></button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let globalData = [];
+        // Data Globales
+        let vendedoresData = [];
+        let fincasData = [];
+        
+        // Sorting Vendedores
         let sortCol = 'originalIndex';
         let sortState = 0; 
-        let chartInstance = null;
+        
+        // Sorting Fincas (Por defecto Fecha cronológica ascendente)
+        let sortColFinca = 'fechaTS';
+        let sortStateFinca = 1;
 
-        // Mostrar Efecto Copiado
+        let chartInstance = null;
+        let currentModule = 'vendedores'; // 'vendedores' o 'fincas'
+
+        // Helpers de Animación
         function showButtonSuccess(btn, successText = "¡Copiado!") {
             if (!btn) return;
             const originalHtml = btn.innerHTML;
-            const originalWidth = btn.offsetWidth; // Mantener tamaño estable
-            
+            const originalWidth = btn.offsetWidth;
             btn.style.width = originalWidth + 'px';
             btn.classList.add('btn-success-state');
             btn.innerHTML = `<i class="ri-check-double-line"></i> <span>${successText}</span>`;
-            
             setTimeout(() => {
                 btn.classList.remove('btn-success-state');
                 btn.innerHTML = originalHtml;
@@ -515,16 +515,16 @@
             }, 2000);
         }
 
-        // Calcular Semana Actual
+        // Setup Semana Actual
         function getWeekNumber(d) {
             d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
             d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
             var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-            return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+            return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
         }
         document.getElementById('weekNumLabel').textContent = getWeekNumber(new Date());
 
-        // Toggles y Controles de Vista
+        // Manejo de Interfaz (Toggles y Tabs)
         document.getElementById('togglePoCheck').addEventListener('change', function(e) {
             if(e.target.checked) document.body.classList.remove('hide-po');
             else document.body.classList.add('hide-po');
@@ -533,14 +533,32 @@
         document.getElementById('toggleViewBtn').addEventListener('click', function() {
             let isCompact = document.body.classList.toggle('compact-mode');
             let span = this.querySelector('span');
-            if(isCompact) {
-                span.textContent = "Vista Completa";
-            } else {
-                span.textContent = "Vista Compacta";
-            }
+            span.textContent = isCompact ? "Vista Completa" : "Vista Compacta";
         });
 
-        // Tabs
+        // Tabs Principales (Vendedores / Fincas)
+        document.querySelectorAll('.main-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.main-section').forEach(s => s.classList.remove('active'));
+                
+                tab.classList.add('active');
+                let target = tab.dataset.target;
+                document.getElementById(target).classList.add('active');
+                
+                if (target === 'fincasSection') {
+                    currentModule = 'fincas';
+                    document.getElementById('togglePoContainer').style.display = 'none';
+                    updateFincasUI();
+                } else {
+                    currentModule = 'vendedores';
+                    document.getElementById('togglePoContainer').style.display = 'flex';
+                    updateVendedoresUI();
+                }
+            });
+        });
+
+        // Sub Tabs Vendedores
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -550,21 +568,15 @@
             });
         });
 
-        document.getElementById('vendedorSelect').addEventListener('change', () => { resetSortAndUpdate(); });
-        document.getElementById('frecuenciaSelect').addEventListener('change', () => { resetSortAndUpdate(); });
+        // Listeners de Filtros
+        document.getElementById('vendedorSelect').addEventListener('change', () => { sortCol = 'originalIndex'; sortState = 0; updateVendedoresUI(); });
+        document.getElementById('frecuenciaSelect').addEventListener('change', () => { sortCol = 'originalIndex'; sortState = 0; updateVendedoresUI(); });
+        document.getElementById('fincaSelect').addEventListener('change', () => { sortColFinca = 'fechaTS'; sortStateFinca = 1; updateFincasUI(); });
 
-        function resetSortAndUpdate() {
-            sortCol = 'originalIndex';
-            sortState = 0;
-            resetSortIcons();
-            updateUI();
-        }
-
-        // Lectura de Excel
+        // Procesamiento Excel
         document.getElementById('fileInput').addEventListener('change', function(e) {
             let file = e.target.files[0];
             if(!file) return;
-
             let reader = new FileReader();
             reader.onload = function(e) {
                 let data = new Uint8Array(e.target.result);
@@ -594,200 +606,201 @@
                     return;
                 }
 
+                let fileWeek = guiasSheet['L2'] ? guiasSheet['L2'].v : '-';
+                document.getElementById('fileWeekLabel').textContent = fileWeek;
+
                 let testData = XLSX.utils.sheet_to_json(testSheet);
                 let guiasData = XLSX.utils.sheet_to_json(guiasSheet);
 
                 let vendedoresFullNames = [];
                 guiasData.forEach(row => {
-                    if(row['Nombre']) {
-                        vendedoresFullNames.push(row['Nombre'].toString().trim());
-                    } else {
-                        Object.values(row).forEach(val => {
-                            if(typeof val === 'string' && val.trim().length > 2) {
-                                vendedoresFullNames.push(val.trim());
+                    if(row['Nombre']) vendedoresFullNames.push(row['Nombre'].toString().trim());
+                    else Object.values(row).forEach(val => {
+                        if(typeof val === 'string' && val.trim().length > 2) vendedoresFullNames.push(val.trim());
+                    });
+                });
+                vendedoresFullNames = [...new Set(vendedoresFullNames)];
+
+                vendedoresData = [];
+                fincasData = [];
+
+                testData.forEach((row, index) => {
+                    // --- PARSEO DE FECHAS ---
+                    let fechaRaw = row['FechaEntrega'] || row['Fecha Entrega'] || '';
+                    let fechaFormat = '-';
+                    let fechaTS = 0; // Para orden cronológico Lunes -> Domingo
+                    let fechaEmailStr = ''; // Para correos "Miércoles 29 de Julio"
+
+                    if (typeof fechaRaw === 'number' && fechaRaw > 20000) {
+                        let d = new Date(Math.round((fechaRaw - 25569) * 86400 * 1000));
+                        d = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+                        fechaTS = d.getTime(); 
+                        
+                        let dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                        let meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                        
+                        let diaNombre = dias[d.getDay()];
+                        let mesNombre = meses[d.getMonth()];
+                        let diaStr = String(d.getDate()).padStart(2, '0');
+                        let mesStr = String(d.getMonth() + 1).padStart(2, '0');
+                        
+                        fechaFormat = `${diaNombre} ${diaStr}/${mesStr}/${d.getFullYear()}`;
+                        fechaEmailStr = `${diaNombre} ${d.getDate()} de ${mesNombre}`;
+                    }
+
+                    // --- COLUMNAS COMUNES ---
+                    let variedad = row['Variedad'] || row['variedad'] || '';
+                    let nombreArt = row['Nombre'] || row['nombre'] || ''; 
+                    let typeBox = row['Type of Box'] || row['type of box'] || '';
+                    let cantMin = parseFloat(row['Cantidad_Min'] || row['cantidad_min']) || 0;
+                    let precio = parseFloat(row['Precio'] || row['precio']) || 0;
+                    let costo = parseFloat(row['Cost'] || row['cost']) || 0;
+                    
+                    let markupRaw = String(row['Markup'] || row['markup'] || "0");
+                    let markup = parseFloat(markupRaw.replace('%', ''));
+                    if (markupRaw.indexOf('%') === -1 && markup > 0 && markup <= 1) markup = markup * 100;
+
+                    let po = row['Color'] || row['color'] || '-';
+                    let finca = row['Finca'] || row['finca'] || '-';
+
+                    let rawOrdenInfo = `${variedad} ${nombreArt}`.trim();
+                    let arrivalMap = {'(M/T)': 'Mon - Tue', '(T/W)': 'Tue - Wed', '(W/T)': 'Wed - Thu', '(T/F)': 'Thu - Fri'};
+                    let arrival = '-';
+                    for (let key in arrivalMap) {
+                        if (rawOrdenInfo.toUpperCase().includes(key)) {
+                            arrival = arrivalMap[key];
+                            rawOrdenInfo = rawOrdenInfo.replace(new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '').trim();
+                            break;
+                        }
+                    }
+
+                    // ==========================================
+                    // 1. POBLAR DATA FINCAS (Lectura directa de fila)
+                    // ==========================================
+                    if (finca && String(finca).trim() !== '-' && String(finca).trim() !== '') {
+                        let qty = parseFloat(row['Qty'] || row['qty'] || row['QTY'] || row['Cajas']) || 0;
+                        
+                        // Producto sin etiquetas Arrival (M/T, T/W, etc) para Fincas
+                        let productoFinca = `${variedad} ${nombreArt}`.trim();
+                        Object.keys(arrivalMap).forEach(tag => {
+                            productoFinca = productoFinca.replace(new RegExp(tag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '').trim();
+                        });
+
+                        // Qty * Stems * Precio
+                        let precioFinalFinca = qty * cantMin * precio;
+
+                        fincasData.push({
+                            originalIndex: index,
+                            finca: String(finca).trim(),
+                            qty: qty,
+                            typeBox: typeBox,
+                            cantMin: cantMin,
+                            producto: productoFinca,
+                            fechaFormat: fechaFormat,
+                            fechaTS: fechaTS,
+                            fechaEmailStr: fechaEmailStr,
+                            po: po,
+                            costo: costo,
+                            markup: markup,
+                            precio: precio,
+                            precioFinalFinca: precioFinalFinca
+                        });
+                    }
+
+                    // ==========================================
+                    // 2. POBLAR DATA VENDEDORES (Spliteando Standing Orders)
+                    // ==========================================
+                    let standingOrders = row['Standing Orders'] || row['standing orders'] || row['STANDING ORDERS'];
+                    if(standingOrders) {
+                        let orders = standingOrders.split(';');
+                        orders.forEach(orderStr => {
+                            orderStr = orderStr.trim();
+                            if(!orderStr) return;
+
+                            let match = orderStr.match(/^(\d+(?:\.\d+)?)\s+(.*?)(?:\s*\(\*?(par|impar)\))?\s*\[(.*?)\]$/i);
+                            if(match) {
+                                let boxCount = parseFloat(match[1]);
+                                let vendedorFragment = match[2].trim();
+                                let parImpar = match[3] ? match[3].toLowerCase() : null;
+                                let clienteRaw = match[4].trim();
+
+                                let fullName = vendedoresFullNames.find(v => v.toLowerCase().includes(vendedorFragment.toLowerCase())) || vendedorFragment;
+                                
+                                let frecuencia = "Everyweek", freqClass = "everyweek";
+                                if(parImpar === "par") { frecuencia = "Biweekly (Par)"; freqClass = "par"; }
+                                else if(parImpar === "impar") { frecuencia = "Biweekly (Impar)"; freqClass = "impar"; }
+
+                                let orden = `${boxCount}${typeBox} x${cantMin} ${rawOrdenInfo}`.trim();
+                                let precioFinal = boxCount * cantMin * precio;
+
+                                vendedoresData.push({
+                                    originalIndex: index,
+                                    boxCount: boxCount, typeBox: typeBox, cantMin: cantMin,
+                                    vendedorFull: fullName, frecuencia: frecuencia, freqClass: freqClass,
+                                    orden: orden, cliente: clienteRaw, arrival: arrival, po: po,
+                                    precio: precio, finca: String(finca).trim(), costo: costo, markup: markup,
+                                    precioFinal: precioFinal, fechaEmailStr: fechaEmailStr
+                                });
                             }
                         });
                     }
                 });
-                vendedoresFullNames = [...new Set(vendedoresFullNames)];
 
-                globalData = [];
-
-                testData.forEach((row) => {
-                    let standingOrders = row['Standing Orders'] || row['standing orders'] || row['STANDING ORDERS'];
-                    if(!standingOrders) return;
-
-                    let orders = standingOrders.split(';');
-                    orders.forEach(orderStr => {
-                        orderStr = orderStr.trim();
-                        if(!orderStr) return;
-
-                        let match = orderStr.match(/^(\d+(?:\.\d+)?)\s+(.*?)(?:\s*\(\*?(par|impar)\))?\s*\[(.*?)\]$/i);
-                        
-                        if(match) {
-                            let boxCount = parseFloat(match[1]);
-                            let vendedorFragment = match[2].trim();
-                            let parImpar = match[3] ? match[3].toLowerCase() : null;
-                            let clienteRaw = match[4].trim();
-
-                            let fullName = vendedoresFullNames.find(v => 
-                                v.toLowerCase().includes(vendedorFragment.toLowerCase())
-                            ) || vendedorFragment;
-
-                            let frecuencia = "Everyweek";
-                            let freqClass = "everyweek";
-                            if(parImpar === "par") {
-                                frecuencia = "Biweekly (Par)";
-                                freqClass = "par";
-                            } else if(parImpar === "impar") {
-                                frecuencia = "Biweekly (Impar)";
-                                freqClass = "impar";
-                            }
-
-                            let variedad = row['Variedad'] || row['variedad'] || '';
-                            let nombreArt = row['Nombre'] || row['nombre'] || ''; 
-                            let typeBox = row['Type of Box'] || row['type of box'] || '';
-                            let cantMin = parseFloat(row['Cantidad_Min'] || row['cantidad_min']) || 0;
-                            
-                            let rawOrdenInfo = `${variedad} ${nombreArt}`.trim();
-                            let arrival = '-';
-                            let arrivalMap = {
-                                '(M/T)': 'Mon - Tue', '(T/W)': 'Tue - Wed',
-                                '(W/T)': 'Wed - Thu', '(T/F)': 'Thu - Fri'
-                            };
-
-                            for (let key in arrivalMap) {
-                                if (rawOrdenInfo.toUpperCase().includes(key)) {
-                                    arrival = arrivalMap[key];
-                                    let escapeRegex = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                                    rawOrdenInfo = rawOrdenInfo.replace(new RegExp(escapeRegex, 'gi'), '').trim();
-                                    break;
-                                }
-                            }
-
-                            let orden = `${boxCount}${typeBox} x${cantMin} ${rawOrdenInfo}`.trim();
-
-                            let precio = parseFloat(row['Precio'] || row['precio']) || 0;
-                            let costo = parseFloat(row['Cost'] || row['cost']) || 0;
-                            let markupRaw = String(row['Markup'] || row['markup'] || "0");
-                            let markup = parseFloat(markupRaw.replace('%', ''));
-                            if (markupRaw.indexOf('%') === -1 && markup > 0 && markup <= 1) {
-                                markup = markup * 100;
-                            }
-
-                            let po = row['Color'] || row['color'] || '-';
-                            let finca = row['Finca'] || row['finca'] || '-';
-                            
-                            let precioFinal = boxCount * cantMin * precio;
-
-                            globalData.push({
-                                originalIndex: globalData.length,
-                                boxCount: boxCount,
-                                typeBox: typeBox,
-                                cantMin: cantMin,
-                                vendedorFull: fullName,
-                                frecuencia: frecuencia,
-                                freqClass: freqClass,
-                                orden: orden,
-                                cliente: clienteRaw,
-                                arrival: arrival,
-                                po: po,
-                                precio: precio,
-                                finca: finca,
-                                costo: costo,
-                                markup: markup,
-                                precioFinal: precioFinal
-                            });
-                        }
-                    });
-                });
-
-                populateVendedores();
+                populateSelects();
                 document.getElementById('dashboard').style.display = 'block';
                 document.getElementById('uploadContainer').style.display = 'none';
 
             } catch(err) {
                 console.error(err);
-                alert("Hubo un error procesando el archivo. Verifica la consola.");
+                alert("Hubo un error procesando el archivo.");
             }
         }
 
-        function populateVendedores() {
-            let select = document.getElementById('vendedorSelect');
-            let uniqueVendedores = [...new Set(globalData.map(d => d.vendedorFull))].sort();
+        function populateSelects() {
+            // Vendedores
+            let selVend = document.getElementById('vendedorSelect');
+            let uVend = [...new Set(vendedoresData.map(d => d.vendedorFull))].sort();
+            selVend.innerHTML = '<option value="">Vista General (Todos)</option>';
+            uVend.forEach(v => selVend.innerHTML += `<option value="${v}">${v}</option>`);
             
-            select.innerHTML = '<option value="">Vista General (Todos)</option>';
-            uniqueVendedores.forEach(v => {
-                let opt = document.createElement('option');
-                opt.value = v;
-                opt.textContent = v;
-                select.appendChild(opt);
-            });
-            
-            updateUI();
+            // Fincas
+            let selFinca = document.getElementById('fincaSelect');
+            let uFincas = [...new Set(fincasData.map(d => d.finca))].sort();
+            selFinca.innerHTML = '<option value="">Vista General (Todas)</option>';
+            uFincas.forEach(f => selFinca.innerHTML += `<option value="${f}">${f}</option>`);
+
+            updateVendedoresUI();
+            updateFincasUI();
         }
 
         function formatCurrency(val) { return '$' + parseFloat(val).toFixed(2); }
         function formatPercent(val) { return parseFloat(val).toFixed(2) + '%'; }
 
-        function getFilteredData() {
-            let selectedVend = document.getElementById('vendedorSelect').value;
-            let selectedFreq = document.getElementById('frecuenciaSelect').value;
+        // ======================= LÓGICA VENDEDORES =======================
+        
+        function getFilteredVendedores() {
+            let selVend = document.getElementById('vendedorSelect').value;
+            let selFreq = document.getElementById('frecuenciaSelect').value;
+            let data = vendedoresData;
             
-            let data = globalData;
-            
-            if(selectedVend) data = data.filter(d => d.vendedorFull === selectedVend);
-
-            if(selectedFreq === 'par') {
-                data = data.filter(d => d.freqClass === 'par' || d.freqClass === 'everyweek');
-            } else if(selectedFreq === 'impar') {
-                data = data.filter(d => d.freqClass === 'impar' || d.freqClass === 'everyweek');
-            }
+            if(selVend) data = data.filter(d => d.vendedorFull === selVend);
+            if(selFreq === 'par') data = data.filter(d => d.freqClass === 'par' || d.freqClass === 'everyweek');
+            else if(selFreq === 'impar') data = data.filter(d => d.freqClass === 'impar' || d.freqClass === 'everyweek');
             
             data.sort((a, b) => {
-                let valA = a[sortCol];
-                let valB = b[sortCol];
-                if(typeof valA === 'string') valA = valA.toLowerCase();
-                if(typeof valB === 'string') valB = valB.toLowerCase();
-                
-                if (sortState === 1) return valA < valB ? -1 : (valA > valB ? 1 : 0);
-                if (sortState === 2) return valA > valB ? -1 : (valA < valB ? 1 : 0);
+                let vA = a[sortCol], vB = b[sortCol];
+                if(typeof vA === 'string') vA = vA.toLowerCase();
+                if(typeof vB === 'string') vB = vB.toLowerCase();
+                if (sortState === 1) return vA < vB ? -1 : (vA > vB ? 1 : 0);
+                if (sortState === 2) return vA > vB ? -1 : (vA < vB ? 1 : 0);
                 return a.originalIndex - b.originalIndex;
             });
-
             return data;
         }
 
-        function updateUI() {
-            renderTable();
-            renderStats();
-        }
-
-        function generateRowHTML(row) {
-            let markupCls = row.markup < 21 ? 'text-red' : '';
-            return `
-                <td class="nowrap"><span class="pill ${row.freqClass}">${row.frecuencia}</span></td>
-                <td class="text-bold">${row.orden}</td>
-                <td class="nowrap">${row.cliente}</td>
-                <td class="nowrap"><span class="pill arrival">${row.arrival}</span></td>
-                <td class="col-po">${row.po}</td>
-                <td class="text-center">${formatCurrency(row.precio)}</td>
-                <td class="col-admin col-divider">${row.finca}</td>
-                <td class="col-admin text-center">${formatCurrency(row.costo)}</td>
-                <td class="col-admin text-center ${markupCls}">${formatPercent(row.markup)}</td>
-                <td class="col-admin text-center text-bold">${formatCurrency(row.precioFinal)}</td>
-            `;
-        }
-
-        function resetSortIcons() {
-            document.querySelectorAll('th[data-sort] i').forEach(icon => {
-                icon.className = 'ri-arrow-up-down-line';
-            });
-        }
-
-        function renderTable() {
-            let filteredData = getFilteredData();
-            let tbody = document.getElementById('tableBody');
+        function updateVendedoresUI() {
+            let data = getFilteredVendedores();
+            let tbody = document.getElementById('tableBodyVendedores');
             tbody.innerHTML = '';
             
             document.querySelectorAll('th[data-sort]').forEach(th => {
@@ -797,313 +810,323 @@
                     if(sortState === 1) icon.className = 'ri-sort-asc';
                     else if(sortState === 2) icon.className = 'ri-sort-desc';
                     else icon.className = 'ri-arrow-up-down-line';
-                } else {
-                    icon.className = 'ri-arrow-up-down-line';
-                }
+                } else icon.className = 'ri-arrow-up-down-line';
             });
             
-            let totalCajas = 0, totalVentas = 0;
-            let countEB = 0, countQB = 0, countHB = 0;
+            let tCajas = 0, tVentas = 0, cEB = 0, cQB = 0, cHB = 0;
 
-            filteredData.forEach(row => {
-                totalCajas += row.boxCount;
-                totalVentas += row.precioFinal;
+            data.forEach(row => {
+                tCajas += row.boxCount; tVentas += row.precioFinal;
                 let tb = String(row.typeBox).toUpperCase();
-                if(tb === 'EB') countEB += row.boxCount;
-                if(tb === 'QB') countQB += row.boxCount;
-                if(tb === 'HB') countHB += row.boxCount;
+                if(tb === 'EB') cEB += row.boxCount; if(tb === 'QB') cQB += row.boxCount; if(tb === 'HB') cHB += row.boxCount;
 
-                let tr = document.createElement('tr');
-                tr.innerHTML = generateRowHTML(row);
-                tbody.appendChild(tr);
+                let mkCls = row.markup < 21 ? 'text-red' : '';
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="nowrap"><span class="pill ${row.freqClass}">${row.frecuencia}</span></td>
+                        <td class="text-bold">${row.orden}</td><td class="nowrap">${row.cliente}</td>
+                        <td class="nowrap"><span class="pill arrival">${row.arrival}</span></td><td class="col-po">${row.po}</td>
+                        <td class="text-center">${formatCurrency(row.precio)}</td><td class="col-admin col-divider">${row.finca}</td>
+                        <td class="col-admin text-center">${formatCurrency(row.costo)}</td>
+                        <td class="col-admin text-center ${mkCls}">${formatPercent(row.markup)}</td>
+                        <td class="col-admin text-center text-bold">${formatCurrency(row.precioFinal)}</td>
+                    </tr>`;
             });
             
-            document.getElementById('statsInfo').textContent = `${filteredData.length} registros visibles`;
-
-            document.getElementById('summaryTotals').innerHTML = `
-                <div class="summary-card">
-                    <strong><i class="ri-box-3-line"></i> Total Cajas</strong>
-                    <div class="summary-val">${totalCajas}</div>
-                </div>
-                <div class="summary-card">
-                    <strong><i class="ri-money-dollar-circle-line"></i> Total Ventas (Órdenes)</strong>
-                    <div class="summary-val">${formatCurrency(totalVentas)}</div>
-                </div>
-                <div class="summary-card">
-                    <strong><i class="ri-bar-chart-box-line"></i> Tipos de Caja</strong>
-                    <div style="margin-top: 5px; display:flex; gap: 8px;">
-                        <span class="pill arrival">EB: ${countEB}</span> 
-                        <span class="pill arrival">QB: ${countQB}</span> 
-                        <span class="pill arrival">HB: ${countHB}</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderStats() {
-            let filteredData = getFilteredData();
-            let clientStats = {};
-            let fincaStats = {};
-
-            filteredData.forEach(d => {
-                if(!fincaStats[d.finca]) fincaStats[d.finca] = { cajas: 0 };
-                fincaStats[d.finca].cajas += d.boxCount;
-
-                if(!clientStats[d.cliente]) clientStats[d.cliente] = { cajas: 0, ventas: 0, types: new Set() };
-                clientStats[d.cliente].cajas += d.boxCount;
-                clientStats[d.cliente].ventas += d.precioFinal;
-                if(d.typeBox) clientStats[d.cliente].types.add(String(d.typeBox).toUpperCase());
-            });
-
-            let fincaArr = Object.keys(fincaStats).map(k => ({ nombre: k, cajas: fincaStats[k].cajas }));
-            fincaArr.sort((a,b) => b.cajas - a.cajas);
-
-            let fincasHtml = '';
-            fincaArr.forEach(f => {
-                let encodedName = encodeURIComponent(f.nombre);
-                fincasHtml += `<div class="stat-row">
-                    <span>${f.nombre}</span> 
-                    <span class="text-bold d-flex align-center gap-2">
-                        ${f.cajas} cajas
-                        <i class="ri-eye-line pointer text-brand" onclick="openDataModal('finca', '${encodedName}')"></i>
-                    </span>
+            document.getElementById('statsInfoVendedores').textContent = `${data.length} registros visibles`;
+            document.getElementById('summaryTotalsVendedores').innerHTML = `
+                <div class="summary-card"><strong><i class="ri-box-3-line"></i> Total Cajas</strong><div class="summary-val">${tCajas}</div></div>
+                <div class="summary-card"><strong><i class="ri-money-dollar-circle-line"></i> Ventas (Órdenes)</strong><div class="summary-val">${formatCurrency(tVentas)}</div></div>
+                <div class="summary-card"><strong><i class="ri-bar-chart-box-line"></i> Tipos Caja</strong>
+                    <div style="margin-top: 5px; display:flex; gap: 8px;"><span class="pill arrival">EB: ${cEB}</span><span class="pill arrival">QB: ${cQB}</span><span class="pill arrival">HB: ${cHB}</span></div>
                 </div>`;
-            });
-            document.getElementById('topFincas').innerHTML = fincasHtml || '<div class="text-muted">Sin datos</div>';
-
-            let cliArr = Object.keys(clientStats).map(k => ({
-                nombre: k, cajas: clientStats[k].cajas, ventas: clientStats[k].ventas,
-                tipos: Array.from(clientStats[k].types).join(', ')
-            }));
-            cliArr.sort((a,b) => b.ventas - a.ventas);
-
-            let cliHtml = '';
-            cliArr.forEach(c => {
-                let encodedName = encodeURIComponent(c.nombre);
-                cliHtml += `
-                    <div style="padding: 10px 0; border-bottom: 1px solid #f2f1ee;">
-                        <div class="d-flex justify-between align-center" style="font-weight: 500; margin-bottom: 5px;">
-                            ${c.nombre}
-                            <i class="ri-eye-line pointer text-brand" onclick="openDataModal('cliente', '${encodedName}')"></i>
-                        </div>
-                        <div style="font-size: 12px; color: var(--text-muted); display:flex; gap: 15px;">
-                            <span><i class="ri-box-3-line"></i> ${c.cajas} cajas</span>
-                            <span><i class="ri-price-tag-3-line"></i> ${c.tipos || 'N/A'}</span>
-                            <span style="color: var(--brand); font-weight: 600;">${formatCurrency(c.ventas)}</span>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('topClientes').innerHTML = cliHtml || '<div class="text-muted">Sin datos</div>';
-
-            renderChart(fincaArr);
+            
+            renderStatsVendedores(data);
         }
 
-        function renderChart(fincaArr) {
-            let ctx = document.getElementById('fincasChart').getContext('2d');
-            let top5 = fincaArr.slice(0, 7); 
-            let labels = top5.map(f => f.nombre);
-            let data = top5.map(f => f.cajas);
-            let bgColors = ['#2383e2', '#2ea043', '#e15759', '#f28e2c', '#76b7b2', '#af7aa1', '#edc949'];
+        function renderStatsVendedores(data) {
+            let cStats = {}, fStats = {};
+            data.forEach(d => {
+                if(!fStats[d.finca]) fStats[d.finca] = { cajas: 0 };
+                fStats[d.finca].cajas += d.boxCount;
+                if(!cStats[d.cliente]) cStats[d.cliente] = { cajas: 0, ventas: 0, types: new Set() };
+                cStats[d.cliente].cajas += d.boxCount; cStats[d.cliente].ventas += d.precioFinal;
+                if(d.typeBox) cStats[d.cliente].types.add(String(d.typeBox).toUpperCase());
+            });
 
-            if(chartInstance) { chartInstance.destroy(); }
+            let fArr = Object.keys(fStats).map(k => ({ nombre: k, cajas: fStats[k].cajas })).sort((a,b) => b.cajas - a.cajas);
+            document.getElementById('topFincas').innerHTML = fArr.map(f => `<div class="stat-row"><span>${f.nombre}</span> <span class="text-bold d-flex align-center gap-2">${f.cajas} cajas <i class="ri-eye-line pointer text-brand" onclick="openDataModal('finca', '${encodeURIComponent(f.nombre)}')"></i></span></div>`).join('') || '<div class="text-muted">Sin datos</div>';
+
+            let cArr = Object.keys(cStats).map(k => ({ nombre: k, cajas: cStats[k].cajas, ventas: cStats[k].ventas, tipos: Array.from(cStats[k].types).join(', ') })).sort((a,b) => b.ventas - a.ventas);
+            document.getElementById('topClientes').innerHTML = cArr.map(c => `<div style="padding: 10px 0; border-bottom: 1px solid #f2f1ee;"><div class="d-flex justify-between align-center" style="font-weight: 500; margin-bottom: 5px;">${c.nombre} <i class="ri-eye-line pointer text-brand" onclick="openDataModal('cliente', '${encodeURIComponent(c.nombre)}')"></i></div><div style="font-size: 12px; color: var(--text-muted); display:flex; gap: 15px;"><span><i class="ri-box-3-line"></i> ${c.cajas} cajas</span><span><i class="ri-price-tag-3-line"></i> ${c.tipos || 'N/A'}</span><span style="color: var(--brand); font-weight: 600;">${formatCurrency(c.ventas)}</span></div></div>`).join('') || '<div class="text-muted">Sin datos</div>';
+
+            let ctx = document.getElementById('fincasChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, {
                 type: 'doughnut',
-                data: { labels: labels, datasets: [{ data: data, backgroundColor: bgColors, borderWidth: 1 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: "'Inter', sans-serif", size: 12 } } }, tooltip: { callbacks: { label: function(c) { return ' ' + c.raw + ' Cajas'; } } } }, cutout: '65%' }
+                data: { labels: fArr.slice(0, 7).map(f => f.nombre), datasets: [{ data: fArr.slice(0, 7).map(f => f.cajas), backgroundColor: ['#2383e2', '#2ea043', '#e15759', '#f28e2c', '#76b7b2', '#af7aa1', '#edc949'], borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '65%' }
             });
         }
 
-        // --- SISTEMA DE GENERADOR DE CORREOS ---
-
-        async function openEmailModal(type) {
-            let selectedVend = document.getElementById('vendedorSelect').value;
-            if (!selectedVend) {
-                alert("Por favor, selecciona un vendedor en el filtro superior primero.");
-                return;
-            }
-
-            let data = getFilteredData();
-            if (data.length === 0) {
-                alert("No hay órdenes filtradas para este vendedor.");
-                return;
-            }
-
-            const table = document.querySelector('#tableView table');
-            const originalPoHidden = document.body.classList.contains('hide-po');
-            const originalCompact = document.body.classList.contains('compact-mode');
-
-            document.body.classList.add('hide-po');
-            if (type === 'vendedor') {
-                document.body.classList.add('compact-mode');
-            } else {
-                document.body.classList.remove('compact-mode');
-            }
-
-            let canvas = await html2canvas(table, { backgroundColor: '#ffffff', scale: 2 });
-            let imgData = canvas.toDataURL('image/png');
-
-            if (!originalPoHidden) document.body.classList.remove('hide-po');
-            if (originalCompact) document.body.classList.add('compact-mode');
-            else document.body.classList.remove('compact-mode');
-
-            let emailHtml = "";
-            if (type === 'vendedor') {
-                emailHtml = `
-                    <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
-                        <p>Estimado/a <strong>${selectedVend}</strong>,</p>
-                        <p>A continuación adjunto la orden fija correspondiente.</p>
-                        <p>Por favor revisen detalladamente la información de los precios, los clientes, las fechas de llegada al cliente en la columna Arrival y que todo cuadre correctamente. Si hay algún cambio, por favor respondan a este correo para aplicarlos y asegurar que la próxima vez que les envíe esté todo correcto.</p>
-                        <br>
-                        <img src="${imgData}" style="max-width: 100%; border: 1px solid #ccc; border-radius: 4px;" alt="Tabla de Órdenes Vendedor">
-                        <br><br>
-                        <p>Saludos cordiales,<br>César</p>
-                    </div>
-                `;
-            } else if (type === 'admin') {
-                let hasLowMarkup = data.some(d => d.markup < 21);
-                let alertMsg = hasLowMarkup ? `<p style="color: #e03e3e; font-weight: bold;">Nota de Revisión: Se reportan valores con un margen (Markup) inferior al 21% acordado. Por favor, estar pendientes de esta situación.</p>` : ``;
-
-                emailHtml = `
-                    <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
-                        <p>Estimado equipo de <strong>EC Flowers</strong>,</p>
-                        <p>Mediante el presente correo reporto la orden fija semanal correspondiente al vendedor <strong>${selectedVend}</strong>.</p>
-                        ${alertMsg}
-                        <p>Dejo este correo como constancia para que puedan visualizar la orden completa del vendedor.</p>
-                        <br>
-                        <img src="${imgData}" style="max-width: 100%; border: 1px solid #ccc; border-radius: 4px;" alt="Tabla de Órdenes Admin">
-                        <br><br>
-                        <p>Saludos cordiales,<br>César</p>
-                    </div>
-                `;
-            }
-
-            document.getElementById('emailContentRaw').innerHTML = emailHtml;
-            document.getElementById('emailModal').style.display = 'flex';
-        }
-
-        function closeEmailModal() {
-            document.getElementById('emailModal').style.display = 'none';
-        }
-
-        async function copyEmailToClipboard(btn) {
-            const emailDiv = document.getElementById('emailContentRaw');
-            try {
-                const htmlBlob = new Blob([emailDiv.innerHTML], { type: 'text/html' });
-                const textBlob = new Blob([emailDiv.innerText], { type: 'text/plain' });
-                const item = new ClipboardItem({
-                    'text/html': htmlBlob,
-                    'text/plain': textBlob
-                });
-                await navigator.clipboard.write([item]);
-                showButtonSuccess(btn);
-            } catch (err) {
-                alert('Tu navegador limitó el copiado automático. Haz clic en el texto del correo, presiona Ctrl+A para seleccionar todo, y luego Ctrl+C para copiar.');
-            }
-        }
-
-        // --- SISTEMA DE EXPORTACIÓN REGULAR ---
-
-        function copyTableText(type, btn) {
-            let data = getFilteredData();
-            let clipboardText = "";
-            let isUser = (type === 'usuario');
-
-            if (isUser) {
-                clipboardText += "Frecuencia\tOrden\tCliente\tArrival\tPrecio\n";
-                data.forEach(r => { clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.precio}\n`; });
-            } else {
-                clipboardText += "Frecuencia\tOrden\tCliente\tArrival\tPO\tPrecio\tFinca\tPrecio Compra\tMarkup %\tPrecio Final\n";
-                data.forEach(r => {
-                    clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.po}\t${r.precio}\t${r.finca}\t${r.costo}\t${formatPercent(r.markup)}\t${r.precioFinal}\n`;
-                });
-            }
-
-            navigator.clipboard.writeText(clipboardText).then(() => { 
-                showButtonSuccess(btn);
-            }).catch(err => {
-                alert("Error al copiar: " + err);
+        document.querySelectorAll('th[data-sort]').forEach(th => {
+            th.addEventListener('click', () => {
+                let col = th.getAttribute('data-sort');
+                if (sortCol === col) sortState = (sortState + 1) % 3; else { sortCol = col; sortState = 1; }
+                if (sortState === 0) sortCol = 'originalIndex';
+                updateVendedoresUI();
             });
-        }
+        });
 
-        async function copyTableImage(type, btn) {
-            const table = document.querySelector('#tableView table');
-            const originalPoHidden = document.body.classList.contains('hide-po');
-            const originalCompact = document.body.classList.contains('compact-mode');
+        // ======================= LÓGICA FINCAS =======================
+        
+        function getFilteredFincas() {
+            let sel = document.getElementById('fincaSelect').value;
+            let data = sel ? fincasData.filter(d => d.finca === sel) : fincasData;
             
-            if (type === 'usuario') {
-                document.body.classList.add('hide-po');
+            data.sort((a, b) => {
+                let vA = a[sortColFinca], vB = b[sortColFinca];
+                if(typeof vA === 'string') vA = vA.toLowerCase();
+                if(typeof vB === 'string') vB = vB.toLowerCase();
+                if (sortStateFinca === 1) return vA < vB ? -1 : (vA > vB ? 1 : 0);
+                if (sortStateFinca === 2) return vA > vB ? -1 : (vA < vB ? 1 : 0);
+                
+                // Si el state es 0, vuelve al orden cronológico por defecto (Ascendente)
+                return a.fechaTS - b.fechaTS;
+            });
+            return data;
+        }
+
+        function updateFincasUI() {
+            let data = getFilteredFincas();
+            let tbody = document.getElementById('tableBodyFincas');
+            tbody.innerHTML = '';
+            
+            document.querySelectorAll('th[data-sort-finca]').forEach(th => {
+                let col = th.getAttribute('data-sort-finca');
+                let icon = th.querySelector('i');
+                if (col === sortColFinca) {
+                    if(sortStateFinca === 1) icon.className = 'ri-sort-asc';
+                    else if(sortStateFinca === 2) icon.className = 'ri-sort-desc';
+                    else icon.className = 'ri-arrow-up-down-line';
+                } else icon.className = 'ri-arrow-up-down-line';
+            });
+
+            let tCajas = 0, tVentas = 0, cEB = 0, cQB = 0, cHB = 0;
+
+            data.forEach(row => {
+                tCajas += row.qty; 
+                tVentas += row.precioFinalFinca;
+                let tb = String(row.typeBox).toUpperCase();
+                if(tb === 'EB') cEB += row.qty; if(tb === 'QB') cQB += row.qty; if(tb === 'HB') cHB += row.qty;
+
+                let mkCls = row.markup < 21 ? 'text-red' : '';
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center text-bold">${row.qty}</td>
+                        <td class="nowrap">${row.typeBox}</td>
+                        <td class="text-center">${row.cantMin}</td>
+                        <td>${row.producto}</td>
+                        <td class="nowrap">${row.fechaFormat}</td>
+                        <td>${row.po}</td>
+                        <td class="col-admin col-divider text-center">${formatCurrency(row.costo)}</td>
+                        <td class="col-admin text-center ${mkCls}">${formatPercent(row.markup)}</td>
+                        <td class="col-admin text-center">${formatCurrency(row.precio)}</td>
+                        <td class="col-admin text-center text-bold text-brand">${formatCurrency(row.precioFinalFinca)}</td>
+                    </tr>`;
+            });
+            
+            document.getElementById('statsInfoFincas').textContent = `${data.length} registros visibles`;
+            
+            document.getElementById('summaryTotalsFincas').innerHTML = `
+                <div class="summary-card"><strong><i class="ri-box-3-line"></i> Total Cajas</strong><div class="summary-val">${tCajas}</div></div>
+                <div class="summary-card"><strong><i class="ri-money-dollar-circle-line"></i> Precio Final</strong><div class="summary-val">${formatCurrency(tVentas)}</div></div>
+                <div class="summary-card"><strong><i class="ri-bar-chart-box-line"></i> Tipos Caja</strong>
+                    <div style="margin-top: 5px; display:flex; gap: 8px;"><span class="pill arrival">EB: ${cEB}</span><span class="pill arrival">QB: ${cQB}</span><span class="pill arrival">HB: ${cHB}</span></div>
+                </div>`;
+        }
+
+        document.querySelectorAll('th[data-sort-finca]').forEach(th => {
+            th.addEventListener('click', () => {
+                let col = th.getAttribute('data-sort-finca');
+                if (sortColFinca === col) sortStateFinca = (sortStateFinca + 1) % 3; else { sortColFinca = col; sortStateFinca = 1; }
+                if (sortStateFinca === 0) sortColFinca = 'fechaTS'; // Reset al cronológico por defecto
+                updateFincasUI();
+            });
+        });
+
+        // ======================= SISTEMAS DE EXPORTACIÓN =======================
+
+        function copyTableText(userType, btn, moduleType) {
+            let data = moduleType === 'vendedor' ? getFilteredVendedores() : getFilteredFincas();
+            let clipboardText = "";
+            
+            if(moduleType === 'vendedor') {
+                if (userType === 'usuario') {
+                    clipboardText += "Frecuencia\tOrden\tCliente\tArrival\tPrecio\n";
+                    data.forEach(r => clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.precio}\n`);
+                } else {
+                    clipboardText += "Frecuencia\tOrden\tCliente\tArrival\tPO\tPrecio\tFinca\tPrecio Compra\tMarkup %\tPrecio Final\n";
+                    data.forEach(r => clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.po}\t${r.precio}\t${r.finca}\t${r.costo}\t${formatPercent(r.markup)}\t${r.precioFinal}\n`);
+                }
+            } else {
+                if (userType === 'usuario') { 
+                    clipboardText += "Qty\tBox\tStems\tVariedad + Nombre\tFecha Entrega\tPO\n";
+                    data.forEach(r => clipboardText += `${r.qty}\t${r.typeBox}\t${r.cantMin}\t${r.producto}\t${r.fechaFormat}\t${r.po}\n`);
+                } else {
+                    clipboardText += "Qty\tBox\tStems\tVariedad + Nombre\tFecha Entrega\tPO\tCost\tMarkup %\tPrecio\tPrecio Final\n";
+                    data.forEach(r => clipboardText += `${r.qty}\t${r.typeBox}\t${r.cantMin}\t${r.producto}\t${r.fechaFormat}\t${r.po}\t${r.costo}\t${formatPercent(r.markup)}\t${r.precio}\t${r.precioFinalFinca}\n`);
+                }
+            }
+
+            navigator.clipboard.writeText(clipboardText).then(() => showButtonSuccess(btn)).catch(err => alert("Error: " + err));
+        }
+
+        async function copyTableImage(userType, btn, moduleType) {
+            const table = moduleType === 'vendedor' ? document.querySelector('#tableViewVendedores table') : document.querySelector('#tableViewFincas table');
+            const origPo = document.body.classList.contains('hide-po');
+            const origCompact = document.body.classList.contains('compact-mode');
+            
+            if (userType === 'usuario') {
+                if(moduleType === 'vendedor') document.body.classList.add('hide-po');
                 document.body.classList.add('compact-mode');
             } else {
-                document.body.classList.remove('hide-po');
+                if(moduleType === 'vendedor') document.body.classList.remove('hide-po');
                 document.body.classList.remove('compact-mode');
             }
 
             try {
                 const canvas = await html2canvas(table, { backgroundColor: '#ffffff', scale: 2 });
                 canvas.toBlob(blob => {
-                    navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(() => {
-                        showButtonSuccess(btn);
-                    });
+                    navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(() => showButtonSuccess(btn));
                 }, 'image/png');
-            } catch (err) {
-                alert("Error generando imagen: " + err);
-            } finally {
-                if (originalPoHidden) document.body.classList.add('hide-po');
-                else document.body.classList.remove('hide-po');
-                if (originalCompact) document.body.classList.add('compact-mode');
-                else document.body.classList.remove('compact-mode');
+            } catch (err) { alert("Error: " + err); } 
+            finally {
+                if (origPo) document.body.classList.add('hide-po'); else document.body.classList.remove('hide-po');
+                if (origCompact) document.body.classList.add('compact-mode'); else document.body.classList.remove('compact-mode');
             }
         }
 
-        function downloadExcel(type) {
-            let data = getFilteredData();
+        function downloadExcel(userType, moduleType) {
+            let data = moduleType === 'vendedor' ? getFilteredVendedores() : getFilteredFincas();
             let ws_data = [];
-            let isUser = (type === 'usuario');
             
-            if(isUser) {
-                ws_data.push(["Frecuencia", "Orden", "Cliente", "Arrival", "Precio"]);
-                data.forEach(r => ws_data.push([r.frecuencia, r.orden, r.cliente, r.arrival, r.precio]));
+            if(moduleType === 'vendedor') {
+                if(userType === 'usuario') {
+                    ws_data.push(["Frecuencia", "Orden", "Cliente", "Arrival", "Precio"]);
+                    data.forEach(r => ws_data.push([r.frecuencia, r.orden, r.cliente, r.arrival, r.precio]));
+                } else {
+                    ws_data.push(["Frecuencia", "Orden", "Cliente", "Arrival", "PO", "Precio", "Finca", "Precio Compra", "Markup %", "Precio Final"]);
+                    data.forEach(r => ws_data.push([r.frecuencia, r.orden, r.cliente, r.arrival, r.po, r.precio, r.finca, r.costo, (r.markup/100).toFixed(4), r.precioFinal]));
+                }
             } else {
-                ws_data.push(["Frecuencia", "Orden", "Cliente", "Arrival", "PO", "Precio", "Finca", "Precio Compra", "Markup %", "Precio Final"]);
-                data.forEach(r => ws_data.push([r.frecuencia, r.orden, r.cliente, r.arrival, r.po, r.precio, r.finca, r.costo, (r.markup/100).toFixed(4), r.precioFinal]));
+                if(userType === 'usuario') {
+                    ws_data.push(["Qty", "Box", "Stems", "Variedad + Nombre", "Fecha Entrega", "PO"]);
+                    data.forEach(r => ws_data.push([r.qty, r.typeBox, r.cantMin, r.producto, r.fechaFormat, r.po]));
+                } else {
+                    ws_data.push(["Qty", "Box", "Stems", "Variedad + Nombre", "Fecha Entrega", "PO", "Cost", "Markup %", "Precio", "Precio Final"]);
+                    data.forEach(r => ws_data.push([r.qty, r.typeBox, r.cantMin, r.producto, r.fechaFormat, r.po, r.costo, (r.markup/100).toFixed(4), r.precio, r.precioFinalFinca]));
+                }
             }
 
             let ws = XLSX.utils.aoa_to_sheet(ws_data);
             let wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Ordenes");
-            XLSX.writeFile(wb, `Tabla_Filtrada_${isUser ? 'Usuario' : 'Admin'}.xlsx`);
+            XLSX.utils.book_append_sheet(wb, ws, "Datos");
+            XLSX.writeFile(wb, `Reporte_${moduleType}_${userType}.xlsx`);
         }
 
-        // --- SISTEMA DE MODAL DETALLES ---
+        // ======================= GENERADOR DE CORREOS =======================
 
+        async function openEmailModal(type) {
+            let sel = document.getElementById('vendedorSelect').value;
+            if (!sel) return alert("Selecciona un vendedor primero.");
+            let data = getFilteredVendedores();
+            if (data.length === 0) return alert("No hay datos.");
+
+            const table = document.querySelector('#tableViewVendedores table');
+            const origPo = document.body.classList.contains('hide-po'), origComp = document.body.classList.contains('compact-mode');
+
+            document.body.classList.add('hide-po');
+            if (type === 'vendedor') document.body.classList.add('compact-mode');
+            else document.body.classList.remove('compact-mode');
+
+            let canvas = await html2canvas(table, { backgroundColor: '#ffffff', scale: 2 });
+            let imgData = canvas.toDataURL('image/png');
+
+            if (!origPo) document.body.classList.remove('hide-po');
+            if (origComp) document.body.classList.add('compact-mode'); else document.body.classList.remove('compact-mode');
+
+            let emailHtml = "";
+            if (type === 'vendedor') {
+                emailHtml = `<div style="font-family: Arial; font-size: 14px; color: #333;"><p>Estimado/a <strong>${sel}</strong>,</p><p>A continuación adjunto la orden fija correspondiente.</p><p>Por favor revisen detalladamente la información de los precios, los clientes, las fechas de llegada al cliente en la columna Arrival y que todo cuadre correctamente. Si hay algún cambio, por favor respondan a este correo para aplicarlos.</p><br><img src="${imgData}" style="max-width: 100%; border: 1px solid #ccc;"><br><br><p>Saludos cordiales,<br>César</p></div>`;
+            } else {
+                let alertMsg = data.some(d => d.markup < 21) ? `<p style="color: #e03e3e; font-weight: bold;">Nota: Se reportan valores con Markup inferior al 21%.</p>` : ``;
+                emailHtml = `<div style="font-family: Arial; font-size: 14px; color: #333;"><p>Estimado equipo de <strong>EC Flowers</strong>,</p><p>Reporto la orden fija semanal del vendedor <strong>${sel}</strong>.</p>${alertMsg}<p>Queda como constancia de la orden.</p><br><img src="${imgData}" style="max-width: 100%; border: 1px solid #ccc;"><br><br><p>Saludos cordiales,<br>César</p></div>`;
+            }
+            document.getElementById('emailContentRaw').innerHTML = emailHtml;
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+
+        async function openEmailModalFinca(type) {
+            let sel = document.getElementById('fincaSelect').value;
+            if (!sel) return alert("Selecciona una finca primero.");
+            let data = getFilteredFincas();
+            if (data.length === 0) return alert("No hay datos.");
+
+            const table = document.querySelector('#tableViewFincas table');
+            const origComp = document.body.classList.contains('compact-mode');
+
+            if (type === 'finca') document.body.classList.add('compact-mode');
+            else document.body.classList.remove('compact-mode');
+
+            let canvas = await html2canvas(table, { backgroundColor: '#ffffff', scale: 2 });
+            let imgData = canvas.toDataURL('image/png');
+
+            if (origComp) document.body.classList.add('compact-mode'); else document.body.classList.remove('compact-mode');
+
+            let fechasSet = [...new Set(data.map(d => d.fechaEmailStr).filter(Boolean))];
+            let fechasTexto = fechasSet.join(', ').replace(/, ([^,]*)$/, ' y $1');
+
+            let emailHtml = "";
+            if (type === 'finca') {
+                emailHtml = `<div style="font-family: Arial; font-size: 14px; color: #333;"><p>Estimados <strong>${sel}</strong>,</p><p>Esto seria la orden fija planificada para las fechas de entregas: <strong>${fechasTexto}</strong>.</p><p>Que cualquier cambio que se ocasione por favor me responda este correo o se comunique conmigo para hacer los cambios necesarios.</p><br><img src="${imgData}" style="max-width: 100%; border: 1px solid #ccc;"><br><br><p>Saludos cordiales,<br>César</p></div>`;
+            } else {
+                let alertMsg = data.some(d => d.markup < 21) ? `<p style="color: #e03e3e; font-weight: bold;">Nota: Se reportan márgenes inferiores al 21% en esta finca.</p>` : ``;
+                emailHtml = `<div style="font-family: Arial; font-size: 14px; color: #333;"><p>Estimado equipo de <strong>EC Flowers</strong>,</p><p>Reporto el detalle consolidado para la finca <strong>${sel}</strong>.</p>${alertMsg}<p>Adjunto la tabla completa para su revisión interna.</p><br><img src="${imgData}" style="max-width: 100%; border: 1px solid #ccc;"><br><br><p>Saludos cordiales,<br>César</p></div>`;
+            }
+            document.getElementById('emailContentRaw').innerHTML = emailHtml;
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+
+        function closeEmailModal() { document.getElementById('emailModal').style.display = 'none'; }
+        async function copyEmailToClipboard(btn) {
+            const emailDiv = document.getElementById('emailContentRaw');
+            try {
+                const htmlBlob = new Blob([emailDiv.innerHTML], { type: 'text/html' });
+                const textBlob = new Blob([emailDiv.innerText], { type: 'text/plain' });
+                await navigator.clipboard.write([new ClipboardItem({'text/html': htmlBlob, 'text/plain': textBlob})]);
+                showButtonSuccess(btn);
+            } catch (err) { alert('Copia manual: Presiona Ctrl+A sobre el texto y Ctrl+C.'); }
+        }
+
+        // ======================= MODAL DETALLES =======================
         function openDataModal(type, encodedValue) {
-            let value = decodeURIComponent(encodedValue);
+            let val = decodeURIComponent(encodedValue);
             document.getElementById('dataModal').style.display = 'flex';
-            document.getElementById('modalTitle').innerHTML = `<i class="ri-search-eye-line text-brand"></i> Órdenes de ${type === 'finca' ? 'Finca' : 'Cliente'}: ${value}`;
-
-            let data = getFilteredData();
-            if(type === 'finca') data = data.filter(d => d.finca === value);
-            if(type === 'cliente') data = data.filter(d => d.cliente === value);
-
+            document.getElementById('modalTitle').innerHTML = `<i class="ri-search-eye-line text-brand"></i> Órdenes de ${type}: ${val}`;
+            let data = getFilteredVendedores();
+            if(type === 'finca') data = data.filter(d => d.finca === val);
+            if(type === 'cliente') data = data.filter(d => d.cliente === val);
             let tbody = document.getElementById('modalTableBody');
             tbody.innerHTML = '';
-            
             data.forEach(row => {
-                let tr = document.createElement('tr');
-                tr.innerHTML = generateRowHTML(row);
-                tbody.appendChild(tr);
+                let mkCls = row.markup < 21 ? 'text-red' : '';
+                tbody.innerHTML += `<tr><td class="nowrap"><span class="pill ${row.freqClass}">${row.frecuencia}</span></td><td class="text-bold">${row.orden}</td><td class="nowrap">${row.cliente}</td><td class="nowrap"><span class="pill arrival">${row.arrival}</span></td><td class="col-po">${row.po}</td><td class="text-center">${formatCurrency(row.precio)}</td><td class="col-admin col-divider">${row.finca}</td><td class="col-admin text-center">${formatCurrency(row.costo)}</td><td class="col-admin text-center ${mkCls}">${formatPercent(row.markup)}</td><td class="col-admin text-center text-bold">${formatCurrency(row.precioFinal)}</td></tr>`;
             });
         }
-
         function closeDataModal() { document.getElementById('dataModal').style.display = 'none'; }
-        
-        document.getElementById('dataModal').addEventListener('click', function(e) {
-            if(e.target === this) closeDataModal();
-        });
-        document.getElementById('emailModal').addEventListener('click', function(e) {
-            if(e.target === this) closeEmailModal();
-        });
+        document.getElementById('dataModal').addEventListener('click', function(e) { if(e.target === this) closeDataModal(); });
+        document.getElementById('emailModal').addEventListener('click', function(e) { if(e.target === this) closeEmailModal(); });
 
     </script>
 </body>
