@@ -167,8 +167,24 @@
             font-weight: 500;
         }
         .btn:hover { background: var(--hover-bg); }
+        
+        /* Custom Button Colors */
         .btn-primary { background: var(--brand); color: white; border-color: var(--brand); }
         .btn-primary:hover { background: #1a73e8; }
+        
+        .btn-black { background: #202020; color: white; border-color: #202020; }
+        .btn-black:hover { background: #000000; color: white; }
+
+        .btn-green { background: #2ea043; color: white; border-color: #2ea043; }
+        .btn-green:hover { background: #238636; color: white; }
+
+        /* Success Animation Class */
+        .btn-success-state {
+            background: #2ea043 !important;
+            color: white !important;
+            border-color: #2ea043 !important;
+            transform: scale(0.97);
+        }
         
         .action-area {
             display: flex;
@@ -284,9 +300,9 @@
             padding: 20px; border-bottom: 1px solid var(--border-light);
             display: flex; justify-content: space-between; align-items: center;
         }
-        .modal-header h3 { margin: 0; font-size: 18px; }
-        .modal-header i { font-size: 24px; cursor: pointer; color: var(--text-muted); }
-        .modal-header i:hover { color: var(--text-main); }
+        .modal-header h3 { margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        .modal-header i.close-btn { font-size: 24px; cursor: pointer; color: var(--text-muted); }
+        .modal-header i.close-btn:hover { color: var(--text-main); }
         .modal-body { padding: 20px; overflow-y: auto; }
         
     </style>
@@ -369,28 +385,37 @@
                 </div>
                 
                 <div class="action-buttons-grid">
-                    <div class="btn-group-title">Copiar Datos (Texto)</div>
-                    <button class="btn" onclick="copyTableText('usuario')">
-                        <i class="ri-file-copy-line"></i> Copia Usuario
+                    
+                    <div class="btn-group-title">Generar Correo</div>
+                    <button class="btn" onclick="openEmailModal('vendedor')">
+                        <i class="ri-mail-send-line"></i> <span>Correo Vendedor</span>
                     </button>
-                    <button class="btn" onclick="copyTableText('admin')">
-                        <i class="ri-file-copy-fill"></i> Copia Admin
+                    <button class="btn btn-black" onclick="openEmailModal('admin')">
+                        <i class="ri-mail-star-line"></i> <span>Correo Admin</span>
+                    </button>
+
+                    <div class="btn-group-title">Copiar Datos (Texto)</div>
+                    <button class="btn" onclick="copyTableText('usuario', this)">
+                        <i class="ri-file-copy-line"></i> <span>Copia Usuario</span>
+                    </button>
+                    <button class="btn btn-black" onclick="copyTableText('admin', this)">
+                        <i class="ri-file-copy-fill"></i> <span>Copia Admin</span>
                     </button>
 
                     <div class="btn-group-title">Capturar como Imagen</div>
-                    <button class="btn" onclick="copyTableImage('usuario')">
-                        <i class="ri-image-line"></i> Imagen Usuario
+                    <button class="btn" onclick="copyTableImage('usuario', this)">
+                        <i class="ri-image-line"></i> <span>Imagen Usuario</span>
                     </button>
-                    <button class="btn" onclick="copyTableImage('admin')">
-                        <i class="ri-image-fill"></i> Imagen Admin
+                    <button class="btn btn-black" onclick="copyTableImage('admin', this)">
+                        <i class="ri-image-fill"></i> <span>Imagen Admin</span>
                     </button>
 
                     <div class="btn-group-title">Exportar archivo Excel</div>
-                    <button class="btn btn-primary" onclick="downloadExcel('usuario')">
-                        <i class="ri-file-excel-2-line"></i> Descargar Usuario
+                    <button class="btn btn-green" onclick="downloadExcel('usuario')">
+                        <i class="ri-file-excel-2-line"></i> <span>Descargar Usuario</span>
                     </button>
                     <button class="btn btn-primary" onclick="downloadExcel('admin')">
-                        <i class="ri-file-excel-2-fill"></i> Descargar Admin
+                        <i class="ri-file-excel-2-fill"></i> <span>Descargar Admin</span>
                     </button>
                 </div>
             </div>
@@ -422,7 +447,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">Detalles</h3>
-                <i class="ri-close-line" onclick="closeModal()"></i>
+                <i class="ri-close-line close-btn" onclick="closeDataModal()"></i>
             </div>
             <div class="modal-body">
                 <table>
@@ -446,11 +471,49 @@
         </div>
     </div>
 
+    <!-- MODAL POPUP DE CORREO -->
+    <div id="emailModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3 id="emailModalTitle"><i class="ri-mail-open-line text-brand"></i> Vista Previa del Correo</h3>
+                <i class="ri-close-line close-btn" onclick="closeEmailModal()"></i>
+            </div>
+            <div class="modal-body">
+                <div id="emailContentRaw" contenteditable="true" style="padding: 25px; border: 1px solid var(--border-light); border-radius: 6px; outline: none; background: #fff; min-height: 200px; line-height: 1.5;">
+                    <!-- Se inyecta dinámicamente -->
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 15px;">
+                    <button class="btn" onclick="closeEmailModal()">Cancelar</button>
+                    <button class="btn btn-primary" onclick="copyEmailToClipboard(this)">
+                        <i class="ri-clipboard-line"></i> <span>Copiar Correo al Portapapeles</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let globalData = [];
         let sortCol = 'originalIndex';
         let sortState = 0; 
         let chartInstance = null;
+
+        // Mostrar Efecto Copiado
+        function showButtonSuccess(btn, successText = "¡Copiado!") {
+            if (!btn) return;
+            const originalHtml = btn.innerHTML;
+            const originalWidth = btn.offsetWidth; // Mantener tamaño estable
+            
+            btn.style.width = originalWidth + 'px';
+            btn.classList.add('btn-success-state');
+            btn.innerHTML = `<i class="ri-check-double-line"></i> <span>${successText}</span>`;
+            
+            setTimeout(() => {
+                btn.classList.remove('btn-success-state');
+                btn.innerHTML = originalHtml;
+                btn.style.width = ''; 
+            }, 2000);
+        }
 
         // Calcular Semana Actual
         function getWeekNumber(d) {
@@ -487,7 +550,6 @@
             });
         });
 
-        // Eventos de Filtros
         document.getElementById('vendedorSelect').addEventListener('change', () => { resetSortAndUpdate(); });
         document.getElementById('frecuenciaSelect').addEventListener('change', () => { resetSortAndUpdate(); });
 
@@ -668,7 +730,6 @@
         function formatCurrency(val) { return '$' + parseFloat(val).toFixed(2); }
         function formatPercent(val) { return parseFloat(val).toFixed(2) + '%'; }
 
-        // Filtro Principal
         function getFilteredData() {
             let selectedVend = document.getElementById('vendedorSelect').value;
             let selectedFreq = document.getElementById('frecuenciaSelect').value;
@@ -683,7 +744,6 @@
                 data = data.filter(d => d.freqClass === 'impar' || d.freqClass === 'everyweek');
             }
             
-            // Ordenamiento Activo
             data.sort((a, b) => {
                 let valA = a[sortCol];
                 let valB = b[sortCol];
@@ -795,7 +855,6 @@
                 if(d.typeBox) clientStats[d.cliente].types.add(String(d.typeBox).toUpperCase());
             });
 
-            // Fincas
             let fincaArr = Object.keys(fincaStats).map(k => ({ nombre: k, cajas: fincaStats[k].cajas }));
             fincaArr.sort((a,b) => b.cajas - a.cajas);
 
@@ -806,13 +865,12 @@
                     <span>${f.nombre}</span> 
                     <span class="text-bold d-flex align-center gap-2">
                         ${f.cajas} cajas
-                        <i class="ri-eye-line pointer text-brand" onclick="openModal('finca', '${encodedName}')"></i>
+                        <i class="ri-eye-line pointer text-brand" onclick="openDataModal('finca', '${encodedName}')"></i>
                     </span>
                 </div>`;
             });
             document.getElementById('topFincas').innerHTML = fincasHtml || '<div class="text-muted">Sin datos</div>';
 
-            // Clientes
             let cliArr = Object.keys(clientStats).map(k => ({
                 nombre: k, cajas: clientStats[k].cajas, ventas: clientStats[k].ventas,
                 tipos: Array.from(clientStats[k].types).join(', ')
@@ -826,7 +884,7 @@
                     <div style="padding: 10px 0; border-bottom: 1px solid #f2f1ee;">
                         <div class="d-flex justify-between align-center" style="font-weight: 500; margin-bottom: 5px;">
                             ${c.nombre}
-                            <i class="ri-eye-line pointer text-brand" onclick="openModal('cliente', '${encodedName}')"></i>
+                            <i class="ri-eye-line pointer text-brand" onclick="openDataModal('cliente', '${encodedName}')"></i>
                         </div>
                         <div style="font-size: 12px; color: var(--text-muted); display:flex; gap: 15px;">
                             <span><i class="ri-box-3-line"></i> ${c.cajas} cajas</span>
@@ -851,56 +909,128 @@
             if(chartInstance) { chartInstance.destroy(); }
             chartInstance = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{ data: data, backgroundColor: bgColors, borderWidth: 1 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: "'Inter', sans-serif", size: 12 } } },
-                        tooltip: { callbacks: { label: function(c) { return ' ' + c.raw + ' Cajas'; } } }
-                    },
-                    cutout: '65%'
-                }
+                data: { labels: labels, datasets: [{ data: data, backgroundColor: bgColors, borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: "'Inter', sans-serif", size: 12 } } }, tooltip: { callbacks: { label: function(c) { return ' ' + c.raw + ' Cajas'; } } } }, cutout: '65%' }
             });
         }
 
-        // --- SISTEMA DE EXPORTACIÓN (Texto, Imagen y Excel) ---
+        // --- SISTEMA DE GENERADOR DE CORREOS ---
 
-        // 1. Exportar Texto al Portapapeles
-        function copyTableText(type) {
+        async function openEmailModal(type) {
+            let selectedVend = document.getElementById('vendedorSelect').value;
+            if (!selectedVend) {
+                alert("Por favor, selecciona un vendedor en el filtro superior primero.");
+                return;
+            }
+
+            let data = getFilteredData();
+            if (data.length === 0) {
+                alert("No hay órdenes filtradas para este vendedor.");
+                return;
+            }
+
+            const table = document.querySelector('#tableView table');
+            const originalPoHidden = document.body.classList.contains('hide-po');
+            const originalCompact = document.body.classList.contains('compact-mode');
+
+            document.body.classList.add('hide-po');
+            if (type === 'vendedor') {
+                document.body.classList.add('compact-mode');
+            } else {
+                document.body.classList.remove('compact-mode');
+            }
+
+            let canvas = await html2canvas(table, { backgroundColor: '#ffffff', scale: 2 });
+            let imgData = canvas.toDataURL('image/png');
+
+            if (!originalPoHidden) document.body.classList.remove('hide-po');
+            if (originalCompact) document.body.classList.add('compact-mode');
+            else document.body.classList.remove('compact-mode');
+
+            let emailHtml = "";
+            if (type === 'vendedor') {
+                emailHtml = `
+                    <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                        <p>Estimado/a <strong>${selectedVend}</strong>,</p>
+                        <p>A continuación adjunto la orden fija correspondiente.</p>
+                        <p>Por favor revisen detalladamente la información de los precios, los clientes, las fechas de llegada al cliente en la columna Arrival y que todo cuadre correctamente. Si hay algún cambio, por favor respondan a este correo para aplicarlos y asegurar que la próxima vez que les envíe esté todo correcto.</p>
+                        <br>
+                        <img src="${imgData}" style="max-width: 100%; border: 1px solid #ccc; border-radius: 4px;" alt="Tabla de Órdenes Vendedor">
+                        <br><br>
+                        <p>Saludos cordiales,<br>César</p>
+                    </div>
+                `;
+            } else if (type === 'admin') {
+                let hasLowMarkup = data.some(d => d.markup < 21);
+                let alertMsg = hasLowMarkup ? `<p style="color: #e03e3e; font-weight: bold;">Nota de Revisión: Se reportan valores con un margen (Markup) inferior al 21% acordado. Por favor, estar pendientes de esta situación.</p>` : ``;
+
+                emailHtml = `
+                    <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                        <p>Estimado equipo de <strong>EC Flowers</strong>,</p>
+                        <p>Mediante el presente correo reporto la orden fija semanal correspondiente al vendedor <strong>${selectedVend}</strong>.</p>
+                        ${alertMsg}
+                        <p>Dejo este correo como constancia para que puedan visualizar la orden completa del vendedor.</p>
+                        <br>
+                        <img src="${imgData}" style="max-width: 100%; border: 1px solid #ccc; border-radius: 4px;" alt="Tabla de Órdenes Admin">
+                        <br><br>
+                        <p>Saludos cordiales,<br>César</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('emailContentRaw').innerHTML = emailHtml;
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+
+        function closeEmailModal() {
+            document.getElementById('emailModal').style.display = 'none';
+        }
+
+        async function copyEmailToClipboard(btn) {
+            const emailDiv = document.getElementById('emailContentRaw');
+            try {
+                const htmlBlob = new Blob([emailDiv.innerHTML], { type: 'text/html' });
+                const textBlob = new Blob([emailDiv.innerText], { type: 'text/plain' });
+                const item = new ClipboardItem({
+                    'text/html': htmlBlob,
+                    'text/plain': textBlob
+                });
+                await navigator.clipboard.write([item]);
+                showButtonSuccess(btn);
+            } catch (err) {
+                alert('Tu navegador limitó el copiado automático. Haz clic en el texto del correo, presiona Ctrl+A para seleccionar todo, y luego Ctrl+C para copiar.');
+            }
+        }
+
+        // --- SISTEMA DE EXPORTACIÓN REGULAR ---
+
+        function copyTableText(type, btn) {
             let data = getFilteredData();
             let clipboardText = "";
             let isUser = (type === 'usuario');
 
             if (isUser) {
                 clipboardText += "Frecuencia\tOrden\tCliente\tArrival\tPrecio\n";
-                data.forEach(r => {
-                    clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.precio}\n`;
-                });
+                data.forEach(r => { clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.precio}\n`; });
             } else {
                 clipboardText += "Frecuencia\tOrden\tCliente\tArrival\tPO\tPrecio\tFinca\tPrecio Compra\tMarkup %\tPrecio Final\n";
                 data.forEach(r => {
-                    let mkup = formatPercent(r.markup);
-                    clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.po}\t${r.precio}\t${r.finca}\t${r.costo}\t${mkup}\t${r.precioFinal}\n`;
+                    clipboardText += `${r.frecuencia}\t${r.orden}\t${r.cliente}\t${r.arrival}\t${r.po}\t${r.precio}\t${r.finca}\t${r.costo}\t${formatPercent(r.markup)}\t${r.precioFinal}\n`;
                 });
             }
 
-            navigator.clipboard.writeText(clipboardText).then(() => {
-                alert(`¡Datos copiados al portapapeles con éxito (Vista ${isUser ? 'Usuario' : 'Admin'})!`);
+            navigator.clipboard.writeText(clipboardText).then(() => { 
+                showButtonSuccess(btn);
             }).catch(err => {
                 alert("Error al copiar: " + err);
             });
         }
 
-        // 2. Exportar Tabla como Imagen
-        async function copyTableImage(type) {
+        async function copyTableImage(type, btn) {
             const table = document.querySelector('#tableView table');
             const originalPoHidden = document.body.classList.contains('hide-po');
             const originalCompact = document.body.classList.contains('compact-mode');
             
-            // Preparamos la tabla según el tipo solicitado
             if (type === 'usuario') {
                 document.body.classList.add('hide-po');
                 document.body.classList.add('compact-mode');
@@ -910,35 +1040,22 @@
             }
 
             try {
-                // html2canvas renderiza lo visible en el DOM en ese preciso instante
-                const canvas = await html2canvas(table, { 
-                    backgroundColor: '#ffffff',
-                    scale: 2 // Mayor calidad de imagen
-                });
-                
+                const canvas = await html2canvas(table, { backgroundColor: '#ffffff', scale: 2 });
                 canvas.toBlob(blob => {
-                    try {
-                        navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(() => {
-                            alert(`¡Tabla copiada como imagen exitosamente (Vista ${type === 'usuario' ? 'Usuario' : 'Admin'})! Puedes pegarla con Ctrl+V.`);
-                        });
-                    } catch(e) {
-                        alert("Tu navegador no soporta el copiado directo de imágenes. Por favor intenta desde otro navegador moderno.");
-                    }
+                    navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(() => {
+                        showButtonSuccess(btn);
+                    });
                 }, 'image/png');
-                
             } catch (err) {
-                alert("Hubo un error al generar la imagen: " + err);
+                alert("Error generando imagen: " + err);
             } finally {
-                // Restauramos la interfaz como el usuario la tenía
                 if (originalPoHidden) document.body.classList.add('hide-po');
                 else document.body.classList.remove('hide-po');
-                
                 if (originalCompact) document.body.classList.add('compact-mode');
                 else document.body.classList.remove('compact-mode');
             }
         }
 
-        // 3. Exportar Excel
         function downloadExcel(type) {
             let data = getFilteredData();
             let ws_data = [];
@@ -958,8 +1075,9 @@
             XLSX.writeFile(wb, `Tabla_Filtrada_${isUser ? 'Usuario' : 'Admin'}.xlsx`);
         }
 
-        // Modal Popups
-        function openModal(type, encodedValue) {
+        // --- SISTEMA DE MODAL DETALLES ---
+
+        function openDataModal(type, encodedValue) {
             let value = decodeURIComponent(encodedValue);
             document.getElementById('dataModal').style.display = 'flex';
             document.getElementById('modalTitle').innerHTML = `<i class="ri-search-eye-line text-brand"></i> Órdenes de ${type === 'finca' ? 'Finca' : 'Cliente'}: ${value}`;
@@ -978,12 +1096,13 @@
             });
         }
 
-        function closeModal() {
-            document.getElementById('dataModal').style.display = 'none';
-        }
-
+        function closeDataModal() { document.getElementById('dataModal').style.display = 'none'; }
+        
         document.getElementById('dataModal').addEventListener('click', function(e) {
-            if(e.target === this) closeModal();
+            if(e.target === this) closeDataModal();
+        });
+        document.getElementById('emailModal').addEventListener('click', function(e) {
+            if(e.target === this) closeEmailModal();
         });
 
     </script>
