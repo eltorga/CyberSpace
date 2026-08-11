@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palworld Pokedex & Card Generator</title>
+    <!-- Remix Icons para UI -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- Librerías -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --panel-bg: #121826;
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff007f;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --section-bg: rgba(18, 24, 38, 0.95);
+            --section-border: #2a3b5c;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Controles Superiores */
+        .controls {
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--neon-blue);
+            box-sizing: border-box;
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        select, button {
+            background: #1a2235;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        select { flex-grow: 1; }
+        button { cursor: pointer; text-transform: uppercase; font-weight: bold; }
+        button:hover { background: var(--neon-blue); color: #000; }
+
+        input[type="color"] {
+            background: #1a2235;
+            border: 1px solid var(--neon-blue);
+            border-radius: 4px;
+            height: 36px;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: #1a2235;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            border: 1px solid var(--neon-blue);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--neon-blue);
+            cursor: pointer;
+        }
+
+        /* Tarjeta Principal */
+        .pal-card {
+            width: 730px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Bloques de Sección separados */
+        .section-block {
+            background: var(--section-bg);
+            border: 2px solid var(--section-border);
+            border-radius: 12px;
+            padding: 25px;
+            box-sizing: border-box;
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(0,240,255,0.05);
+        }
+
+        #sec-info {
+            position: relative;
+            overflow: hidden; 
+        }
+        
+        .sec-bg-image {
+            position: absolute;
+            top: 0; 
+            left: 0;
+            width: 100%;
+            height: auto; 
+            opacity: 0.35;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .info-grid, .bottom-info-grid, .pal-desc {
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-block.render-mode {
+            background: transparent !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+            padding-left: 0px !important;
+            padding-right: 0px !important;
+            padding-bottom: 0px !important;
+        }
+        .section-block.render-mode::before {
+            display: none !important;
+        }
+
+        .section-block::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            z-index: 2;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            border-bottom: 2px solid var(--neon-blue);
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .habitat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+        }
+
+        .habitat-toggle {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--text-main);
+            display: flex;
+            gap: 10px;
+            position: relative;
+            z-index: 3;
+            cursor: pointer;
+        }
+
+        .habitat-toggle label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .icon-price { transform: scale(1.4); display: inline-block; }
+        .icon-gender { transform: scale(1.4); display: inline-block; }
+        .icon-drop { transform: scale(1.4); display: inline-block; }
+
+        /* === SECCIÓN 1: Info Básica === */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .pal-image-container {
+            width: 100%;
+            height: 250px;
+            border-radius: 8px;
+            border: 2px solid var(--neon-blue);
+            position: relative;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pal-bg-img {
+            position: absolute;
+            top: 0; 
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .pal-image-container img#palImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pal-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            color: white;
+            border: 1px solid var(--neon-blue);
+            z-index: 3;
+        }
+
+        .title-group h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            margin: 0;
+            text-transform: uppercase;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .title-group h3 {
+            font-size: 16px;
+            color: var(--neon-pink);
+            margin: 5px 0 10px 0;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .types-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .type-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .type-badge img { width: 18px; height: 18px; }
+
+        .rarity-container {
+            color: #ffd700;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rarity-label { 
+            color: var(--text-main); 
+            font-size: 15px; 
+            font-weight: bold; 
+            font-family: 'Inter', sans-serif;
+        }
+
+        .drops-title { color: var(--text-main); font-weight: bold; margin-bottom: 8px; font-size: 15px; }
+        .drops-list { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px; }
+        
+        .drop-item {
+            background: rgba(255,255,255,0.05);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .extra-info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid var(--neon-pink);
+        }
+        
+        .extra-label { 
+            color: var(--text-main); 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            white-space: nowrap;
+        }
+        .extra-label i { color: var(--neon-blue); font-size: 16px; }
+        
+        .food-icons { display: flex; gap: 2px; }
+        .food-icons img { width: 18px; height: 18px; }
+
+        .gender-ratio { display: flex; align-items: center; white-space: nowrap; }
+
+        .egg-info { display: flex; align-items: center; gap: 8px; color: #e1b12c; white-space: nowrap; }
+        .egg-info img { width: 24px; height: 24px; }
+
+        .bottom-info-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .grid-3-col { grid-template-columns: repeat(3, 1fr); }
+        .grid-2-col { grid-template-columns: 1fr 1fr; margin-top: 15px; }
+        
+        .bottom-info-grid .extra-info-row { margin-bottom: 0; }
+
+        .pal-desc {
+            font-size: 15px;
+            color: var(--text-main);
+            line-height: 1.5;
+            background: rgba(0,0,0,0.4);
+            padding: 12px;
+            border-left: 3px solid var(--neon-pink);
+            border-radius: 4px;
+            font-style: italic;
+            margin-top: 20px; 
+            width: 100%; 
+            box-sizing: border-box;
+        }
+
+        /* === SECCIÓN 2: Work Suitability === */
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .work-item {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 10px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .work-item.inactive { opacity: 0.35; filter: grayscale(100%); }
+        .work-item.active { border-color: var(--neon-blue); background: rgba(0,240,255,0.05); }
+        .work-item-left { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+        .work-item-left img { width: 22px; height: 22px; object-fit: contain; }
+        .work-level { font-size: 15px; font-weight: bold; color: var(--neon-blue); }
+
+        /* === SECCIÓN 3: Base Stats === */
+        .stat-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-label {
+            width: 130px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-bar-bg {
+            flex-grow: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .stat-bar-fill { height: 100%; border-radius: 3px; }
+        .stat-value { width: 40px; text-align: right; font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff;}
+        
+        .movement-stats {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 25px;
+            padding-top: 15px;
+            font-size: 14px;
+            color: var(--text-main);
+            font-weight: bold;
+            border-top: 1px dashed rgba(255,255,255,0.2);
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .movement-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            flex: 1;
+        }
+        
+        .movement-item i {
+            color: var(--neon-blue);
+            font-size: 18px;
+        }
+
+        /* === SECCIÓN 4: Skills === */
+        .skills-container { display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 1;}
+        .skill-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .skill-card.partner-card { border-color: rgba(255,255,255,0.1); }
+        .skill-header { display: flex; align-items: center; gap: 15px; }
+        .skill-level {
+            background: #e67e22; color: #000;
+            font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: bold;
+            padding: 6px 12px; border-radius: 4px;
+        }
+        
+        .skill-title-block { display: flex; align-items: center; gap: 10px; }
+        .skill-title-block img { width: 24px; height: 24px; }
+        .skill-title-block h4 { margin: 0; font-size: 18px; font-family: 'Orbitron', sans-serif; }
+        
+        .skill-desc { margin: 0; color: var(--text-main); font-size: 14px; line-height: 1.4; margin-top: 5px; }
+        
+        .skill-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+            font-size: 13px; font-weight: 600; margin-top: 8px;
+        }
+        .skill-stats span {
+            background: rgba(255,255,255,0.05); padding: 8px; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* === SECCIÓN 5: Mapa === */
+        .map-controls {
+            display: flex; gap: 10px; align-items: center; font-weight: bold; margin-top: 15px;
+            position: relative; z-index: 3;
+        }
+        .map-container {
+            position: relative; width: 100%; border: 2px solid var(--neon-blue); border-radius: 8px;
+            overflow: hidden; background: #000; line-height: 0; margin-top: 15px;
+            z-index: 1;
+        }
+        .map-container img { width: 100%; height: auto; display: block; }
+        
+        canvas { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 2; cursor: crosshair;
+            opacity: 0.6;
+        }
+
+        /* Indicador flotante del tamaño exacto del pincel (coincide con el radio real del canvas) */
+        #brushCursor {
+            position: absolute;
+            border: 2px dashed #ffffff;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 10;
+        }
+
+        /* Animación para el botón de copiado de hábitat */
+        @keyframes pulseSuccess {
+            0% { transform: scale(1); background-color: #2ed573; color: #000; }
+            50% { transform: scale(1.05); background-color: #2ed573; color: #000; box-shadow: 0 0 15px #2ed573; }
+            100% { transform: scale(1); background-color: #1a2235; color: #2ed573; }
+        }
+        .btn-copied {
+            animation: pulseSuccess 0.8s ease;
+            border-color: #2ed573 !important;
+            color: #2ed573 !important;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Controles -->
+    <div class="controls" data-html2canvas-ignore>
+        <div class="controls-row">
+            <select id="palSelector" onchange="renderPal()"></select>
+            <button id="langBtn" onclick="toggleLang()">🇺🇸 EN</button>
+            <button onclick="downloadCard()"><i class="ri-download-2-line"></i> Generar Imágenes</button>
+        </div>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div class="pal-card" id="captureArea">
+        
+        <!-- SECCIÓN 1: Info Básica -->
+        <div class="section-block download-section" id="sec-info">
+            
+            <!-- Fondo actualizado de sección 1 -->
+            <img class="sec-bg-image" crossorigin="anonymous" src="https://wsrv.nl/?url=blogger.googleusercontent.com/img/a/AVvXsEhClVi0hOshD79IRDN1gzw1FEwrE8QSnb-Jgb9mFwl6SAQGEbrOcn16Vx0QhZbObeM_ZX_AjNNc-THsjs9FdKhDGn9ebtOpDlDYpHS8rwBGkQiibgTOCUeQqTaP6eLJobwjB5ORWrQQ_aW5Eis3wU84w33KIAdA3Y9aN-PxZjkMRuRFfo4etKgzrrq5Psue" alt="">
+
+            <div class="info-grid">
+                <div class="pal-image-container" id="palImageContainer">
+                    <img class="pal-bg-img" crossorigin="anonymous" src="https://wsrv.nl/?url=blogger.googleusercontent.com/img/a/AVvXsEi3ZQNzAf3AOcS-JRkTjIZLexqM1bjEiOFh8jbkwU8CfTYVnSIg9OCNzLJdx3x_GJ6YSSs2jIlRuL5GH4L5OZ-I3X0HJtSfZv_-XA0sP0Ao9ZVIFrzQ3eipZQXqqzLz9HC6ZNtR1AYxf6hDxm99ygjex3ECpP3y5QSDh82cQKZdHvXdCyfE72EXolL-uyfL" alt="">
+                    
+                    <img id="palImage" crossorigin="anonymous" src="" alt="Pal Image">
+                    <div class="pal-number" id="palNumber"></div>
+                </div>
+                
+                <div class="basic-info-right">
+                    <div class="title-group">
+                        <h1 id="palName"></h1>
+                        <h3 id="palPrefix"></h3>
+                    </div>
+                    
+                    <div class="types-container" id="palTypes"></div>
+                    
+                    <div class="rarity-container">
+                        <span class="rarity-label lang-rarity"></span>
+                        <span id="palRarityStars"></span>
+                    </div>
+
+                    <div class="drops-container">
+                        <div class="drops-title"><span class="lang-drops"></span>:</div>
+                        <div class="drops-list" id="palDrops"></div>
+                    </div>
+
+                    <div class="extra-info-row" style="margin-bottom: 0;">
+                        <div class="extra-label" id="labelFood">Food:</div>
+                        <div class="food-icons" id="palFoodIcons"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom-info-grid grid-3-col">
+                <div class="extra-info-row">
+                    <div class="extra-label" id="labelPrice"></div>
+                    <div id="palPrice"></div>
+                </div>
+
+                <div class="extra-info-row">
+                    <div class="extra-label" id="labelSize"><i class="ri-ruler-line"></i> Size:</div>
+                    <div id="palSize"></div>
+                </div>
+                
+                <div class="extra-info-row">
+                    <div class="extra-label" id="labelCapture"><i class="ri-focus-2-line"></i> Capture:</div>
+                    <div id="palCapture"></div>
+                </div>
+            </div>
+
+            <div class="bottom-info-grid grid-2-col">
+                <div class="extra-info-row">
+                    <div class="extra-label" id="labelGender">Gender Ratio:</div>
+                    <div class="gender-ratio" id="palGender"></div>
+                </div>
+                
+                <div class="extra-info-row">
+                    <div class="extra-label" id="labelEgg">Pal Egg:</div>
+                    <div class="egg-info" id="palEgg"></div>
+                </div>
+            </div>
+
+            <div class="pal-desc" id="palDesc"></div>
+        </div>
+
+        <!-- SECCIÓN 2: Work Suitability -->
+        <div class="section-block download-section" id="sec-work">
+            <div class="section-title"><span class="lang-work"></span></div>
+            <div class="work-grid" id="palWork"></div>
+        </div>
+
+        <!-- SECCIÓN 3: Base Stats -->
+        <div class="section-block download-section" id="sec-stats">
+            <div class="section-title"><span class="lang-stats"></span></div>
+            <div id="palStatsBars"></div>
+            <div class="movement-stats" id="palMovement"></div>
+        </div>
+
+        <!-- SECCIÓN 4: Skills -->
+        <div class="section-block download-section" id="sec-skills">
+            <div class="section-title"><span class="lang-skills"></span></div>
+            <div class="skills-container" id="palSkills"></div>
+        </div>
+
+        <!-- SECCIÓN 5: Mapa -->
+        <div class="section-block download-section" id="sec-map">
+            <div class="habitat-header">
+                <div class="section-title" style="margin-bottom: 0;">Habitat <span id="habitatTitleSpan" style="color:#94a3b8; font-size:16px;">(Day)</span></div>
+                <div class="habitat-toggle" data-html2canvas-ignore>
+                    <label><input type="radio" name="habitatTime" value="day" checked onchange="toggleHabitatTime()"> Day</label>
+                    <label><input type="radio" name="habitatTime" value="night" onchange="toggleHabitatTime()"> Night</label>
+                </div>
+            </div>
+            
+            <div class="map-controls" data-html2canvas-ignore>
+                <input type="color" id="brushColor" value="#ffaa00" style="width: 40px; border:none; padding:0;">
+                <i class="ri-brush-line" style="color:var(--text-muted); font-size:18px; margin-left:5px;"></i>
+                <input type="range" id="brushSize" min="5" max="60" value="25" style="width: 80px;">
+                <button onclick="clearAllStrokes()"><i class="ri-eraser-line"></i> <span class="lang-clear"></span></button>
+                <button id="btnCopyHabitat" onclick="copyMapData()" style="border-color: #2ed573; color: #2ed573;"><i class="ri-clipboard-line"></i> <span class="lang-copy">Copiar Hábitat</span></button>
+            </div>
+            <div class="map-container" id="mapContainer">
+                <img id="mapImage" crossorigin="anonymous" src="">
+                <canvas id="mapCanvas"></canvas>
+                <div id="brushCursor"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let palDatabase = [];
+        let currentLang = 'en'; 
+        
+        let currentDayStrokes = [];
+        let currentNightStrokes = [];
+        let activeHabitat = 'day';
+
+        const CORS_PROXY = "https://wsrv.nl/?url="; 
+        const SHEET_ID = '11y6X5BSx4hym0S697MDcUDd2kZc2aCLoAU9tbUuyrSk'; 
+        const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+
+        const langDict = {
+            es: {
+                work: "Aptitud de Trabajo", drops: "Posibles Objetos", stats: "Estadísticas Base",
+                skills: "Habilidades Activas", passive: "Habilidades Pasivas", mapPaint: "Pintar Hábitat:", clear: "Limpiar", copy: "Copiar Hábitat",
+                none: "Ninguna", rarity: "Rareza:", power: "Poder", cooldown: "Enfriamiento", range: "Rango",
+                price: "Precio", size: "Tamaño", capture: "Captura", gender: "Género", egg: "Huevo Pal", food: "Comida",
+                hp: "PV", attack: "ATAQUE", defense: "DEFENSA", support: "SOPORTE", craft: "VEL. TRABAJO", stamina: "RESISTENCIA",
+                run: "Correr", ride: "Montura", sprint: "Sprint", swim: "Nadar", lv: "Nv"
+            },
+            en: {
+                work: "Work Suitability", drops: "Possible Drops", stats: "Base Stats",
+                skills: "Active Skills", passive: "Passive Skills", mapPaint: "Paint Habitat:", clear: "Clear", copy: "Copy Habitat",
+                none: "None", rarity: "Rarity:", power: "Power", cooldown: "Cooldown", range: "Range",
+                price: "Price", size: "Size", capture: "Capture", gender: "Gender Ratio", egg: "Pal Egg", food: "Food",
+                hp: "HP", attack: "ATTACK", defense: "DEFENSE", support: "SUPPORT", craft: "CRAFT SPEED", stamina: "STAMINA",
+                run: "Run", ride: "Ride", sprint: "Sprint", swim: "Swim", lv: "Lv"
+            }
+        };
+
+        const workTranslations = {
+            'Kindling': {es: 'Encendido', en: 'Kindling'},
+            'Watering': {es: 'Riego', en: 'Watering'},
+            'Planting': {es: 'Siembra', en: 'Planting'},
+            'Electricity': {es: 'Electricidad', en: 'Generating Electricity'},
+            'Handiwork': {es: 'Trabajo Manual', en: 'Handiwork'},
+            'Gathering': {es: 'Recolección', en: 'Gathering'},
+            'Lumbering': {es: 'Tala', en: 'Lumbering'},
+            'Mining': {es: 'Minería', en: 'Mining'},
+            'Medicine': {es: 'Medicina', en: 'Medicine Production'},
+            'Cooling': {es: 'Enfriamiento', en: 'Cooling'},
+            'Transporting': {es: 'Transporte', en: 'Transporting'},
+            'Farming': {es: 'Ganadería', en: 'Farming'}
+        };
+
+        const elementTranslations = {
+            "Neutral": {es: "Neutral", en: "Neutral"},
+            "Grass": {es: "Planta", en: "Grass"},
+            "Fire": {es: "Fuego", en: "Fire"},
+            "Water": {es: "Agua", en: "Water"},
+            "Electric": {es: "Rayo", en: "Electric"},
+            "Ice": {es: "Hielo", en: "Ice"},
+            "Ground": {es: "Tierra", en: "Ground"},
+            "Dark": {es: "Oscuridad", en: "Dark"},
+            "Dragon": {es: "Dragón", en: "Dragon"}
+        };
+
+        const typeColors = {
+            "Neutral": "#bdc3c7", "Grass": "#2ecc71", "Fire": "#e74c3c", "Water": "#3498db",
+            "Electric": "#f1c40f", "Ice": "#00d2d3", "Ground": "#e67e22", "Dark": "#8e44ad", "Dragon": "#fd79a8"
+        };
+
+        const elementIcons = {
+            "Dark": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/3/33/Dark_icon.png",
+            "Dragon": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/9/91/Dragon_icon.png",
+            "Electric": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/a/af/Electric_icon.png",
+            "Fire": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/5/5e/Fire_icon.png",
+            "Grass": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/c/cb/Grass_icon.png",
+            "Ground": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/5/58/Ground_icon.png",
+            "Ice": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/8/83/Ice_icon.png",
+            "Neutral": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/1/14/Neutral_icon.png",
+            "Water": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/7/7f/Water_icon.png"
+        };
+
+        const eggIcons = {
+            "Common": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/8/86/Common_Egg_icon.png",
+            "Scorching": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/a/a1/Scorching_Egg_icon.png",
+            "Damp": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/a/a1/Damp_Egg_icon.png",
+            "Verdant": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/4/44/Verdant_Egg_icon.png",
+            "Electric": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/e/e4/Electric_Egg_icon.png",
+            "Frozen": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/b/b3/Frozen_Egg_icon.png",
+            "Rocky": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/5/52/Rocky_Egg_icon.png",
+            "Dark": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/1/18/Dark_Egg_icon.png",
+            "Dragon": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/f/f9/Dragon_Egg_icon.png"
+        };
+
+        const passiveIcons = {
+            "-3": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/2/21/Passive_Z_icon.png",
+            "-2": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/9/92/Passive_Y_icon.png",
+            "-1": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/3/32/Passive_X_icon.png",
+            "1": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/1/13/Passive_D_icon.png",
+            "2": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/7/7f/Passive_C_icon.png",
+            "3": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/8/82/Passive_B_icon.png",
+            "4": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/2/27/Passive_A_icon.png",
+            "5": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/7/73/Passive_S_icon.png"
+        };
+
+        const dropIcons = {
+            "Wool": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/b/b5/Wool_icon.png",
+            "Lamball Mutton": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/1/18/Lamball_Mutton_icon.png",
+            "Red Berries": CORS_PROXY + "static.wikia.nocookie.net/palworld/images/2/23/Red_Berries_icon.png"
+        };
+
+        const fallbackDropIcon = CORS_PROXY + "static.wikia.nocookie.net/palworld/images/5/52/Material_icon.png";
+
+        const foodOn = CORS_PROXY + "static.wikia.nocookie.net/palworld/images/1/16/Food_on_icon.png";
+        const foodOff = CORS_PROXY + "static.wikia.nocookie.net/palworld/images/d/dc/Food_off_icon.png";
+        const maleIcon = CORS_PROXY + "static.wikia.nocookie.net/palworld/images/b/bd/Male_icon.png";
+        const femaleIcon = CORS_PROXY + "static.wikia.nocookie.net/palworld/images/4/46/Female_icon.png";
+        
+        const workIcons = {
+            'Kindling': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/d/d7/Kindling_Icon.png',
+            'Watering': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/4/48/Watering_Icon.png',
+            'Planting': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/7/75/Planting_Icon.png',
+            'Electricity': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/0/0f/Generating_Electricity_Icon.png',
+            'Handiwork': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/a/a2/Handiwork_Icon.png',
+            'Gathering': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/a/a2/Gathering_Icon.png',
+            'Lumbering': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/b/bc/Lumbering_Icon.png',
+            'Mining': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/7/7b/Mining_Icon.png',
+            'Medicine': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/e/e9/Medicine_Production_Icon.png',
+            'Cooling': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/3/32/Cooling_Icon.png',
+            'Transporting': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/8/8f/Transporting_Icon.png',
+            'Farming': CORS_PROXY + 'static.wikia.nocookie.net/palworld/images/d/d7/Farming_Icon.png'
+        };
+
+        const workOrder = ['Kindling', 'Watering', 'Planting', 'Electricity', 'Handiwork', 'Gathering', 'Lumbering', 'Mining', 'Medicine', 'Cooling', 'Transporting', 'Farming'];
+
+        window.onload = () => {
+            const mapImgUrl = "blogger.googleusercontent.com/img/a/AVvXsEj-Dq-SF2Haxewy56iaWvbOHVq9yv22sdS72lpO_0V67kF4na8q_bKIwvgFthr8Z1EfRUax_1G0wrp2AnCa7vmzcCwexl75d0VACIRf56DvXYDYuXqKDNGPZupVS_48uPQEpgAOo6Ttien65t7OHRd-5Gd4JHf9XGcx17fgtqQwmkXO4Fxx6n1Lw6-8RRGF";
+            const mapImg = document.getElementById('mapImage');
+            mapImg.src = CORS_PROXY + mapImgUrl;
+            mapImg.onload = () => {
+                initCanvas();
+                if(window.pendingHabitat) {
+                    try { redrawStrokes(JSON.parse(window.pendingHabitat)); } catch(e){}
+                    window.pendingHabitat = null;
+                }
+            };
+            document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇺🇸 EN' : '🇪🇸 ES';
+            fetchDataFromSheets();
+        };
+
+        function fetchDataFromSheets() {
+            Papa.parse(CSV_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    palDatabase = results.data;
+                    populateSelector();
+                    renderPal();
+                }
+            });
+        }
+
+        const parseJSON = (str, fallback) => {
+            try { return str ? JSON.parse(str) : fallback; } 
+            catch(e) { return fallback; }
+        };
+
+        function populateSelector() {
+            const selector = document.getElementById('palSelector');
+            selector.innerHTML = '';
+            palDatabase.forEach((pal, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                const name = pal.Name || 'Desconocido';
+                opt.textContent = `#${pal.ID || '?'} - ${name}`;
+                selector.appendChild(opt);
+            });
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇺🇸 EN' : '🇪🇸 ES';
+            const currentIndex = document.getElementById('palSelector').value;
+            populateSelector();
+            document.getElementById('palSelector').value = currentIndex;
+            updateHabitatTitle();
+            renderPal();
+        }
+
+        function updateHabitatTitle() {
+            const span = document.getElementById('habitatTitleSpan');
+            if (span) {
+                span.textContent = activeHabitat === 'day' ? '(Day)' : '(Night)';
+            }
+        }
+
+        // Selector de Día / Noche con color por defecto azul para Night
+        function toggleHabitatTime() {
+            const selectedRadio = document.querySelector('input[name="habitatTime"]:checked');
+            if (!selectedRadio) return;
+
+            if (activeHabitat === 'day') {
+                currentDayStrokes = [...drawnStrokes];
+            } else {
+                currentNightStrokes = [...drawnStrokes];
+            }
+
+            activeHabitat = selectedRadio.value;
+            updateHabitatTitle();
+
+            // Cambiar color por defecto según el modo
+            const colorInput = document.getElementById('brushColor');
+            if (activeHabitat === 'night') {
+                colorInput.value = '#00a8ff'; // Azul por defecto para noche
+            } else {
+                colorInput.value = '#ffaa00'; // Naranja/Amarillo por defecto para día
+            }
+
+            const strokesToDraw = activeHabitat === 'day' ? currentDayStrokes : currentNightStrokes;
+            redrawStrokes(strokesToDraw);
+        }
+
+        function renderPal() {
+            if(palDatabase.length === 0) return;
+            
+            const index = document.getElementById('palSelector').value;
+            const pal = palDatabase[index];
+            const dict = langDict[currentLang];
+
+            document.querySelector('.lang-work').textContent = dict.work;
+            document.querySelector('.lang-skills').textContent = dict.skills;
+            document.querySelector('.lang-stats').textContent = dict.stats;
+            document.querySelector('.lang-clear').textContent = dict.clear;
+            document.querySelector('.lang-copy').textContent = dict.copy;
+            document.querySelector('.lang-rarity').textContent = dict.rarity;
+            document.querySelector('.lang-drops').textContent = dict.drops;
+            
+            document.getElementById('labelPrice').innerHTML = `<img crossorigin="anonymous" src="${CORS_PROXY}static.wikia.nocookie.net/palworld/images/4/49/Gold_Coin_icon.png" class="icon-price" style="width: 16px; height: 16px; margin-right: 8px;"> ${dict.price}:`;
+            document.getElementById('labelSize').innerHTML = `<i class="ri-ruler-line"></i> ${dict.size}:`;
+            document.getElementById('labelCapture').innerHTML = `<i class="ri-focus-2-line"></i> ${dict.capture}:`;
+            document.getElementById('labelGender').innerHTML = `${dict.gender}:`;
+            document.getElementById('labelEgg').innerHTML = `${dict.egg}:`;
+            document.getElementById('labelFood').innerHTML = `${dict.food}:`;
+
+            const palPrefixObj = parseJSON(pal.Prefix_JSON, {es: "", en: ""});
+            const partnerObj = parseJSON(pal.Partner_JSON, {name_es: "-", name_en: "-", desc_es: "-", desc_en: "-"});
+            const statsObj = parseJSON(pal.Stats_JSON, {hp: 0, attack: 0, defense: 0, support: 0, craft_speed: 0, stamina: 0, run: 0, ride: 0, sprint: 0, swim: 0});
+            const palDescObj = parseJSON(pal.Desc_JSON, {es: "", en: ""});
+            const eggObj = parseJSON(pal.Egg_JSON, {type: "Common", name_es: "Huevo Desconocido", name_en: "Unknown Egg"});
+
+            document.getElementById('palNumber').textContent = pal.ID || '?';
+            document.getElementById('palName').textContent = pal.Name || '???';
+            document.getElementById('palPrefix').textContent = currentLang === 'es' ? palPrefixObj.es : palPrefixObj.en;
+            
+            let cleanPalImgUrl = pal.Image_URL ? pal.Image_URL.replace(/^https?:\/\//, '') : '';
+            document.getElementById('palImage').src = cleanPalImgUrl ? CORS_PROXY + cleanPalImgUrl : '';
+
+            const typesArr = pal.Types ? pal.Types.split(',') : ['Neutral'];
+            document.getElementById('palTypes').innerHTML = typesArr.map(t => {
+                const typeName = t.trim();
+                const iconUrl = elementIcons[typeName] || elementIcons["Neutral"];
+                const transType = elementTranslations[typeName] ? (currentLang === 'es' ? elementTranslations[typeName].es : elementTranslations[typeName].en) : typeName;
+                return `<div class="type-badge" style="color: ${typeColors[typeName] || '#fff'}; border-color: ${typeColors[typeName] || '#fff'}">
+                            <img crossorigin="anonymous" src="${iconUrl}" alt="${typeName}"> ${transType}
+                        </div>`;
+            }).join('');
+
+            document.getElementById('palRarityStars').innerHTML = Array(parseInt(pal.Rarity) || 1).fill('<i class="ri-star-fill"></i>').join('');
+            document.getElementById('palPrice').textContent = pal.Price || 0;
+            document.getElementById('palSize').textContent = pal.Size || '-';
+            document.getElementById('palCapture').textContent = pal.Capture_Rate || '-';
+
+            const dropsArr = parseJSON(pal.Drops_JSON, []);
+            document.getElementById('palDrops').innerHTML = dropsArr.map(d => {
+                const dropNameEn = d.name_en || '';
+                const displayDropName = currentLang === 'es' ? d.name_es : dropNameEn;
+                const dropIconUrl = dropIcons[dropNameEn] || fallbackDropIcon;
+                
+                return `<div class="drop-item">
+                            <img crossorigin="anonymous" src="${dropIconUrl}" class="icon-drop" style="width: 16px; height: 16px; margin-right: 8px;" onerror="this.src='${fallbackDropIcon}'; this.onerror=null;">
+                            ${displayDropName} (${d.quantity})
+                        </div>`;
+            }).join('');
+
+            let foodAmount = parseInt(pal.Food_Amount) || 0;
+            let foodHtml = '';
+            for(let i=0; i<10; i++) {
+                if(i < foodAmount) foodHtml += `<img crossorigin="anonymous" src="${foodOn}">`;
+                else foodHtml += `<img crossorigin="anonymous" src="${foodOff}">`;
+            }
+            document.getElementById('palFoodIcons').innerHTML = foodHtml;
+
+            let maleRatio = parseFloat(pal.Male_Ratio);
+            if(isNaN(maleRatio)) {
+                document.getElementById('palGender').innerHTML = '???';
+            } else {
+                let femaleRatio = 100 - maleRatio;
+                document.getElementById('palGender').innerHTML = `<img crossorigin="anonymous" src="${maleIcon}" class="icon-gender" style="margin-right: 6px; width: 14px; height: 14px;"> ${maleRatio}% <span style="margin: 0 10px;"></span> <img crossorigin="anonymous" src="${femaleIcon}" class="icon-gender" style="margin-right: 6px; width: 14px; height: 14px;"> ${femaleRatio}%`;
+            }
+
+            let eggType = eggObj.type || 'Common';
+            let eggName = currentLang === 'es' ? eggObj.name_es : eggObj.name_en;
+            let eggUrl = eggIcons[eggType] || eggIcons['Common'];
+            document.getElementById('palEgg').innerHTML = `<img crossorigin="anonymous" src="${eggUrl}"> <span style="color: #e1b12c; font-weight: bold;">${eggName}</span>`;
+
+            document.getElementById('palDesc').textContent = currentLang === 'es' ? palDescObj.es : palDescObj.en;
+
+            const palWorksStr = pal.Work_Suitability ? pal.Work_Suitability.split(',') : [];
+            const palWorksObj = {};
+            palWorksStr.forEach(w => {
+                const parts = w.split(':');
+                if(parts[0]) palWorksObj[parts[0].trim()] = parts[1] ? parts[1].trim() : '1';
+            });
+
+            document.getElementById('palWork').innerHTML = workOrder.map(wType => {
+                const level = palWorksObj[wType];
+                const iconSrc = workIcons[wType];
+                const statusClass = level ? 'active' : 'inactive';
+                const displayLevel = level ? `${dict.lv} ${level}` : '-';
+                const transName = currentLang === 'es' ? workTranslations[wType].es : workTranslations[wType].en;
+                
+                return `
+                <div class="work-item ${statusClass}">
+                    <div class="work-item-left">
+                        <img src="${iconSrc}" crossorigin="anonymous" alt="${wType}"> <span>${transName}</span>
+                    </div>
+                    <div class="work-level">${displayLevel}</div>
+                </div>`;
+            }).join('');
+
+            const maxStat = 150; 
+            const buildBar = (label, value, color, iconClass) => `
+                <div class="stat-bar-container">
+                    <div class="stat-label"><i class="${iconClass}" style="color:${color}; font-size:16px;"></i> ${label}</div>
+                    <div class="stat-bar-bg">
+                        <div class="stat-bar-fill" style="width: ${Math.min((value/maxStat)*100, 100)}%; background: ${color};"></div>
+                    </div>
+                    <div class="stat-value">${value}</div>
+                </div>
+            `;
+
+            document.getElementById('palStatsBars').innerHTML = `
+                ${buildBar(dict.hp, statsObj.hp || 0, '#ff4757', 'ri-heart-pulse-fill')}
+                ${buildBar(dict.attack, statsObj.attack || 0, '#ffa502', 'ri-sword-fill')}
+                ${buildBar(dict.defense, statsObj.defense || 0, '#1e90ff', 'ri-shield-star-fill')}
+                ${buildBar(dict.support, statsObj.support || 0, '#2ed573', 'ri-magic-fill')}
+                ${buildBar(dict.craft, statsObj.craft_speed || 0, '#a4b0be', 'ri-hammer-fill')}
+                ${buildBar(dict.stamina, statsObj.stamina || 0, '#f1c40f', 'ri-battery-2-charge-fill')}
+            `;
+
+            document.getElementById('palMovement').innerHTML = `
+                <div class="movement-item"><i class="ri-run-line"></i> ${dict.run}: <span style="color:#fff">${statsObj.run || 0}</span></div>
+                <div class="movement-item"><i class="ri-riding-line"></i> ${dict.ride}: <span style="color:#fff">${statsObj.ride || 0}</span></div>
+                <div class="movement-item"><i class="ri-speed-up-line"></i> ${dict.sprint}: <span style="color:#fff">${statsObj.sprint || 0}</span></div>
+                <div class="movement-item"><i class="ri-ship-line"></i> ${dict.swim}: <span style="color:#fff">${statsObj.swim || 0}</span></div>
+            `;
+
+            let skillsHtml = '';
+            let pImageUrl = pal.Partner_Image_URL ? CORS_PROXY + pal.Partner_Image_URL.replace(/^https?:\/\//, '') : '';
+            let pImageHtml = pImageUrl ? `<img src="${pImageUrl}" crossorigin="anonymous" style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover;">` : `<div class="skill-level" style="background: var(--neon-pink); color: white;">PARTNER</div>`;
+
+            skillsHtml += `
+                <div class="skill-card partner-card" style="margin-bottom: 20px;">
+                    <div class="skill-header">
+                        ${pImageHtml}
+                        <div class="skill-title-block" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                            <h4 style="color: var(--neon-pink)">${currentLang === 'es' ? partnerObj.name_es : partnerObj.name_en}</h4>
+                            <div class="skill-desc">${currentLang === 'es' ? partnerObj.desc_es : partnerObj.desc_en}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            let activeSkills = parseJSON(pal.Active_Skills_JSON, []);
+            activeSkills.forEach(sk => {
+                const color = typeColors[sk.element] || '#fff';
+                const elIconUrl = elementIcons[sk.element] || elementIcons["Neutral"];
+                const skName = currentLang === 'es' ? (sk.name_es || sk.name) : (sk.name_en || sk.name);
+                
+                skillsHtml += `
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <div class="skill-level">${dict.lv} ${sk.level}</div>
+                            <div class="skill-title-block">
+                                <img src="${elIconUrl}" crossorigin="anonymous" alt="${sk.element}">
+                                <h4 style="color: ${color}">${skName}</h4>
+                            </div>
+                        </div>
+                        <div class="skill-desc">${currentLang === 'es' ? sk.desc_es : sk.desc_en}</div>
+                        <div class="skill-stats">
+                            <span><i class="ri-flashlight-fill" style="color:#ff4757"></i> ${dict.power}: ${sk.power || '-'}</span>
+                            <span><i class="ri-timer-2-line" style="color:#1e90ff"></i> ${dict.cooldown}: ${sk.cooldown || '-'}s</span>
+                            <span><i class="ri-focus-3-line" style="color:#2ed573"></i> ${dict.range}: ${sk.range || '-'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            let passiveSkills = parseJSON(pal.Passive_Skills_JSON, []);
+            if (passiveSkills && passiveSkills.length > 0) {
+                skillsHtml += `
+                    <div class="section-title" style="margin-top: 25px; font-size: 18px; border-bottom: 1px dashed var(--neon-blue);">
+                        <i class="ri-price-tag-3-line"></i> ${dict.passive}
+                    </div>
+                `;
+                passiveSkills.forEach(ps => {
+                    const pIcon = passiveIcons[ps.tier] || passiveIcons["1"];
+                    skillsHtml += `
+                        <div class="skill-card">
+                            <div class="skill-header" style="align-items: center; gap: 15px;">
+                                <img src="${pIcon}" crossorigin="anonymous" style="width:32px; height:32px;">
+                                <div class="skill-title-block" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                                    <h4 style="color: white">${currentLang === 'es' ? ps.name_es : ps.name_en}</h4>
+                                    <div class="skill-desc" style="margin-top: 2px;">${currentLang === 'es' ? ps.desc_es : ps.desc_en}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('palSkills').innerHTML = skillsHtml;
+
+            currentDayStrokes = parseJSON(pal.Habitat_Day_JSON, []);
+            currentNightStrokes = parseJSON(pal.Habitat_Night_JSON, []);
+            
+            const dayRadio = document.querySelector('input[name="habitatTime"][value="day"]');
+            if (dayRadio) dayRadio.checked = true;
+            activeHabitat = 'day';
+            updateHabitatTitle();
+            
+            document.getElementById('brushColor').value = '#ffaa00';
+            redrawStrokes(currentDayStrokes);
+        }
+
+        // Lógica del Canvas y Cursor Flotante corregido (coincidencia exacta de ancho)
+        let canvas, ctx, isDrawing = false;
+        let drawnStrokes = [];
+        let currentStroke = null;
+
+        function initCanvas() {
+            canvas = document.getElementById('mapCanvas');
+            const container = canvas.parentElement;
+            ctx = canvas.getContext('2d');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+
+            ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            ctx.globalAlpha = 1.0; 
+            ctx.shadowBlur = 0; 
+
+            const brushCursor = document.getElementById('brushCursor');
+            const brushSizeInput = document.getElementById('brushSize');
+
+            canvas.addEventListener('mouseenter', () => {
+                brushCursor.style.display = 'block';
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                brushCursor.style.display = 'none';
+                isDrawing = false;
+                currentStroke = null;
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Cálculo exacto del diámetro del pincel en píxeles de pantalla
+                const currentBrushSize = parseFloat(brushSizeInput.value);
+                const scaleX = canvas.clientWidth / canvas.width;
+                const cssDiameter = currentBrushSize * scaleX;
+
+                brushCursor.style.width = `${cssDiameter}px`;
+                brushCursor.style.height = `${cssDiameter}px`;
+                brushCursor.style.left = `${x}px`;
+                brushCursor.style.top = `${y}px`;
+                brushCursor.style.borderColor = document.getElementById('brushColor').value;
+
+                if (isDrawing) {
+                    draw(e);
+                }
+            });
+
+            canvas.addEventListener('mousedown', (e) => { 
+                isDrawing = true; 
+                currentStroke = { 
+                    color: document.getElementById('brushColor').value, 
+                    size: document.getElementById('brushSize').value,
+                    points: [] 
+                };
+                drawnStrokes.push(currentStroke);
+                draw(e); 
+            });
+
+            canvas.addEventListener('mouseup', () => { isDrawing = false; currentStroke = null; });
+        }
+
+        function draw(e) {
+            if (!isDrawing || !currentStroke) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
+            const rx = Math.round(x * 10) / 10;
+            const ry = Math.round(y * 10) / 10;
+
+            currentStroke.points.push([rx, ry]);
+            redrawStrokes(drawnStrokes);
+        }
+
+        function clearAllStrokes() { 
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            drawnStrokes = [];
+        }
+
+        function redrawStrokes(strokes) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            strokes.forEach(stroke => {
+                if (!stroke.points || stroke.points.length === 0) return;
+                ctx.beginPath();
+                ctx.strokeStyle = stroke.color;
+                ctx.lineWidth = stroke.size || 25; 
+                ctx.moveTo(stroke.points[0][0], stroke.points[0][1]);
+                for (let i = 1; i < stroke.points.length; i++) {
+                    ctx.lineTo(stroke.points[i][0], stroke.points[i][1]);
+                }
+                ctx.stroke();
+            });
+            drawnStrokes = strokes; 
+        }
+
+        // Copiar hábitat con animación en el botón y sin alerta emergente
+        function copyMapData() {
+            if (activeHabitat === 'day') currentDayStrokes = [...drawnStrokes];
+            else currentNightStrokes = [...drawnStrokes];
+
+            const currentData = activeHabitat === 'day' ? currentDayStrokes : currentNightStrokes;
+            if(currentData.length === 0) {
+                alert("El mapa está vacío. Pinta algo primero.");
+                return;
+            }
+            const code = JSON.stringify(currentData);
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('btnCopyHabitat');
+                const originalHTML = btn.innerHTML;
+                
+                // Cambiar texto y agregar animación CSS
+                btn.innerHTML = `<i class="ri-check-line"></i> Hábitat Copiado`;
+                btn.classList.add('btn-copied');
+                
+                // Volver a la normalidad tras 1.2 segundos
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('btn-copied');
+                }, 1200);
+            }).catch(err => {
+                console.error("Error al copiar: ", err);
+                alert("Error al copiar el código.");
+            });
+        }
+
+        // Descarga optimizada y compresión iterativa PNG (Límite 1.95MB)
+        async function downloadCard() {
+            if (activeHabitat === 'day') currentDayStrokes = [...drawnStrokes];
+            else currentNightStrokes = [...drawnStrokes];
+
+            const sections = Array.from(document.querySelectorAll('.download-section'));
+            const mapSection = sections.pop(); 
+            const palName = document.getElementById('palName').textContent.replace(/[^a-z0-9]/gi, '_');
+            
+            sections.forEach(sec => sec.classList.add('render-mode'));
+            mapSection.classList.add('render-mode');
+
+            const captureSection = async (section, filename) => {
+                let canvas = await html2canvas(section, {
+                    backgroundColor: null,
+                    scale: 2, 
+                    useCORS: true,
+                    allowTaint: false
+                });
+
+                return new Promise(async resolve => {
+                    let blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+                    const maxSize = 1950000; 
+
+                    if (blob.size > maxSize) {
+                        let scale = 0.9;
+                        let tempCanvas = document.createElement('canvas');
+                        let ctx = tempCanvas.getContext('2d');
+                        
+                        while (blob.size > maxSize && scale > 0.3) {
+                            tempCanvas.width = canvas.width * scale;
+                            tempCanvas.height = canvas.height * scale;
+                            ctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                            ctx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
+                            blob = await new Promise(r => tempCanvas.toBlob(r, 'image/png'));
+                            scale -= 0.1;
+                        }
+                    }
+
+                    saveBlob(blob, filename);
+                    resolve();
+                });
+            };
+
+            function saveBlob(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+            }
+            
+            for(let i = 0; i < sections.length; i++) {
+                await captureSection(sections[i], `${palName}_Seccion_${i+1}.png`);
+                await new Promise(resolve => setTimeout(resolve, 600));
+            }
+
+            const hasDay = currentDayStrokes.length > 0;
+            const hasNight = currentNightStrokes.length > 0;
+
+            if (hasDay) {
+                document.querySelector('input[value="day"]').checked = true;
+                activeHabitat = 'day';
+                document.getElementById('habitatTitleSpan').textContent = '(Day)';
+                redrawStrokes(currentDayStrokes);
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                await captureSection(mapSection, `${palName}_Seccion_6_Day.png`);
+                await new Promise(resolve => setTimeout(resolve, 600));
+            }
+
+            if (hasNight) {
+                document.querySelector('input[value="night"]').checked = true;
+                activeHabitat = 'night';
+                document.getElementById('habitatTitleSpan').textContent = '(Night)';
+                redrawStrokes(currentNightStrokes);
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                await captureSection(mapSection, `${palName}_Seccion_6_Night.png`);
+                await new Promise(resolve => setTimeout(resolve, 600));
+            }
+
+            if (!hasDay && !hasNight) {
+                await captureSection(mapSection, `${palName}_Seccion_6_Map.png`);
+            }
+            
+            sections.forEach(sec => sec.classList.remove('render-mode'));
+            mapSection.classList.remove('render-mode');
+        }
+    </script>
+</body>
+</html>
