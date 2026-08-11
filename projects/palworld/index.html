@@ -514,6 +514,7 @@
             position: relative; width: 100%; border: 2px solid var(--neon-blue); border-radius: 8px;
             overflow: hidden; background: #000; line-height: 0; margin-top: 15px;
             z-index: 1;
+            box-sizing: border-box; /* <--- Soluciona el recorte del borde derecho */
         }
         .map-container img { width: 100%; height: auto; display: block; }
         
@@ -523,7 +524,7 @@
             opacity: 0.6;
         }
 
-        /* Indicador flotante del tamaño exacto del pincel (coincide con el radio real del canvas) */
+        /* Indicador flotante del tamaño exacto del pincel */
         #brushCursor {
             position: absolute;
             border: 2px dashed #ffffff;
@@ -534,7 +535,6 @@
             z-index: 10;
         }
 
-        /* Animación para el botón de copiado de hábitat */
         @keyframes pulseSuccess {
             0% { transform: scale(1); background-color: #2ed573; color: #000; }
             50% { transform: scale(1.05); background-color: #2ed573; color: #000; box-shadow: 0 0 15px #2ed573; }
@@ -565,12 +565,11 @@
         <!-- SECCIÓN 1: Info Básica -->
         <div class="section-block download-section" id="sec-info">
             
-            <!-- Fondo actualizado de sección 1 -->
             <img class="sec-bg-image" crossorigin="anonymous" src="https://wsrv.nl/?url=blogger.googleusercontent.com/img/a/AVvXsEhClVi0hOshD79IRDN1gzw1FEwrE8QSnb-Jgb9mFwl6SAQGEbrOcn16Vx0QhZbObeM_ZX_AjNNc-THsjs9FdKhDGn9ebtOpDlDYpHS8rwBGkQiibgTOCUeQqTaP6eLJobwjB5ORWrQQ_aW5Eis3wU84w33KIAdA3Y9aN-PxZjkMRuRFfo4etKgzrrq5Psue" alt="">
 
             <div class="info-grid">
                 <div class="pal-image-container" id="palImageContainer">
-                    <img class="pal-bg-img" crossorigin="anonymous" src="https://wsrv.nl/?url=blogger.googleusercontent.com/img/a/AVvXsEi3ZQNzAf3AOcS-JRkTjIZLexqM1bjEiOFh8jbkwU8CfTYVnSIg9OCNzLJdx3x_GJ6YSSs2jIlRuL5GH4L5OZ-I3X0HJtSfZv_-XA0sP0Ao9ZVIFrzQ3eipZQXqqzLz9HC6ZNtR1AYxf6hDxm99ygjex3ECpP3y5QSDh82cQKZdHvXdCyfE72EXolL-uyfL" alt="">
+                    <img class="pal-bg-img" crossorigin="anonymous" src="https://wsrv.nl/?url=blogger.googleusercontent.com/img/a/AVvXsEhClVi0hOshD79IRDN1gzw1FEwrE8QSnb-Jgb9mFwl6SAQGEbrOcn16Vx0QhZbObeM_ZX_AjNNc-THsjs9FdKhDGn9ebtOpDlDYpHS8rwBGkQiibgTOCUeQqTaP6eLJobwjB5ORWrQQ_aW5Eis3wU84w33KIAdA3Y9aN-PxZjkMRuRFfo4etKgzrrq5Psue" alt="">
                     
                     <img id="palImage" crossorigin="anonymous" src="" alt="Pal Image">
                     <div class="pal-number" id="palNumber"></div>
@@ -807,7 +806,7 @@
         const workOrder = ['Kindling', 'Watering', 'Planting', 'Electricity', 'Handiwork', 'Gathering', 'Lumbering', 'Mining', 'Medicine', 'Cooling', 'Transporting', 'Farming'];
 
         window.onload = () => {
-            const mapImgUrl = "blogger.googleusercontent.com/img/a/AVvXsEj-Dq-SF2Haxewy56iaWvbOHVq9yv22sdS72lpO_0V67kF4na8q_bKIwvgFthr8Z1EfRUax_1G0wrp2AnCa7vmzcCwexl75d0VACIRf56DvXYDYuXqKDNGPZupVS_48uPQEpgAOo6Ttien65t7OHRd-5Gd4JHf9XGcx17fgtqQwmkXO4Fxx6n1Lw6-8RRGF";
+            const mapImgUrl = "blogger.googleusercontent.com/img/a/AVvXsEg9tadtIa57zmGEKz_Yj9NNL2MprqutUqbukv2MoEApBkxXcJUEQAhYhrP-sVO4-R2An0N7TLv8AStoSTRztZC3KjcvSet78i_wQQQTegGYF56dMWY3LUmbm1gFUCoCgKKBamyyh6uPo18toEVSZ9qF_8DKNvSNZO85XscyON31ab6mV1bN3yVneZkC5g74";
             const mapImg = document.getElementById('mapImage');
             mapImg.src = CORS_PROXY + mapImgUrl;
             mapImg.onload = () => {
@@ -868,7 +867,6 @@
             }
         }
 
-        // Selector de Día / Noche con color por defecto azul para Night
         function toggleHabitatTime() {
             const selectedRadio = document.querySelector('input[name="habitatTime"]:checked');
             if (!selectedRadio) return;
@@ -882,12 +880,11 @@
             activeHabitat = selectedRadio.value;
             updateHabitatTitle();
 
-            // Cambiar color por defecto según el modo
             const colorInput = document.getElementById('brushColor');
             if (activeHabitat === 'night') {
-                colorInput.value = '#00a8ff'; // Azul por defecto para noche
+                colorInput.value = '#00a8ff'; 
             } else {
-                colorInput.value = '#ffaa00'; // Naranja/Amarillo por defecto para día
+                colorInput.value = '#ffaa00'; 
             }
 
             const strokesToDraw = activeHabitat === 'day' ? currentDayStrokes : currentNightStrokes;
@@ -1106,7 +1103,6 @@
             redrawStrokes(currentDayStrokes);
         }
 
-        // Lógica del Canvas y Cursor Flotante corregido (coincidencia exacta de ancho)
         let canvas, ctx, isDrawing = false;
         let drawnStrokes = [];
         let currentStroke = null;
@@ -1140,7 +1136,6 @@
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
 
-                // Cálculo exacto del diámetro del pincel en píxeles de pantalla
                 const currentBrushSize = parseFloat(brushSizeInput.value);
                 const scaleX = canvas.clientWidth / canvas.width;
                 const cssDiameter = currentBrushSize * scaleX;
@@ -1204,7 +1199,6 @@
             drawnStrokes = strokes; 
         }
 
-        // Copiar hábitat con animación en el botón y sin alerta emergente
         function copyMapData() {
             if (activeHabitat === 'day') currentDayStrokes = [...drawnStrokes];
             else currentNightStrokes = [...drawnStrokes];
@@ -1220,11 +1214,9 @@
                 const btn = document.getElementById('btnCopyHabitat');
                 const originalHTML = btn.innerHTML;
                 
-                // Cambiar texto y agregar animación CSS
                 btn.innerHTML = `<i class="ri-check-line"></i> Hábitat Copiado`;
                 btn.classList.add('btn-copied');
                 
-                // Volver a la normalidad tras 1.2 segundos
                 setTimeout(() => {
                     btn.innerHTML = originalHTML;
                     btn.classList.remove('btn-copied');
@@ -1235,7 +1227,6 @@
             });
         }
 
-        // Descarga optimizada y compresión iterativa PNG (Límite 1.95MB)
         async function downloadCard() {
             if (activeHabitat === 'day') currentDayStrokes = [...drawnStrokes];
             else currentNightStrokes = [...drawnStrokes];
