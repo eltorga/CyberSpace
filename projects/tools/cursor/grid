@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Cursor Generator - Pro Max</title>
+    <!-- Librería de Iconos Uicons -->
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <!-- Librería GIF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+    <style>
+        :root {
+            --steam-bg-main: #1b2838;
+            --steam-bg-dark: #171a21;
+            --steam-text: #c6d4df;
+            --border-color: #66c0f4;
+            --box-blur: 6px; 
+            --box-bg-dark: rgba(0, 0, 0, 0.6);
+            --box-bg-light: rgba(255, 255, 255, 0.75);
+            --current-box-bg: var(--box-bg-dark);
+            --steam-green: linear-gradient(to right, #a4d007 5%, #536904 95%);
+            --steam-red: #ff4747;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--steam-bg-main);
+            color: var(--steam-text);
+            display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0;
+            min-height: 100vh;
+        }
+
+        h1 { margin-bottom: 5px; color: white; text-align: center; display: flex; align-items: center; gap: 10px; justify-content: center; }
+
+        .container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 650px; }
+
+        /* Barras de Herramientas */
+        .toolbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--steam-bg-dark); padding: 12px 15px; border-radius: 8px; flex-wrap: wrap; gap: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .toolbar-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .btn {
+            background: #2a475e; color: white; border: none; padding: 8px 12px; border-radius: 4px; 
+            cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 6px; transition: 0.2s;
+        }
+        .btn:hover { background: #66c0f4; color: #171a21; }
+        .btn-danger { background: rgba(255, 71, 71, 0.2); color: #ff4747; }
+        .btn-danger:hover { background: #ff4747; color: white; }
+
+        .control-label { font-size: 13px; font-weight: bold; color: #88949b; display: flex; align-items: center; gap: 5px; }
+        input[type="range"] { accent-color: var(--border-color); cursor: pointer; }
+        
+        .color-picker-wrapper { display: flex; align-items: center; gap: 5px; }
+        .color-swatch {
+            width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: 0.2s;
+        }
+        .color-swatch:hover { transform: scale(1.1); }
+        .color-swatch.active { border-color: white; box-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        input[type="color"] { width: 30px; height: 30px; padding: 0; border: none; border-radius: 4px; cursor: pointer; background: none; }
+
+        /* Lienzo de Trabajo Cuadrado */
+        .workspace-wrapper {
+            width: 100%; aspect-ratio: 1 / 1;
+            background-color: #000; position: relative; overflow: hidden;
+            border: 2px solid var(--border-color); border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.6); transition: border-color 0.3s;
+        }
+
+        .bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        #bg-img {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) translate(var(--bg-x, 0px), var(--bg-y, 0px)) scale(var(--bg-scale, 1));
+            transform-origin: center; display: none;
+        }
+
+        .grid-container {
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
+            padding: 4%; gap: 4%; box-sizing: border-box;
+        }
+
+        .cursor-dropzone {
+            width: 100%; height: 100%; border-radius: 12px;
+            border: 2px dashed rgba(255, 255, 255, 0.2); 
+            background-color: rgba(27, 40, 56, 0.6); 
+            display: flex; justify-content: center; align-items: center;
+            position: relative; transition: 0.2s; box-sizing: border-box;
+            overflow: hidden; /* Esto también es vital visualmente para que no se salga de la caja en el navegador */
+        }
+
+        .cursor-dropzone.filled {
+            background-color: var(--current-box-bg);
+            border: 2px solid var(--border-color);
+            backdrop-filter: blur(var(--box-blur)); 
+            -webkit-backdrop-filter: blur(var(--box-blur));
+            cursor: grab; pointer-events: auto;
+        }
+        .cursor-dropzone.filled:active { cursor: grabbing; }
+        .cursor-dropzone.drag-over { border: 2px dashed var(--border-color); background-color: rgba(102, 192, 244, 0.3); }
+
+        .cursor-dropzone img {
+            width: 85%; height: 85%; object-fit: contain; display: none; image-rendering: pixelated; pointer-events: none;
+            position: absolute; top: 50%; left: 50%;
+            /* Utilizamos variables CSS para escalar dinámicamente */
+            transform: translate(-50%, -50%) scale(var(--slot-scale, 1));
+            transition: transform 0.2s ease;
+        }
+        
+        .empty-text { font-size: 12px; color: rgba(255,255,255,0.3); font-weight: bold; pointer-events: none; }
+
+        /* === CONTROLES SUPERPUESTOS === */
+        .overlay-controls {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; justify-content: space-between; 
+            padding: 8px; box-sizing: border-box; z-index: 10; pointer-events: none; 
+        }
+        .cursor-dropzone.filled:hover .overlay-controls { display: flex; }
+        .overlay-controls button { pointer-events: auto; }
+
+        .delete-box-btn {
+            width: 28px; height: 28px; background: var(--steam-red); color: white; 
+            border: none; border-radius: 6px; display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size: 14px; transition: 0.2s;
+        }
+        .delete-box-btn:hover { background: #ff2a2a; transform: scale(1.1); }
+
+        .size-controls {
+            align-self: center; display: flex; gap: 8px; background: rgba(0,0,0,0.6); 
+            padding: 4px; border-radius: 8px; backdrop-filter: blur(2px);
+        }
+        .size-btn {
+            width: 26px; height: 26px; background: #2a475e; color: white; border: none; 
+            border-radius: 4px; display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; transition: 0.2s; font-size: 14px;
+        }
+        .size-btn:hover:not(:disabled) { background: #66c0f4; color: #171a21; }
+        .size-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        button.export-btn {
+            padding: 15px; background: var(--steam-green); color: #fff; border: none; border-radius: 4px;
+            font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        button.export-btn:disabled { background: #4c5a61; color: #88949b; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <h1><i class="fi fi-rr-cursor-plus"></i> Steam Cursor Pro Max</h1>
+    
+    <div class="container">
+        <!-- BARRA 1: Archivos, Vistas y Reset -->
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <button class="btn" onclick="document.getElementById('bg-input').click()">
+                    <i class="fi fi-rr-picture"></i> Subir Fondo
+                </button>
+                <input type="file" id="bg-input" accept="image/*" style="display: none;">
+                
+                <button class="btn" id="center-bg-btn" title="Centrar Fondo">
+                    <i class="fi fi-rr-crosshairs"></i> Centrar
+                </button>
+
+                <button class="btn" id="theme-btn">
+                    <i class="fi fi-rr-moon-stars"></i> Oscuro
+                </button>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="control-label"><i class="fi fi-rr-search"></i> Zoom:</span>
+                <input type="range" id="zoom-slider" min="0.5" max="3" step="0.05" value="1">
+            </div>
+
+            <button class="btn btn-danger" id="reset-all-btn" title="Borrar todo">
+                <i class="fi fi-rr-trash"></i> Resetear
+            </button>
+        </div>
+
+        <!-- BARRA 2: Estética (Color y Blur) -->
+        <div class="toolbar" style="justify-content: flex-start; gap: 20px;">
+            <div class="toolbar-group">
+                <span class="control-label"><i class="fi fi-rr-droplet"></i> Blur (1-10):</span>
+                <input type="range" id="blur-slider" min="0" max="10" value="3" style="width: 80px;">
+            </div>
+
+            <div class="toolbar-group color-picker-wrapper">
+                <span class="control-label"><i class="fi fi-rr-palette"></i> Borde:</span>
+                <div class="color-swatch active" style="background: #66c0f4;" data-color="#66c0f4"></div>
+                <div class="color-swatch" style="background: #a4d007;" data-color="#a4d007"></div>
+                <div class="color-swatch" style="background: #ff4747;" data-color="#ff4747"></div>
+                <div class="color-swatch" style="background: #f1c40f;" data-color="#f1c40f"></div>
+                <div class="color-swatch" style="background: #9b59b6;" data-color="#9b59b6"></div>
+                <div class="color-swatch" style="background: #ffffff;" data-color="#ffffff"></div>
+                <input type="color" id="custom-color-input" value="#66c0f4" title="Color Personalizado">
+            </div>
+        </div>
+
+        <!-- Área de Trabajo -->
+        <div class="workspace-wrapper" id="workspace">
+            <div class="bg-layer"><img id="bg-img" alt="fondo"></div>
+            <div class="grid-container" id="grid"></div>
+        </div>
+
+        <button id="download-btn" class="export-btn" disabled>
+            <i class="fi fi-rr-download"></i> EXPORTAR
+        </button>
+    </div>
+
+    <script>
+        // === REFERENCIAS DOM ===
+        const grid = document.getElementById('grid');
+        const workspace = document.getElementById('workspace');
+        const bgImgEl = document.getElementById('bg-img');
+        const bgInput = document.getElementById('bg-input');
+        const downloadBtn = document.getElementById('download-btn');
+        const zoomSlider = document.getElementById('zoom-slider');
+        const themeBtn = document.getElementById('theme-btn');
+        const blurSlider = document.getElementById('blur-slider');
+        const customColorInput = document.getElementById('custom-color-input');
+        const colorSwatches = document.querySelectorAll('.color-swatch');
+        const centerBgBtn = document.getElementById('center-bg-btn');
+        const resetAllBtn = document.getElementById('reset-all-btn');
+
+        // === VARIABLES DE ESTADO ===
+        let slotsData = new Array(9).fill(null);
+        let hasAnimatedCursors = false;
+        let draggedSlotIndex = null;
+        let isLightMode = false;
+        let currentBorderColor = '#66c0f4';
+        let currentBlur = 3;
+
+        let bgImageObj = null;
+        let bgX = 0, bgY = 0, bgZoom = 1, baseScale = 1;
+        let isDraggingBg = false, startX, startY, initBgX, initBgY;
+
+        // INICIALIZAR WORKER GIF
+        let workerBlobURL = null;
+        async function initWorker() {
+            try {
+                const res = await fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js');
+                workerBlobURL = URL.createObjectURL(new Blob([await res.text()], {type: 'application/javascript'}));
+            } catch(e) { console.warn("Usando worker CDN."); }
+        }
+        initWorker();
+
+        // === 1. CREAR CUADRÍCULA 3x3 Y EVENTOS ===
+        for (let i = 0; i < 9; i++) {
+            const dropzone = document.createElement('div');
+            dropzone.className = 'cursor-dropzone';
+            dropzone.dataset.index = i;
+            
+            // Estructura actualizada con Panel Overlay y el nuevo botón de Restablecer
+            dropzone.innerHTML = `
+                <span class="empty-text">VACÍO</span>
+                <img id="img-${i}" alt="cursor" />
+                <div class="overlay-controls">
+                    <div style="display:flex; justify-content:flex-end; width:100%;">
+                        <button class="delete-box-btn" title="Quitar Cursor"><i class="fi fi-rr-trash"></i></button>
+                    </div>
+                    <div class="size-controls">
+                        <button class="size-btn minus-btn" title="Reducir"><i class="fi fi-rr-minus"></i></button>
+                        <button class="size-btn reset-btn" title="Normal (100%)"><i class="fi fi-rr-refresh"></i></button>
+                        <button class="size-btn plus-btn" title="Agrandar"><i class="fi fi-rr-plus"></i></button>
+                    </div>
+                </div>
+            `;
+            
+            // Eliminar cuadro individual
+            dropzone.querySelector('.delete-box-btn').addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                slotsData[i] = null;
+                updateSlotUI(i);
+                evaluateState();
+            });
+
+            // Botón Reducir tamaño
+            dropzone.querySelector('.minus-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if(slotsData[i] && slotsData[i].scale > 0.2) {
+                    slotsData[i].scale = Math.round((slotsData[i].scale - 0.1) * 10) / 10;
+                    updateSlotUI(i);
+                }
+            });
+
+            // Botón Restablecer tamaño (100%)
+            dropzone.querySelector('.reset-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if(slotsData[i] && slotsData[i].scale !== 1.0) {
+                    slotsData[i].scale = 1.0;
+                    updateSlotUI(i);
+                }
+            });
+
+            // Botón Aumentar tamaño (Máximo ampliado a 2.5x o 250%)
+            dropzone.querySelector('.plus-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if(slotsData[i] && slotsData[i].scale < 2.5) {
+                    slotsData[i].scale = Math.round((slotsData[i].scale + 0.1) * 10) / 10;
+                    updateSlotUI(i);
+                }
+            });
+
+            // Drag & Drop
+            dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+            dropzone.addEventListener('dragstart', e => {
+                if (!slotsData[i]) { e.preventDefault(); return; }
+                draggedSlotIndex = i; e.dataTransfer.effectAllowed = 'move';
+            });
+            dropzone.addEventListener('dragend', () => draggedSlotIndex = null);
+            dropzone.addEventListener('drop', e => handleDrop(e, i, dropzone));
+            
+            grid.appendChild(dropzone);
+        }
+
+        // === 2. CONTROLES DE ESTÉTICA ===
+        themeBtn.addEventListener('click', () => {
+            isLightMode = !isLightMode;
+            document.documentElement.style.setProperty('--current-box-bg', isLightMode ? 'var(--box-bg-light)' : 'var(--box-bg-dark)');
+            themeBtn.innerHTML = isLightMode ? '<i class="fi fi-rr-brightness"></i> Claro' : '<i class="fi fi-rr-moon-stars"></i> Oscuro';
+            themeBtn.style.background = isLightMode ? "#e0e0e0" : "#2a475e";
+            themeBtn.style.color = isLightMode ? "#171a21" : "#fff";
+        });
+
+        blurSlider.addEventListener('input', (e) => {
+            currentBlur = parseInt(e.target.value);
+            document.documentElement.style.setProperty('--box-blur', `${currentBlur * 2}px`);
+        });
+
+        function changeBorderColor(hex) {
+            currentBorderColor = hex;
+            document.documentElement.style.setProperty('--border-color', hex);
+            customColorInput.value = hex;
+            colorSwatches.forEach(sw => sw.classList.remove('active'));
+        }
+
+        colorSwatches.forEach(swatch => {
+            swatch.addEventListener('click', (e) => {
+                changeBorderColor(e.target.dataset.color);
+                e.target.classList.add('active');
+            });
+        });
+
+        customColorInput.addEventListener('input', (e) => changeBorderColor(e.target.value));
+
+        // === 3. CONTROLES GENERALES ===
+        resetAllBtn.addEventListener('click', () => {
+            if(!confirm("¿Estás seguro de que deseas borrar todos los cursores y el fondo?")) return;
+            slotsData.fill(null);
+            for(let i=0; i<9; i++) updateSlotUI(i);
+            
+            bgImageObj = null;
+            bgImgEl.style.display = 'none';
+            bgImgEl.src = '';
+            bgInput.value = '';
+            
+            bgX = 0; bgY = 0; bgZoom = 1; zoomSlider.value = 1;
+            evaluateState();
+        });
+
+        centerBgBtn.addEventListener('click', () => { bgX = 0; bgY = 0; updateBgTransform(); });
+
+        // === 4. LÓGICA DEL FONDO ===
+        bgInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                bgImgEl.src = url; bgImgEl.style.display = 'block';
+                bgImageObj = new Image(); bgImageObj.src = url;
+                bgImageObj.onload = () => {
+                    baseScale = Math.max(workspace.offsetWidth / bgImageObj.width, workspace.offsetHeight / bgImageObj.height);
+                    bgX = 0; bgY = 0; bgZoom = 1; zoomSlider.value = 1; updateBgTransform();
+                };
+            }
+        });
+
+        zoomSlider.addEventListener('input', (e) => { bgZoom = parseFloat(e.target.value); updateBgTransform(); });
+
+        function updateBgTransform() {
+            bgImgEl.style.setProperty('--bg-x', `${bgX}px`);
+            bgImgEl.style.setProperty('--bg-y', `${bgY}px`);
+            bgImgEl.style.setProperty('--bg-scale', bgZoom * baseScale);
+        }
+
+        workspace.addEventListener('mousedown', e => {
+            if (e.target.closest('.cursor-dropzone.filled') || e.target.closest('.overlay-controls')) return;
+            isDraggingBg = true; startX = e.clientX; startY = e.clientY;
+            initBgX = bgX; initBgY = bgY; workspace.style.cursor = 'grabbing';
+        });
+        window.addEventListener('mousemove', e => {
+            if (!isDraggingBg) return;
+            bgX = initBgX + (e.clientX - startX); bgY = initBgY + (e.clientY - startY); updateBgTransform();
+        });
+        window.addEventListener('mouseup', () => { isDraggingBg = false; workspace.style.cursor = 'default'; });
+
+        // === 5. PARSER BINARIO CUR/ANI ===
+        const getStr = (dv, off, len) => { let s=''; for(let i=0; i<len; i++) s+=String.fromCharCode(dv.getUint8(off+i)); return s; };
+
+        async function parseCursorFile(file) {
+            const isAni = file.name.toLowerCase().endsWith('.ani');
+            if (!isAni) {
+                const url = URL.createObjectURL(file);
+                const img = new Image(); await new Promise(r => { img.onload = r; img.src = url; });
+                return { isAni: false, frames: [{url, img}], durations: [1000], totalDuration: 1000 };
+            }
+
+            const buffer = await file.arrayBuffer(); const dv = new DataView(buffer);
+            let frames = [], rates = [], defaultRate = 8, offset = 0;
+
+            if (getStr(dv, offset, 4) !== 'RIFF') throw new Error("Error"); offset += 12;
+            while (offset < buffer.byteLength) {
+                let chunkId = getStr(dv, offset, 4), chunkLen = dv.getUint32(offset + 4, true), dataOff = offset + 8;
+                if (chunkId === 'anih') defaultRate = dv.getUint32(dataOff + 28, true);
+                else if (chunkId === 'rate') { for (let i = 0; i < chunkLen; i += 4) rates.push(dv.getUint32(dataOff + i, true)); } 
+                else if (chunkId === 'LIST' && getStr(dv, dataOff, 4) === 'fram') {
+                    let sub = dataOff + 4, end = dataOff + chunkLen;
+                    while (sub < end) {
+                        if (getStr(dv, sub, 4) === 'icon') {
+                            let len = dv.getUint32(sub + 4, true);
+                            let blob = new Blob([buffer.slice(sub + 8, sub + 8 + len)], {type: 'image/x-icon'});
+                            frames.push({ url: URL.createObjectURL(blob) });
+                            sub += 8 + len + (len % 2 !== 0 ? 1 : 0);
+                        } else sub += 8 + dv.getUint32(sub + 4, true);
+                    }
+                }
+                offset += 8 + chunkLen + (chunkLen % 2 !== 0 ? 1 : 0);
+            }
+            let durations = frames.map((_, i) => (rates[i] || defaultRate) * (1000/60));
+            for(let i=0; i<frames.length; i++) {
+                let img = new Image(); await new Promise(r => { img.onload = r; img.src = frames[i].url; }); frames[i].img = img;
+            }
+            return { isAni: true, frames, durations, totalDuration: durations.reduce((a,b)=>a+b,0) };
+        }
+
+        async function handleDrop(e, targetIndex, dropzone) {
+            e.preventDefault(); dropzone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                if (!file.name.toLowerCase().match(/\.(cur|ani|png)$/)) return alert("Solo .cur, .ani o .png");
+                dropzone.querySelector('.empty-text').innerText = "Cargando...";
+                try {
+                    const parsedData = await parseCursorFile(file);
+                    parsedData.scale = 1.0; 
+                    slotsData[targetIndex] = parsedData;
+                    
+                    updateSlotUI(targetIndex); evaluateState();
+                } catch(err) { alert("Error al leer el archivo"); updateSlotUI(targetIndex); }
+            } else if (draggedSlotIndex !== null && draggedSlotIndex !== targetIndex) {
+                const temp = slotsData[draggedSlotIndex]; slotsData[draggedSlotIndex] = slotsData[targetIndex]; slotsData[targetIndex] = temp;
+                updateSlotUI(draggedSlotIndex); updateSlotUI(targetIndex); evaluateState();
+            }
+        }
+
+        function updateSlotUI(i) {
+            const dropzone = document.querySelector(`.cursor-dropzone[data-index="${i}"]`);
+            const txt = dropzone.querySelector('.empty-text');
+            const img = document.getElementById(`img-${i}`);
+            
+            if (slotsData[i]) {
+                txt.style.display = 'none'; 
+                img.src = slotsData[i].frames[0].url; 
+                img.style.display = 'block';
+                img.style.setProperty('--slot-scale', slotsData[i].scale); 
+                
+                dropzone.classList.add('filled'); dropzone.draggable = true;
+
+                // Actualizar estado (activado/desactivado) de los botones según los límites
+                dropzone.querySelector('.minus-btn').disabled = slotsData[i].scale <= 0.2;
+                dropzone.querySelector('.plus-btn').disabled = slotsData[i].scale >= 2.5;
+                dropzone.querySelector('.reset-btn').disabled = slotsData[i].scale === 1.0;
+            } else {
+                txt.style.display = 'block'; txt.innerText = "VACÍO"; img.style.display = 'none';
+                dropzone.classList.remove('filled'); dropzone.draggable = false;
+            }
+        }
+
+        function evaluateState() {
+            hasAnimatedCursors = slotsData.some(s => s && s.isAni);
+            downloadBtn.disabled = slotsData.every(s => s === null); 
+            if(!downloadBtn.disabled) {
+                downloadBtn.innerHTML = hasAnimatedCursors ? '<i class="fi fi-rr-play-alt"></i> EXPORTAR GIF (512px)' : '<i class="fi fi-rr-picture"></i> EXPORTAR JPG (1080px)';
+            } else {
+                downloadBtn.innerHTML = '<i class="fi fi-rr-download"></i> EXPORTAR';
+            }
+        }
+
+        function animateDOM() {
+            const now = Date.now();
+            slotsData.forEach((slot, i) => {
+                if (slot && slot.isAni) {
+                    let elapsed = now % slot.totalDuration, acc = 0;
+                    for (let f = 0; f < slot.frames.length; f++) {
+                        acc += slot.durations[f];
+                        if (elapsed < acc) {
+                            const imgEl = document.getElementById(`img-${i}`);
+                            if (imgEl && imgEl.src !== slot.frames[f].url) imgEl.src = slot.frames[f].url; break;
+                        }
+                    }
+                }
+            });
+            requestAnimationFrame(animateDOM);
+        }
+        requestAnimationFrame(animateDOM);
+
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                this.beginPath(); this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r); this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r);
+                this.closePath(); return this;
+            }
+        }
+
+        // === 6. MOTOR DE EXPORTACIÓN CON BLUR DINÁMICO EN CANVAS ===
+        downloadBtn.addEventListener('click', async () => {
+            downloadBtn.innerHTML = '<i class="fi fi-rr-spinner"></i> Procesando...'; downloadBtn.disabled = true;
+            
+            const targetSize = hasAnimatedCursors ? 512 : 1080;
+            const blob = await buildCanvas(targetSize);
+
+            const url = URL.createObjectURL(blob); const a = document.createElement('a');
+            a.href = url; a.download = hasAnimatedCursors ? 'cursores.gif' : 'cursores.jpg'; a.click();
+            URL.revokeObjectURL(url);
+            evaluateState(); 
+        });
+
+        async function buildCanvas(canvasSize) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = canvasSize; canvas.height = canvasSize;
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = false;
+
+                const gap = canvasSize * 0.04; 
+                const boxSize = (canvasSize - (4 * gap)) / 3;
+
+                const drawBackgroundRaw = () => {
+                    ctx.fillStyle = '#1b2838'; ctx.fillRect(0, 0, canvasSize, canvasSize);
+                    if (bgImageObj) {
+                        const scaleMultiplier = canvasSize / workspace.offsetWidth;
+                        ctx.save();
+                        ctx.translate((canvasSize/2) + (bgX * scaleMultiplier), (canvasSize/2) + (bgY * scaleMultiplier));
+                        const imgScale = baseScale * bgZoom * scaleMultiplier;
+                        ctx.scale(imgScale, imgScale);
+                        ctx.drawImage(bgImageObj, -bgImageObj.width/2, -bgImageObj.height/2);
+                        ctx.restore();
+                    }
+                };
+
+                const drawFrame = (currentTime) => {
+                    drawBackgroundRaw();
+
+                    if (currentBlur > 0) {
+                        ctx.save();
+                        const canvasBlur = currentBlur * (canvasSize / 300); 
+                        ctx.filter = `blur(${canvasBlur}px)`;
+                        
+                        ctx.beginPath();
+                        slotsData.forEach((slot, i) => {
+                            if (slot) {
+                                const bx = gap + ((i % 3) * (boxSize + gap));
+                                const by = gap + (Math.floor(i / 3) * (boxSize + gap));
+                                ctx.roundRect(bx, by, boxSize, boxSize, canvasSize * 0.02);
+                            }
+                        });
+                        ctx.clip(); 
+                        drawBackgroundRaw(); 
+                        ctx.restore(); 
+                    }
+
+                    slotsData.forEach((slot, i) => {
+                        if (!slot) return; 
+
+                        const col = i % 3, row = Math.floor(i / 3);
+                        const bx = gap + (col * (boxSize + gap)), by = gap + (row * (boxSize + gap));
+
+                        ctx.save(); // ¡FUNDAMENTAL! Guardamos el estado para aplicar la máscara de recorte
+
+                        // Dibujamos la caja base (fondo y borde)
+                        ctx.fillStyle = isLightMode ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.6)';
+                        ctx.strokeStyle = currentBorderColor;
+                        ctx.lineWidth = Math.max(2, canvasSize * 0.005); 
+                        
+                        ctx.beginPath();
+                        ctx.roundRect(bx, by, boxSize, boxSize, canvasSize * 0.02); 
+                        ctx.fill(); ctx.stroke();
+                        
+                        // Aplicamos el recorte (clip) justo al tamaño de esta celda
+                        // Así evitamos que la imagen gigante "manche" otras celdas
+                        ctx.clip();
+
+                        // ---- APLICACIÓN DEL ZOOM AL EXPORTAR ----
+                        const baseMaxIconSize = boxSize * 0.85;
+                        const finalMaxIconSize = baseMaxIconSize * (slot.scale || 1.0); // Hasta 2.5x
+
+                        const cx = bx + boxSize / 2;
+                        const cy = by + boxSize / 2;
+                        
+                        let activeImg = slot.frames[0].img;
+                        if (slot.isAni) {
+                            let elapsed = currentTime % slot.totalDuration, acc = 0;
+                            for (let f = 0; f < slot.frames.length; f++) {
+                                acc += slot.durations[f];
+                                if (elapsed < acc) { activeImg = slot.frames[f].img; break; }
+                            }
+                        }
+
+                        const imgW = activeImg.naturalWidth || activeImg.width;
+                        const imgH = activeImg.naturalHeight || activeImg.height;
+                        
+                        const scale = Math.min(finalMaxIconSize / imgW, finalMaxIconSize / imgH);
+                        
+                        const drawW = imgW * scale;
+                        const drawH = imgH * scale;
+
+                        ctx.drawImage(activeImg, cx - (drawW / 2), cy - (drawH / 2), drawW, drawH);
+                        
+                        ctx.restore(); // Quitamos el clip para poder pintar la siguiente caja libremente
+                    });
+                };
+
+                if (!hasAnimatedCursors) {
+                    drawFrame(0); 
+                    canvas.toBlob(resolve, 'image/jpeg', 0.95);
+                } else {
+                    const gif = new window.GIF({
+                        workers: 2, quality: 10, width: canvasSize, height: canvasSize,
+                        workerScript: workerBlobURL || 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
+                    });
+                    const maxDur = Math.max(...slotsData.map(s => s ? s.totalDuration : 1000));
+                    const fps = 50, totalFrames = Math.ceil(maxDur / fps);
+
+                    for (let f = 0; f < totalFrames; f++) {
+                        drawFrame(f * fps); gif.addFrame(ctx, {copy: true, delay: fps});
+                    }
+                    gif.on('finished', resolve); gif.render();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
