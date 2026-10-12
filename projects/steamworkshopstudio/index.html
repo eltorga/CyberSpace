@@ -18,6 +18,30 @@
 .range{appearance:none;-webkit-appearance:none;height:8px;border-radius:999px;background:#223040;outline:none}.range::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--mint);border:2px solid #0d161d;box-shadow:0 0 0 2px #2b5347}.range::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--mint);border:2px solid #0d161d;box-shadow:0 0 0 2px #2b5347}.trim-range::-webkit-slider-thumb{width:14px;height:14px}.trim-range::-moz-range-thumb{width:14px;height:14px}.btn[href]{text-decoration:none;display:inline-flex;justify-content:center;align-items:center}
 @media (max-width:1180px){.app{grid-template-columns:280px minmax(0,1fr)}.side.right{grid-column:1 / -1;border-left:0;border-top:1px solid var(--line)}}
 @media (max-width:860px){.app{grid-template-columns:1fr;height:auto}.side.left,.side.right{border:0;border-top:1px solid var(--line)}.center{height:auto}.workspace{max-height:none}.main-canvas{max-height:min(58vh,460px)}.trim-editor{grid-template-columns:1fr}.version{margin-left:0}}
+
+/* Showcase Studio v1.3 — single-track IN/OUT timeline */
+.time-tooltip{color:#7d8fa4;font-size:10px;font-weight:500;margin-left:8px}
+.timeline{gap:12px;padding:14px 16px 12px}
+.timeline-track-wrap{padding:0 13px;min-height:56px;min-width:0}
+.edit-timeline{position:relative;touch-action:none;user-select:none;width:100%;height:54px;cursor:crosshair;outline:none}
+.edit-timeline-base{position:absolute;left:0;right:0;top:26px;height:13px;border-radius:8px;background:repeating-linear-gradient(90deg,#1e2c3b 0 13px,#283a4b 13px 14px);box-shadow:inset 0 1px 4px #000a;border:1px solid #3a4a59}
+.edit-timeline-selection{position:absolute;top:26px;height:13px;left:0;width:100%;background:linear-gradient(90deg,#316e61,#3b8272);border:1px solid #68c3a7;border-radius:4px;pointer-events:none}
+.edit-timeline-progress{position:absolute;top:26px;height:13px;left:0;width:0;background:linear-gradient(90deg,#81ecd0,#adffdf);box-shadow:0 0 8px #86e8c54d;pointer-events:none;border-radius:4px}
+.edit-playhead{position:absolute;top:17px;height:30px;width:2px;left:0%;background:#e5fff6;box-shadow:0 0 7px #e5fff699;transform:translateX(-50%);pointer-events:none;z-index:3}
+.edit-playhead:before{content:'';position:absolute;top:-5px;left:-4px;width:10px;height:9px;background:#e9fff8;clip-path:polygon(0 0,100% 0,50% 100%)}
+.edit-handle{position:absolute;top:16px;left:0%;height:38px;width:18px;padding:0;transform:translateX(-50%);border:1px solid #d5fff2;background:#75dbc0;color:#08251f;z-index:4;display:flex;align-items:center;justify-content:center;cursor:ew-resize;border-radius:4px;box-shadow:0 0 0 3px #0b1619b5,0 3px 9px #0008}
+.edit-handle.out{background:#e1f1ff;color:#183349;border-color:#f3fbff}
+.edit-handle span{font-size:8px;letter-spacing:.02em;font-weight:900;writing-mode:vertical-rl;line-height:1}
+.edit-handle:focus-visible{outline:2px solid #fff;outline-offset:5px}
+.edit-handle:hover{filter:brightness(1.14)}
+.timeline-ruler{padding:0 0 0 53px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;color:#8999ad}
+.timeline-ruler #timelineInText,.timeline-ruler #timelineOutText{font-weight:700;color:#aaf4dd}
+.timeline-main button:disabled{opacity:.35;cursor:not-allowed}
+.flip-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.flip-btn{font-size:11px;min-width:0;padding:9px 7px}
+.flip-btn[aria-pressed="true"]{border-color:#60d7b7;color:#affee0;background:#214438;box-shadow:inset 0 0 0 1px #4ba58a}
+.rotation-labels{display:flex;justify-content:space-between;color:#78889b;font:10px ui-monospace,monospace;margin-top:5px}
+@media(max-width:640px){.time-tooltip{display:none}.timeline{padding:9px}.timeline-ruler{padding:0;gap:6px;font-size:9px}.edit-handle{width:15px}.timeline-track-wrap{padding:0 10px}}
 </style>
 </head>
 <body>
@@ -41,12 +65,14 @@
 <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 3v18"/><path d="M5 4h10l-2 4 2 4H5"/></symbol>
 <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 1 0-7l1.5-1.5a5 5 0 0 1 7 7L17 13"/><path d="M14 11a5 5 0 0 1 0 7L12.5 19.5a5 5 0 0 1-7-7L7 11"/></symbol>
 <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M20 11A8 8 0 1 0 12 20"/><path d="M20 4v7h-7"/></symbol>
+<symbol id="i-flip-h" viewBox="0 0 24 24"><path d="M12 3v18M3 7l6 5-6 5V7Zm18 0-6 5 6 5V7Z"/></symbol>
+<symbol id="i-flip-v" viewBox="0 0 24 24"><path d="M3 12h18M7 3l5 6 5-6H7Zm0 18 5-6 5 6H7Z"/></symbol>
 <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v6m0-10h.01"/></symbol>
 </svg>
 <header class="topbar">
 <div class="mark"><svg class="icon lg"><use href="#i-layout"/></svg></div>
 <div class="brand"><strong>SHOWCASE STUDIO</strong><small>STEAM WORKSHOP · GIF / VIDEO</small></div>
-<div class="version">v1.1 · 5 PANEL EDITOR</div>
+<div class="version">v1.3 · 5 PANEL EDITOR</div>
 </header>
 <main class="app">
 <aside class="side left">
@@ -59,7 +85,10 @@
 <div class="field"><div class="field-label"><span>Altura del showcase</span><span class="value" id="heightValue">1600 px</span></div><select class="select" id="heightPreset"><option value="800">Compacto · 800 px</option><option value="1200">Mediano · 1200 px</option><option value="1600" selected>Largo · 1600 px</option><option value="2000">Extra largo · 2000 px</option><option value="2400">Muy largo · 2400 px</option><option value="custom">Personalizado</option></select></div>
 <div class="field"><div class="field-label">Altura exacta (400–3000 px)</div><div class="suffix"><input class="input" type="number" id="heightCustom" min="400" max="3000" step="10" value="1600"><span>px</span></div></div>
 <div class="field"><div class="field-label"><span>Separación de paneles</span><span class="value" id="gapVal">4 px</span></div><select class="select" id="gapSelect"><option value="4" selected>4 px · recomendado para plantilla 766</option><option value="0">0 px · lienzo de 750</option><option value="2">2 px · personalizado</option><option value="6">6 px · personalizado</option></select></div>
-<div class="field"><div class="field-label"><span>Rotación del contenido</span><span class="value" id="rotateVal">0°</span></div><select class="select" id="rotateSelect"><option value="0" selected>0° · Normal</option><option value="90">90° · Derecha</option><option value="180">180° · Invertido</option><option value="270">270° · Izquierda</option></select></div>
+<div class="field"><div class="field-label"><span>Rotación del contenido</span><span class="value" id="rotateVal">0°</span></div>
+<select class="select" id="rotateSelect"><option value="0" selected>0° · Normal</option><option value="90">90° · Derecha</option><option value="180">180° · Invertido</option><option value="-90">270° · Izquierda</option><option value="custom">Personalizada · deslizador</option></select>
+<div class="field-label" style="margin-top:12px"><span>Ángulo personalizado</span><span class="value" id="rotationRangeVal">0°</span></div><input id="rotateRange" class="range" type="range" min="-180" max="180" step="1" value="0"><div class="rotation-labels"><span>−180°</span><span>0°</span><span>+180°</span></div></div>
+<div class="field"><div class="field-label">Voltear contenido</div><div class="flip-actions"><button class="btn flip-btn" type="button" id="flipHorizontal" aria-pressed="false" title="Voltear izquierda y derecha"><svg class="icon sm"><use href="#i-flip-h"/></svg> Horizontal</button><button class="btn flip-btn" type="button" id="flipVertical" aria-pressed="false" title="Voltear arriba y abajo"><svg class="icon sm"><use href="#i-flip-v"/></svg> Vertical</button></div></div>
 <div class="field"><div class="field-label"><span>Zoom de contenido</span><span class="value" id="zoomVal">100%</span></div><input id="zoomRange" class="range" type="range" min="100" max="350" step="1" value="100"></div>
 <div class="field"><div class="field-label"><span>Posición horizontal</span><span class="value" id="panXVal">0 px</span></div><input class="range" id="panX" type="range" min="-1000" max="1000" value="0"></div>
 <div class="field"><div class="field-label"><span>Posición vertical</span><span class="value" id="panYVal">0 px</span></div><input class="range" id="panY" type="range" min="-2000" max="2000" value="0"></div>
@@ -79,26 +108,25 @@
 <div class="hintbar"><svg class="icon sm"><use href="#i-grip"/></svg><span><strong>Arrastrar</strong> para mover · <strong>Rueda</strong> para zoom · <strong>5 paneles</strong> sincronizados desde el mismo origen</span></div></div>
 <div class="timeline-dock">
   <div class="timeline" id="timeline">
-    <div class="timeline-top"><span class="small-title" style="margin:0">REPRODUCCIÓN / VISTA PREVIA</span><span class="timevals" id="currentTimeLabel">00:00 / 00:00</span></div>
+    <div class="timeline-top">
+      <span class="small-title" style="margin:0">REPRODUCCIÓN / VISTA PREVIA <span class="time-tooltip">· Arrastra IN y OUT para recortar</span></span>
+      <span class="timevals" id="currentTimeLabel">00:00.00 / 00:00.00</span>
+    </div>
     <div class="timeline-main">
-      <button id="playPause" title="Reproducir / Pausar"><svg class="icon"><use id="playIconUse" href="#i-play"/></svg></button>
+      <button id="playPause" title="Reproducir o pausar el tramo" aria-label="Reproducir o pausar"><svg class="icon"><use id="playIconUse" href="#i-play"/></svg></button>
       <div class="timeline-track-wrap">
-        <div class="timeline-selection" id="timelineSelection"></div>
-        <input id="scrub" class="range scrub-range" type="range" min="0" max="100" step="0.01" value="0">
+        <div class="edit-timeline" id="editTimeline" aria-label="Línea de tiempo: ajusta entrada y salida">
+          <div class="edit-timeline-base"></div>
+          <div class="edit-timeline-selection" id="timelineSelection"></div>
+          <div class="edit-timeline-progress" id="timelineProgress"></div>
+          <div class="edit-playhead" id="timelinePlayhead"></div>
+          <button class="edit-handle in" id="inHandle" type="button" aria-label="Marcador de inicio" title="Arrastra para seleccionar IN"><span>IN</span></button>
+          <button class="edit-handle out" id="outHandle" type="button" aria-label="Marcador de fin" title="Arrastra para seleccionar OUT"><span>OUT</span></button>
+        </div>
       </div>
-      <button id="restartBtn" title="Volver al inicio"><svg class="icon"><use href="#i-reset"/></svg></button>
+      <button id="restartBtn" title="Regresar al punto IN" aria-label="Volver al inicio"><svg class="icon"><use href="#i-reset"/></svg></button>
     </div>
-    <div class="timeline-ruler"><span>0s</span><span id="timelineMid">—</span><span id="timelineEnd">0s</span></div>
-    <div class="trim-editor">
-      <div class="trim-slider-group">
-        <div class="trim-label-row"><span><svg class="icon sm"><use href="#i-play"/></svg> Inicio</span><strong id="trimStartBadge">0.00 s</strong></div>
-        <input id="trimStartRange" class="range trim-range" type="range" min="0" max="3" step="0.01" value="0">
-      </div>
-      <div class="trim-slider-group">
-        <div class="trim-label-row"><span><svg class="icon sm"><use href="#i-flag"/></svg> Fin</span><strong id="trimEndBadge">3.00 s</strong></div>
-        <input id="trimEndRange" class="range trim-range" type="range" min="0.1" max="3" step="0.01" value="3">
-      </div>
-    </div>
+    <div class="timeline-ruler"><span id="timelineInText">IN · 00:00.00</span><span id="timelineMid">00:00.00</span><span id="timelineOutText">OUT · 00:03.00</span><span id="timelineEnd">00:10.00</span></div>
   </div>
 </div>
 </section>
@@ -136,8 +164,8 @@
 const $=id=>document.getElementById(id);
 const main=$('mainCanvas'), mini=$('miniCanvas'),ctx=main.getContext('2d',{willReadFrequently:true}),mctx=mini.getContext('2d');
 const work=document.createElement('canvas'),wctx=work.getContext('2d',{willReadFrequently:true});
-let source={type:null,obj:null,file:null,url:null,w:0,h:0,duration:0,decoder:null,frameTimes:[],isAnimated:false},height=1600,gap=4,zoom=1,panX=0,panY=0,rotateDeg=0;
-let displayGaps=true,exporting=false,cancelExport=false,filesOut=[],lastDraw=0,rafId=0,dragState=null,trimStart=0,trimEnd=3,previewTime=0;
+let source={type:null,obj:null,file:null,url:null,w:0,h:0,duration:0,decoder:null,frameTimes:[],isAnimated:false},height=1600,gap=4,zoom=1,panX=0,panY=0,rotateDeg=0,flipH=false,flipV=false;
+let displayGaps=true,exporting=false,cancelExport=false,filesOut=[],lastDraw=0,rafId=0,dragState=null,trimStart=0,trimEnd=3,previewTime=0,previewPlaying=false,previewClock=0,gifPreviewFrame=null,gifPreviewIndex=-1,gifDecodePending=false,gifToken=0,dragEdge=null;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const icon=(name,cls='')=>`<svg class="icon ${cls}"><use href="#i-${name}"/></svg>`;
 function totalWidth(){return 750+4*gap}
@@ -154,7 +182,7 @@ function hideProgress(){$('progressShell').classList.remove('show')}
 function setPreviewProgress(p,label){$('previewProgressShell').classList.add('show');$('previewProgressFill').style.width=(p*100).toFixed(1)+'%';$('previewProgressPercent').textContent=Math.round(p*100)+'%';$('previewProgressText').textContent=label}
 function hidePreviewProgress(){$('previewProgressShell').classList.remove('show')}
 function updateUI(){
- $('heightValue').textContent=height+' px';$('heightCustom').value=height;$('gapVal').textContent=gap+' px';$('zoomVal').textContent=Math.round(zoom*100)+'%';$('zoomRange').value=Math.round(zoom*100);$('rotateVal').textContent=rotateDeg+'°';$('rotateSelect').value=String(rotateDeg);
+ $('heightValue').textContent=height+' px';$('heightCustom').value=height;$('gapVal').textContent=gap+' px';$('zoomVal').textContent=Math.round(zoom*100)+'%';$('zoomRange').value=Math.round(zoom*100);$('rotateVal').textContent=rotateDeg+'°';$('rotationRangeVal').textContent=rotateDeg+'°';$('rotateRange').value=rotateDeg; $('flipHorizontal').setAttribute('aria-pressed',String(flipH));$('flipVertical').setAttribute('aria-pressed',String(flipV));
  $('dimensionsInfo').textContent=totalWidth()+' × '+height+' px';$('partInfo').textContent='150 × '+height;$('canvasInfo').textContent=totalWidth()+' × '+height;$('previewDimensions').textContent=totalWidth()+' × '+height+' px';
  $('panXVal').textContent=Math.round(panX)+' px';$('panYVal').textContent=Math.round(panY)+' px';$('panX').value=Math.round(panX);$('panY').value=Math.round(panY);
  $('fpsVal').textContent=$('fpsRange').value+' FPS';$('colorsVal').textContent=$('colorsSelect').value;$('previewFpsVal').textContent=$('previewFpsRange').value+' FPS';$('previewColorsVal').textContent=$('previewColorsSelect').value;
@@ -162,24 +190,67 @@ function updateUI(){
  $('framesInfo').textContent=source.type?(source.type==='image'?'01':`${Math.max(1,Math.ceil(duration*Number($('fpsRange').value)))} aprox.`):'—';
  $('stageDesc').textContent=source.type?'ARRASTRA PARA ENCUADRAR':'SOLTAR ARCHIVO PARA COMENZAR';
 }
-function getTransform(){const tw=totalWidth(),th=height,sw=source.w||tw,sh=source.h||th,rotSwap=rotateDeg%180!==0,fitW=rotSwap?sh:sw,fitH=rotSwap?sw:sh,scale=Math.max(tw/fitW,th/fitH)*zoom,drawW=sw*scale,drawH=sh*scale,boundW=fitW*scale,boundH=fitH*scale;
- const limX=Math.max(0,(boundW-tw)/2),limY=Math.max(0,(boundH-th)/2);panX=clamp(panX,-limX,limX);panY=clamp(panY,-limY,limY);
+function getTransform(){const tw=totalWidth(),th=height,sw=source.w||tw,sh=source.h||th;
+ const angle=rotateDeg*Math.PI/180,co=Math.abs(Math.cos(angle)),si=Math.abs(Math.sin(angle));
+ // Cover the entire viewport even at non-cardinal rotation angles, including their corners.
+ const scale=Math.max((co*tw+si*th)/sw,(si*tw+co*th)/sh)*zoom;
+ const drawW=sw*scale,drawH=sh*scale,boundW=drawW*co+drawH*si,boundH=drawW*si+drawH*co;
+ const limX=Math.max(0,(boundW-tw)/2),limY=Math.max(0,(boundH-th)/2);
+ panX=clamp(panX,-limX,limX);panY=clamp(panY,-limY,limY);
  return{drawW,drawH,boundW,boundH,x:(tw-boundW)/2+panX,y:(th-boundH)/2+panY};}
 function drawPanelGaps(target,color){for(let i=1;i<=4;i++){const x=i*150+(i-1)*gap;if(gap){target.fillStyle=color;target.fillRect(x,0,gap,height)}else{target.fillStyle=color;target.fillRect(x,0,1,height)}}}
 function compose(target,frame,mode='editor'){const w=totalWidth(),h=height;if(target.canvas.width!==w)target.canvas.width=w;if(target.canvas.height!==h)target.canvas.height=h;target.fillStyle=mode==='preview'?'#1b2838':'#08111b';target.fillRect(0,0,w,h);if(!frame){if(mode==='preview'&&gap)drawPanelGaps(target,'#1b2838');return;}
- const t=getTransform();try{target.save();target.translate(t.x+t.boundW/2,t.y+t.boundH/2);if(rotateDeg)target.rotate(rotateDeg*Math.PI/180);target.drawImage(frame,-t.drawW/2,-t.drawH/2,t.drawW,t.drawH);target.restore();if(mode==='preview'&&gap)drawPanelGaps(target,'#1b2838');}catch(e){/* unsupported frame */}}
+ const t=getTransform();try{target.save();target.translate(t.x+t.boundW/2,t.y+t.boundH/2);target.scale(flipH?-1:1,flipV?-1:1);if(rotateDeg)target.rotate(rotateDeg*Math.PI/180);target.drawImage(frame,-t.drawW/2,-t.drawH/2,t.drawW,t.drawH);target.restore();if(mode==='preview'&&gap)drawPanelGaps(target,'#1b2838');}catch(e){/* unsupported frame */}}
 function drawOverlays(target){if(!displayGaps)return;drawPanelGaps(target,gap?'#0b111bef':'#dfffe766');
  target.save();target.fillStyle='#98ffe7';target.font='bold 17px monospace';for(let i=0;i<5;i++){const x=i*(150+gap);target.fillStyle='#0b111bc9';target.fillRect(x+7,9,29,27);target.fillStyle='#a6ffe3';target.fillText(String(i+1).padStart(2,'0'),x+11,28)}target.restore();}
-function render(force=false){if(!source.type)return;const t=performance.now();if(!force&&t-lastDraw<75)return;lastDraw=t;let frame=source.obj;
+function render(force=false){if(!source.type)return;const now=performance.now();if(!force&&now-lastDraw<55)return;lastDraw=now;
+ if(source.type==='gif'&&source.gifFrames)setFallbackFrame(previewTime);
+ const frame=source.type==='gif'&&source.decoder&&gifPreviewFrame?gifPreviewFrame:source.type==='gif'&&source.gifCanvas?source.gifCanvas:source.obj;
  compose(ctx,frame);drawOverlays(ctx);
  if(mini.width!==main.width)mini.width=main.width;if(mini.height!==main.height)mini.height=main.height;
  mctx.clearRect(0,0,mini.width,mini.height);mctx.drawImage(main,0,0);
- if(source.type==='video'){previewTime=source.obj.currentTime;$('scrub').value=source.obj.currentTime;$('currentTimeLabel').textContent=fmtTime(source.obj.currentTime)+' / '+fmtTime(source.duration)}
- else if(source.isAnimated){$('currentTimeLabel').textContent=fmtTime(trimStart)+' → '+fmtTime(trimEnd)+' / '+fmtTime(source.duration)}
- updateTimelineVisuals();
+ if(source.type==='video')previewTime=clamp(source.obj.currentTime,trimStart,trimEnd);
+ $('currentTimeLabel').textContent=fmtTimePrecise(previewTime)+' / '+fmtTimePrecise(source.duration);
+ updateTimelineVisuals();}
+function fmtTimePrecise(t){const s=Math.max(0,Number(t)||0),m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+(s%60).toFixed(2).padStart(5,'0')}
+function gifIndexAt(t){const d=source.frameTimes;if(!d||!d.length)return 0;let us=Math.max(0,t)*1e6,total=0;
+ for(let i=0;i<d.length;i++){total+=d[i];if(us<total)return i}return d.length-1;}
+function disposeGifFrame(){gifToken++;gifDecodePending=false;gifPreviewIndex=-1;
+ if(gifPreviewFrame){try{gifPreviewFrame.close()}catch(e){}gifPreviewFrame=null}}
+function requestGifPreview(){if(source.type!=='gif'||!source.decoder||exporting||gifDecodePending)return;
+ const idx=gifIndexAt(previewTime);if(idx===gifPreviewIndex)return;gifDecodePending=true;
+ const decoder=source.decoder,token=gifToken;
+ decoder.decode({frameIndex:idx}).then(({image})=>{
+   if(source.decoder!==decoder||token!==gifToken){image.close();return}
+   const prev=gifPreviewFrame;gifPreviewFrame=image;gifPreviewIndex=idx;
+   if(prev)try{prev.close()}catch(e){}
+   render(true);
+ }).catch(err=>{if(source.decoder===decoder)console.warn('No se pudo previsualizar el fotograma GIF',err)})
+ .finally(()=>{if(token===gifToken)gifDecodePending=false});}
+function renderLoop(now){rafId=requestAnimationFrame(renderLoop);if(!source.type)return;
+ if(source.type==='video'){
+   if(!source.obj.paused&&!exporting){
+     if(source.obj.currentTime>=trimEnd-0.012||source.obj.currentTime<trimStart-0.012)source.obj.currentTime=trimStart;
+     render();
+   }
+ }else if(source.type==='gif'){
+   if(previewPlaying&&!exporting&&previewClock){
+     const delta=Math.min(.2,Math.max(0,(now-previewClock)/1000));
+     const span=Math.max(.04,trimEnd-trimStart);
+     previewTime=trimStart+((Math.max(0,previewTime-trimStart)+delta)%span);
+   }
+   previewClock=now;
+   if(source.decoder)requestGifPreview();
+   render();
+ }
 }
-function renderLoop(){rafId=requestAnimationFrame(renderLoop);if(source.type==='video'&&!source.obj.paused){if(source.obj.currentTime>=trimEnd){source.obj.currentTime=trimStart;}render()}else if(source.type==='gif')render()}
-function setReady(ready){$('exportBtn').disabled=!ready;$('previewExportBtn').disabled=!ready;$('emptyState').style.display=ready?'none':'flex';$('canvasWrap').classList.toggle('show',ready);$('miniCanvas').style.display=ready?'block':'none';$('miniEmpty').style.display=ready?'none':'block';$('timeline').classList.toggle('show',ready&&source.isAnimated);$('trimStart').disabled=!ready||!source.isAnimated;$('trimEnd').disabled=!ready||!source.isAnimated;$('trimStartRange').disabled=!ready||!source.isAnimated;$('trimEndRange').disabled=!ready||!source.isAnimated;$('playPause').disabled=!ready||source.type!=='video';$('restartBtn').disabled=!ready||!source.isAnimated;}
+function setReady(ready){$('exportBtn').disabled=!ready;$('previewExportBtn').disabled=!ready;
+ $('emptyState').style.display=ready?'none':'flex';$('canvasWrap').classList.toggle('show',ready);
+ $('miniCanvas').style.display=ready?'block':'none';$('miniEmpty').style.display=ready?'none':'block';
+ $('timeline').classList.toggle('show',ready&&source.isAnimated);
+ $('trimStart').disabled=!ready||!source.isAnimated;$('trimEnd').disabled=!ready||!source.isAnimated;
+ $('playPause').disabled=!ready||!source.isAnimated;$('restartBtn').disabled=!ready||!source.isAnimated;
+ $('inHandle').disabled=!ready||!source.isAnimated;$('outHandle').disabled=!ready||!source.isAnimated;}
 function setSize(n){height=clamp(Math.round(n)||1600,400,3000);panX=0;panY=0;clearOutputs();updateUI();render(true)}
 function parseGifTimes(data){try{const b=new Uint8Array(data), dv=new DataView(data);if(String.fromCharCode(...b.subarray(0,3))!=='GIF')return[];let off=13;const gct=b[10]&128;if(gct)off+=3*(2**((b[10]&7)+1));const times=[];let delay=100;
  const skipBlocks=()=>{while(off<b.length){const len=b[off++];if(len===0)break;off+=len;}};
@@ -190,13 +261,91 @@ function parseGifTimes(data){try{const b=new Uint8Array(data), dv=new DataView(d
  if(times.length>1200)break;
  }return times;
  }catch(e){return[]}}
+// Offline GIF frame decoder for browsers without WebCodecs ImageDecoder.
+// Supports GIF87a/GIF89a, GCT/LCT palettes, sub-block LZW, interlacing,
+// frame delays, transparency, disposal-to-background and disposal-to-previous.
+async function decodeGifFramesOffline(buffer,maxBytes=210*1024*1024){
+ const bytes=new Uint8Array(buffer),W=bytes[6]|bytes[7]<<8,H=bytes[8]|bytes[9]<<8;
+ if(bytes.length<14||W<1||H<1||W*H>12e6)throw new Error('GIF demasiado grande para la decodificación integrada');
+ let p=10,packed=bytes[p++],bg=bytes[p++];p++;const frames=[],durations=[];
+ function palette(size){const table=bytes.slice(p,p+size*3);p+=size*3;return table}
+ const globalPal=packed&128?palette(1<<((packed&7)+1)):null;
+ const pixels=new Uint8ClampedArray(W*H*4);let prev=null,priorRect=null,restore=null;
+ let dispose=0,transparent=-1,delay=100;
+ function skipBlocks(){while(p<bytes.length){const n=bytes[p++];if(n===0)break;p+=n}}
+ function subBlocks(){const arrays=[];let size=0;while(p<bytes.length){const n=bytes[p++];if(!n)break;arrays.push(bytes.subarray(p,p+n));size+=n;p+=n}const out=new Uint8Array(size);let pos=0;for(const v of arrays){out.set(v,pos);pos+=v.length}return out}
+ function lzw(data,minSize,expected){if(minSize<2||minSize>8)throw new Error('LZW GIF no compatible');
+  const clear=1<<minSize,end=clear+1,prefix=new Uint16Array(4096),suffix=new Uint8Array(4096),stack=new Uint8Array(4097),out=new Uint8Array(expected);
+  let cursor=0,bit=0,size=minSize+1,next=end+1,old=-1,first=0,used=0;
+  function code(){let n=0;for(let k=0;k<size;k++){if((bit>>3)>=data.length)return -1;n|=((data[bit>>3]>>(bit&7))&1)<<k;bit++}return n}
+  while(used<expected){let c=code();if(c<0||c===end)break;
+   if(c===clear){size=minSize+1;next=end+1;old=-1;continue}
+   const current=c;let st=0;
+   if(c>=next){if(old<0)break;stack[st++]=first;c=old}
+   while(c>=clear){if(c>=next||st>=4095){st=0;break}stack[st++]=suffix[c];c=prefix[c]}
+   if(st>=4095)break;
+   first=c&255;stack[st++]=first;
+   while(st&&used<expected)out[used++]=stack[--st];
+   if(old!==-1&&next<4096){prefix[next]=old;suffix[next]=first;next++;if(next===(1<<size)&&size<12)size++}
+   old=current;
+  }
+  return out;
+ }
+ while(p<bytes.length&&frames.length<900){const marker=bytes[p++];if(marker===0x3b)break;
+  if(marker===0x21){const label=bytes[p++];if(label===0xf9){const n=bytes[p++],flags=bytes[p],ms=(bytes[p+1]|bytes[p+2]<<8)*10,tr=bytes[p+3];dispose=(flags>>2)&7;transparent=flags&1?tr:-1;delay=Math.max(20,ms||100);p+=n; p++;}else skipBlocks();continue}
+  if(marker!==0x2c)break;
+  if(prev){if(prev.disposal===2){const r=priorRect;for(let y=r.top;y<r.top+r.h;y++)for(let x=r.left;x<r.left+r.w;x++){const off=(y*W+x)*4;pixels[off]=pixels[off+1]=pixels[off+2]=pixels[off+3]=0}}
+   else if(prev.disposal===3&&restore)pixels.set(restore);
+  }
+  const left=bytes[p]|bytes[p+1]<<8,top=bytes[p+2]|bytes[p+3]<<8,w=bytes[p+4]|bytes[p+5]<<8,h=bytes[p+6]|bytes[p+7]<<8;
+  const flags=bytes[p+8];p+=9;const localPal=flags&128?palette(1<<((flags&7)+1)):globalPal;
+  const minCode=bytes[p++],indices=lzw(subBlocks(),minCode,w*h),interlace=!!(flags&64);
+  const previousState=dispose===3?pixels.slice():null;
+  let at=0;
+  function row(y){const dy=top+y;if(dy>=H)return;for(let x=0;x<w;x++){
+    const dx=left+x,k=indices[at++];if(dx>=W||k===transparent||!localPal||k*3+2>=localPal.length)continue;
+    const off=(dy*W+dx)*4;pixels[off]=localPal[k*3];pixels[off+1]=localPal[k*3+1];pixels[off+2]=localPal[k*3+2];pixels[off+3]=255;
+  }}
+  if(interlace){for(const [start,step] of [[0,8],[4,8],[2,4],[1,2]])for(let y=start;y<h;y+=step)row(y)}
+  else for(let y=0;y<h;y++)row(y);
+  if((frames.length+1)*W*H*4>maxBytes)throw new Error('El GIF excede la memoria del decodificador local. Reduce la duración o prueba Chrome/Edge con ImageDecoder.');
+  frames.push(new ImageData(pixels.slice(),W,H));durations.push(delay*1000);
+  prev={disposal:dispose};priorRect={left,top,w,h};restore=previousState;
+  dispose=0;transparent=-1;delay=100;
+  if(frames.length%8===0)await yieldThread();
+ }
+ if(!frames.length)throw new Error('El GIF no contiene fotogramas decodificables');
+ return{frames,durations};
+}
+function setFallbackFrame(t){if(!source.gifFrames||!source.gifCanvas)return;const index=gifIndexAt(t);
+ if(index===gifPreviewIndex)return;
+ source.gifCtx.putImageData(source.gifFrames[index],0,0);gifPreviewIndex=index;
+}
 function fileType(file){const n=file.name.toLowerCase();return n.endsWith('.gif')?'gif':/\.(mp4|mov|webm|m4v)$/i.test(n)?'video':/\.(png|jpe?g|webp)$/i.test(n)?'image':file.type.startsWith('video/')?'video':file.type.startsWith('image/')?'image':null}
 function waitFor(el,event,error='No se pudo abrir el archivo'){return new Promise((resolve,reject)=>{const t=setTimeout(()=>{cleanup();reject(new Error(error))},25000);function cleanup(){clearTimeout(t);el.removeEventListener(event,yes);el.removeEventListener('error',no)}function yes(){cleanup();resolve()}function no(){cleanup();reject(new Error(error))}el.addEventListener(event,yes,{once:true});el.addEventListener('error',no,{once:true})})}
-function applyTrim(a,b,{syncMedia=true,forceRender=true}={}){if(!source.isAnimated)return;const maxDur=Math.max(.1,source.duration||0.1);a=clamp(Number(a)||0,0,Math.max(0,maxDur-.1));b=clamp(Number(b)||Math.min(3,maxDur),a+.1,maxDur);trimStart=a;trimEnd=b;$('trimStart').value=a.toFixed(2);$('trimEnd').value=b.toFixed(2);$('trimStartRange').value=a.toFixed(2);$('trimEndRange').value=b.toFixed(2);$('trimStartBadge').textContent=a.toFixed(2)+' s';$('trimEndBadge').textContent=b.toFixed(2)+' s';if(source.type==='video'){if(syncMedia&&(source.obj.currentTime<a||source.obj.currentTime>b))source.obj.currentTime=a;$('scrub').min='0';$('scrub').max=source.duration.toFixed(2);}$('timelineMid').textContent=fmtTime(maxDur/2);$('timelineEnd').textContent=fmtTime(maxDur);updateTimelineVisuals();clearOutputs();updateUI();if(forceRender)render(true)}
-function updateTimelineVisuals(){const total=Math.max(.1,source.duration||0.1),left=(trimStart/total)*100,right=(trimEnd/total)*100,sel=$('timelineSelection');if(sel){sel.style.left=left+'%';sel.style.width=Math.max(1,right-left)+'%';}$('trimStartBadge').textContent=(Number(trimStart)||0).toFixed(2)+' s';$('trimEndBadge').textContent=(Number(trimEnd)||0).toFixed(2)+' s';if(source.type!=='video'&&source.isAnimated){$('scrub').value=trimStart;$('scrub').min='0';$('scrub').max=total.toFixed(2);}}
+function applyTrim(a,b,{syncMedia=true,forceRender=true}={}){
+ if(!source.isAnimated)return;const maxDur=Math.max(.1,source.duration||.1), minSpan=Math.min(.1,maxDur/2);
+ a=clamp(Number(a)||0,0,maxDur-minSpan);b=clamp(Number(b)||maxDur,a+minSpan,maxDur);
+ trimStart=a;trimEnd=b;
+ $('trimStart').value=a.toFixed(2);$('trimEnd').value=b.toFixed(2);
+ if(previewTime<a||previewTime>=b){previewTime=a;if(source.type==='video'&&syncMedia)source.obj.currentTime=a;}
+ if(source.type==='video'&&syncMedia&&(source.obj.currentTime<a||source.obj.currentTime>=b))source.obj.currentTime=a;
+ updateTimelineVisuals();clearOutputs();updateUI();if(forceRender){if(source.type==='gif')requestGifPreview();render(true)}
+}
+function updateTimelineVisuals(){const total=Math.max(.1,source.duration||.1);
+ const a=clamp(trimStart/total*100,0,100),b=clamp(trimEnd/total*100,0,100),
+ play=clamp(previewTime,trimStart,trimEnd)/total*100;
+ $('timelineSelection').style.left=a+'%';$('timelineSelection').style.width=Math.max(0,b-a)+'%';
+ $('timelineProgress').style.left=a+'%';$('timelineProgress').style.width=Math.max(0,play-a)+'%';
+ $('timelinePlayhead').style.left=play+'%';$('inHandle').style.left=a+'%';$('outHandle').style.left=b+'%';
+ $('timelineInText').textContent='IN · '+fmtTimePrecise(trimStart);
+ $('timelineOutText').textContent='OUT · '+fmtTimePrecise(trimEnd);
+ $('timelineMid').textContent=fmtTimePrecise(total/2);$('timelineEnd').textContent=fmtTimePrecise(total);
+ $('inHandle').setAttribute('aria-valuenow',trimStart.toFixed(2));$('outHandle').setAttribute('aria-valuenow',trimEnd.toFixed(2));
+}
 async function openFile(file){if(!file)return;const kind=fileType(file);if(!kind){message('Formato no admitido. Usa GIF, MP4, WebM, MOV, PNG, JPG o WebP.','error');return}
  if(exporting){message('Termina la exportación antes de cambiar el archivo.','error');return}
- clearOutputs();setReady(false);setStatus('cargando origen');if(source.obj&&source.type==='video'){source.obj.pause();source.obj.removeAttribute('src');source.obj.load()}
+ clearOutputs();previewPlaying=false;previewClock=0;disposeGifFrame();if(source.gifFrames)source.gifFrames.length=0;setReady(false);setStatus('cargando origen');if(source.obj&&source.type==='video'){source.obj.pause();source.obj.removeAttribute('src');source.obj.load()}
  if(source.decoder)try{source.decoder.close()}catch(e){};if(source.url)URL.revokeObjectURL(source.url);
  source={type:null,obj:null,file,url:URL.createObjectURL(file),w:0,h:0,duration:0,decoder:null,frameTimes:[],isAnimated:false};
  try{
@@ -211,43 +360,97 @@ async function openFile(file){if(!file)return;const kind=fileType(file);if(!kind
  if('ImageDecoder'in window){try{const decoder=new ImageDecoder({data:new Uint8Array(data),type:'image/gif'});await decoder.tracks.ready;source.decoder=decoder;
  const count=decoder.tracks.selectedTrack?.frameCount||0;if(count>0&&source.frameTimes.length!==count){source.frameTimes=Array(count).fill(100000);source.duration=count*.1;source.isAnimated=count>1}
  }catch(e){source.decoder=null}}
+ if(!source.decoder&&source.isAnimated){
+  try{setStatus('decodificando gif');const decoded=await decodeGifFramesOffline(data);
+   source.gifFrames=decoded.frames;source.frameTimes=decoded.durations;
+   source.duration=decoded.durations.reduce((a,b)=>a+b,0)/1e6;
+   source.gifCanvas=document.createElement('canvas');source.gifCanvas.width=source.w;source.gifCanvas.height=source.h;
+   source.gifCtx=source.gifCanvas.getContext('2d',{willReadFrequently:true});
+  }catch(err){console.warn(err);message('La animación no se puede controlar fotograma a fotograma en este navegador: '+err.message,'error');}
+ }
  }
  }
  if(!source.w||!source.h)throw new Error('No se pudo obtener el tamaño del archivo.');
  trimStart=0;trimEnd=source.isAnimated?Math.min(3,source.duration):0;
  if(source.isAnimated&&trimEnd<.1)trimEnd=source.duration;previewTime=0;
- $('trimStart').max=source.duration.toFixed(2);$('trimEnd').max=source.duration.toFixed(2);$('trimStartRange').max=source.duration.toFixed(2);$('trimEndRange').max=source.duration.toFixed(2);$('scrub').max=Math.max(source.duration,0.1).toFixed(2);$('scrub').value='0';
+ $('trimStart').max=source.duration.toFixed(2);$('trimEnd').max=source.duration.toFixed(2);
  $('trimHelp').textContent=source.isAnimated?`Duración original: ${source.duration.toFixed(2)} s. Exporta el fragmento seleccionado.`:'Imagen fija: se exportará como un GIF de un fotograma.';
  applyTrim(0,trimEnd,{syncMedia:false,forceRender:false});
  $('fileName').textContent=file.name;$('fileMeta').textContent=`${source.w} × ${source.h} · ${fmtSize(file.size)}`;$('fileInfo').classList.add('show');
  zoom=1;panX=0;panY=0;$('zoomRange').value=100;setReady(true);updateUI();render(true);setStatus('listo para editar');
- if(source.type==='gif'&&!source.decoder&&source.isAnimated)message('Se detectó un GIF animado. Este navegador no tiene ImageDecoder; la exportación usará captura temporal y puede ser menos precisa. Recomendado: Chrome o Edge recientes.');
+ if(source.isAnimated){if(source.type==='video'){source.obj.currentTime=trimStart;await source.obj.play().catch(()=>{});}else if(source.type==='gif'&&(source.decoder||source.gifFrames)){previewPlaying=true;previewClock=performance.now();requestGifPreview();}updatePlayIcon();}
+ if(source.type==='gif'&&!source.decoder&&!source.gifFrames&&source.isAnimated)message('Este GIF no se puede controlar fotograma a fotograma en el navegador actual; prueba Chrome o Edge reciente.','error');
  }catch(err){console.error(err);setReady(false);setStatus('error de archivo');message(err.message||'No fue posible abrir el archivo.','error')}
 }
 $('dropZone').addEventListener('click',()=>$('filePicker').click());$('dropZone').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('filePicker').click()}});$('emptyUpload').onclick=()=>$('filePicker').click();$('filePicker').addEventListener('change',e=>{openFile(e.target.files[0]);e.target.value=''});
 for(const id of ['dropZone','workspace']){const el=$(id);el.addEventListener('dragover',e=>{e.preventDefault();$('dropZone').classList.add('drag')});el.addEventListener('dragleave',()=>$('dropZone').classList.remove('drag'));el.addEventListener('drop',e=>{e.preventDefault();$('dropZone').classList.remove('drag');openFile(e.dataTransfer.files[0])})}
-$('removeFile').onclick=()=>{if(source.url)URL.revokeObjectURL(source.url);if(source.decoder)try{source.decoder.close()}catch(e){};if(source.type==='video')source.obj.pause();source={type:null,obj:null,file:null,url:null,w:0,h:0,duration:0,decoder:null,frameTimes:[],isAnimated:false};$('fileInfo').classList.remove('show');previewTime=0;setReady(false);setStatus('esperando archivo');clearOutputs();updateUI();$('currentTimeLabel').textContent='00:00 / 00:00'};
+$('removeFile').onclick=()=>{previewPlaying=false;previewClock=0;disposeGifFrame();if(source.gifFrames)source.gifFrames.length=0;if(source.url)URL.revokeObjectURL(source.url);if(source.decoder)try{source.decoder.close()}catch(e){};if(source.type==='video')source.obj.pause();source={type:null,obj:null,file:null,url:null,w:0,h:0,duration:0,decoder:null,frameTimes:[],isAnimated:false};$('fileInfo').classList.remove('show');previewTime=0;setReady(false);setStatus('esperando archivo');clearOutputs();updateUI();$('currentTimeLabel').textContent='00:00 / 00:00'};
 $('heightPreset').onchange=e=>{if(e.target.value!=='custom')setSize(Number(e.target.value))};$('heightCustom').onchange=e=>{setSize(Number(e.target.value));$('heightPreset').value=[800,1200,1600,2000,2400].includes(height)?String(height):'custom'};
-$('gapSelect').onchange=e=>{gap=Number(e.target.value);clearOutputs();updateUI();render(true)};$('rotateSelect').onchange=e=>{rotateDeg=Number(e.target.value)||0;panX=0;panY=0;clearOutputs();updateUI();render(true)};
+$('gapSelect').onchange=e=>{gap=Number(e.target.value);clearOutputs();updateUI();render(true)};
+function setRotation(v,isCustom=false){rotateDeg=clamp(Math.round(Number(v)||0),-180,180);panX=0;panY=0;
+ if(isCustom)$('rotateSelect').value='custom';
+ $('rotateRange').value=rotateDeg;clearOutputs();updateUI();render(true)}
+$('rotateSelect').onchange=e=>{if(e.target.value!=='custom')setRotation(e.target.value);};
+$('rotateRange').oninput=e=>setRotation(e.target.value,true);
+$('flipHorizontal').onclick=()=>{flipH=!flipH;clearOutputs();updateUI();render(true)};
+$('flipVertical').onclick=()=>{flipV=!flipV;clearOutputs();updateUI();render(true)};
 $('zoomRange').oninput=e=>{zoom=Number(e.target.value)/100;clearOutputs();updateUI();render(true)};
 for(const axis of ['X','Y']){const el=$('pan'+axis);el.oninput=()=>{if(!source.type)return;if(axis==='X')panX=Number(el.value);else panY=Number(el.value);clearOutputs();getTransform();updateUI();render(true)}}
 $('resetCrop').onclick=()=>{zoom=1;panX=0;panY=0;clearOutputs();updateUI();render(true)};
 $('fitView').onclick=()=>{zoom=1;panX=0;panY=0;clearOutputs();updateUI();render(true)};
 $('toggleGaps').onclick=()=>{displayGaps=!displayGaps;render(true)};
 $('fpsRange').oninput=()=>{clearOutputs();updateUI()};$('colorsSelect').onchange=()=>{clearOutputs();updateUI()};$('previewFpsRange').oninput=()=>{clearOutputs();updateUI()};$('previewColorsSelect').onchange=()=>{clearOutputs();updateUI()};$('previewLimitSelect').onchange=clearOutputs;$('autoFit').onchange=clearOutputs;$('hexPatch').onchange=clearOutputs;
-for(const name of ['trimStart','trimEnd'])$(name).onchange=()=>{if(!source.isAnimated)return;applyTrim(Number($('trimStart').value)||0,Number($('trimEnd').value)||.1)};$('trimStartRange').oninput=()=>{if(!source.isAnimated)return;applyTrim(Math.min(Number($('trimStartRange').value),trimEnd-.1),trimEnd)};$('trimEndRange').oninput=()=>{if(!source.isAnimated)return;applyTrim(trimStart,Math.max(Number($('trimEndRange').value),trimStart+.1))};
+for(const name of ['trimStart','trimEnd'])$(name).oninput=()=>{if(!source.isAnimated)return;applyTrim(Number($('trimStart').value),Number($('trimEnd').value))};
 // Convert mouse position (CSS scaled canvas) to export pixel coordinates.
 $('canvasWrap').addEventListener('pointerdown',e=>{if(!source.type||exporting)return;const rect=main.getBoundingClientRect();dragState={id:e.pointerId,x:e.clientX,y:e.clientY,px:panX,py:panY,scale:totalWidth()/rect.width};$('canvasWrap').setPointerCapture(e.pointerId);$('canvasWrap').classList.add('grabbing')});
 $('canvasWrap').addEventListener('pointermove',e=>{if(!dragState||dragState.id!==e.pointerId)return;panX=dragState.px+(e.clientX-dragState.x)*dragState.scale;panY=dragState.py+(e.clientY-dragState.y)*dragState.scale;getTransform();clearOutputs();updateUI();render(true)});
 function stopDrag(){dragState=null;$('canvasWrap').classList.remove('grabbing')};$('canvasWrap').addEventListener('pointerup',stopDrag);$('canvasWrap').addEventListener('pointercancel',stopDrag);
 $('canvasWrap').addEventListener('wheel',e=>{if(!source.type||exporting)return;e.preventDefault();zoom=clamp(zoom+(e.deltaY<0?.08:-.08),1,3.5);clearOutputs();updateUI();render(true)},{passive:false});
-$('playPause').onclick=async()=>{if(source.type==='video'){if(source.obj.paused){if(source.obj.currentTime>=trimEnd||source.obj.currentTime<trimStart)source.obj.currentTime=trimStart;await source.obj.play().catch(()=>{});}else source.obj.pause()}else if(source.type==='gif'){message('En GIF, la selección temporal se usa al exportar. El visor muestra la animación original del navegador.')}updatePlayIcon()};
-function updatePlayIcon(){$('playIconUse').setAttribute('href',source.type==='video'&&!source.obj.paused?'#i-pause':'#i-play')}
-$('restartBtn').onclick=()=>{if(source.type==='video'){source.obj.currentTime=trimStart;}previewTime=trimStart;render(true)};
-$('scrub').oninput=()=>{if(source.type==='video'){source.obj.currentTime=Number($('scrub').value);previewTime=source.obj.currentTime;render(true)}else if(source.isAnimated){previewTime=Number($('scrub').value);$('currentTimeLabel').textContent=fmtTime(previewTime)+' / '+fmtTime(source.duration);}};
+$('playPause').onclick=async()=>{
+ if(!source.isAnimated)return;
+ if(source.type==='video'){
+   if(source.obj.paused){if(source.obj.currentTime<trimStart||source.obj.currentTime>=trimEnd)source.obj.currentTime=trimStart;
+     await source.obj.play().catch(()=>{});
+   }else source.obj.pause();
+ }else if(source.type==='gif'){
+   if(!source.decoder&&!source.gifFrames){message('Este GIF no se puede pausar sin un decodificador compatible.','error');return;}
+   previewPlaying=!previewPlaying;previewClock=performance.now();
+ }
+ updatePlayIcon();render(true);
+};
+function updatePlayIcon(){const playing=source.type==='video'?!!(source.obj&&!source.obj.paused):source.type==='gif'&&previewPlaying;
+ $('playIconUse').setAttribute('href',playing?'#i-pause':'#i-play');
+ $('playPause').title=playing?'Pausar el tramo':'Reproducir el tramo';}
+$('restartBtn').onclick=()=>{previewTime=trimStart;if(source.type==='video')source.obj.currentTime=trimStart;
+ if(source.type==='gif')requestGifPreview();render(true);};
+function timelineValueFromPointer(e){const rect=$('editTimeline').getBoundingClientRect();return clamp((e.clientX-rect.left)/Math.max(1,rect.width)*source.duration,0,source.duration)}
+function updateHandle(which,t){const minSpan=Math.min(.1,Math.max(.01,source.duration/2));
+ if(which==='in')applyTrim(clamp(t,0,trimEnd-minSpan),trimEnd);
+ else applyTrim(trimStart,clamp(t,trimStart+minSpan,source.duration));}
+$('editTimeline').addEventListener('pointerdown',e=>{
+ if(!source.isAnimated||exporting)return;
+ const el=e.target.closest('.edit-handle');
+ if(el){dragEdge=el.id==='inHandle'?'in':'out';$('editTimeline').setPointerCapture(e.pointerId);updateHandle(dragEdge,timelineValueFromPointer(e));e.preventDefault();}
+ else{
+   const t=clamp(timelineValueFromPointer(e),trimStart,Math.max(trimStart,trimEnd-.001));previewTime=t;
+   if(source.type==='video')source.obj.currentTime=t;else requestGifPreview();render(true);
+ }
+});
+$('editTimeline').addEventListener('pointermove',e=>{if(!dragEdge)return;updateHandle(dragEdge,timelineValueFromPointer(e));});
+for(const event of ['pointerup','pointercancel','lostpointercapture'])$('editTimeline').addEventListener(event,()=>{dragEdge=null});
+for(const name of ['inHandle','outHandle'])$(name).addEventListener('keydown',e=>{
+ if(!source.isAnimated)return;let delta=0;
+ if(e.key==='ArrowLeft')delta=-(e.shiftKey?1:.05);
+ else if(e.key==='ArrowRight')delta=e.shiftKey?1:.05;
+ else if(e.key==='Home')delta=-Infinity;
+ else if(e.key==='End')delta=Infinity;
+ else return;
+ e.preventDefault();const isIn=name==='inHandle';updateHandle(isIn?'in':'out',(isIn?trimStart:trimEnd)+(Number.isFinite(delta)?delta:delta===Infinity?source.duration:-source.duration));
+});
 async function seekVideo(video,time){if(Math.abs(video.currentTime-time)<.003&&video.readyState>=2)return;video.currentTime=Math.min(Math.max(time,0),Math.max(.01,source.duration-.02));await waitFor(video,'seeked','No fue posible buscar un fotograma del video.');}
 async function getFrameAt(t,frameIndex){if(source.type==='video'){await seekVideo(source.obj,t);return {frame:source.obj,cleanup:()=>{}}}
  if(source.type==='gif'&&source.decoder){let idx=0;const delays=source.frameTimes;let us=Math.round(t*1e6);const total=delays.reduce((a,b)=>a+b,0)||1;us%=total;let acc=0;for(let i=0;i<delays.length;i++){acc+=delays[i];if(us<acc){idx=i;break}}const {image}=await source.decoder.decode({frameIndex:idx});return{frame:image,cleanup:()=>image.close()}}
+ if(source.type==='gif'&&source.gifFrames){setFallbackFrame(t);return{frame:source.gifCanvas,cleanup:()=>{}}}
  if(source.type==='gif'&&source.isAnimated){if(frameIndex>0)await new Promise(r=>setTimeout(r,Math.max(30,1000/Number($('fpsRange').value))));return {frame:source.obj,cleanup:()=>{}}}
  return{frame:source.obj,cleanup:()=>{}}}
 // Median-cut palette from representative pixels, with RGB 5-bit histogram. Identical palette for all five parts.
@@ -294,14 +497,14 @@ async function encodePreviewPass(fps,colors,progressBegin,progressSpan){let dura
  const palette=makePalette(samples,colors);samples.length=0;const mapper=createMapper(palette);const writer=new GifWriter(totalWidth(),height,palette.pal);
  for(let i=0;i<frames;i++){const f=await getFrameAt(source.isAnimated?trimStart+i/fps:0,i);compose(wctx,f.frame,'preview');f.cleanup();const delay=source.isAnimated?Math.round((i+1)*100/fps)-Math.round(i*100/fps):100;const pixels=wctx.getImageData(0,0,totalWidth(),height).data;const indices=mappedPixels(pixels,mapper);writer.frame(indices,delay);setPreviewProgress(progressBegin+progressSpan*(.12+.88*(i+1)/frames),`Codificando vista previa ${i+1} de ${frames} · ${fps} FPS`);if(i%2===0)await yieldThread();}
  return{data:writer.finish(false),frames,fps,colors};}
-async function exportPreviewGif(){if(!source.type||exporting)return;exporting=true;clearPreviewMessage();setStatus('exportando vista previa');$('previewExportBtn').disabled=true;$('previewExportBtn').innerHTML=`${icon('film')} PROCESANDO...`;setPreviewProgress(0,'Iniciando…');let videoWasPlaying=source.type==='video'&&!source.obj.paused;let saveTime=source.type==='video'?source.obj.currentTime:0;if(source.type==='video')source.obj.pause();
+async function exportPreviewGif(){if(!source.type||exporting)return;exporting=true;clearPreviewMessage();setStatus('exportando vista previa');$('previewExportBtn').disabled=true;$('previewExportBtn').innerHTML=`${icon('film')} PROCESANDO...`;setPreviewProgress(0,'Iniciando…');let videoWasPlaying=source.type==='video'&&!source.obj.paused;let saveTime=source.type==='video'?source.obj.currentTime:0;const gifWasPlaying=source.type==='gif'&&previewPlaying;previewPlaying=false;if(source.type==='video')source.obj.pause();
  try{const fps=Number($('previewFpsRange').value),colors=Number($('previewColorsSelect').value),limitMB=Number($('previewLimitSelect').value||0),limitBytes=limitMB>0?limitMB*1024*1024:0;const attempts=[{fps,colors}];if(limitBytes&&source.isAnimated){for(const mult of [.72,.5,.34,.25]){const f=Math.max(3,Math.round(fps*mult)),c=Math.max(24,Math.round(colors*mult));if(!attempts.some(a=>a.fps===f&&a.colors===c))attempts.push({fps:f,colors:c})}}let result=null;for(let i=0;i<attempts.length;i++){result=await encodePreviewPass(attempts[i].fps,attempts[i].colors,i/attempts.length,1/attempts.length);if(!limitBytes||result.data.length<=limitBytes||i===attempts.length-1)break;}downloadBlob(new Blob([result.data],{type:'image/gif'}),`steam_preview_completa_${totalWidth()}x${height}.gif`);if(limitBytes&&result.data.length>limitBytes)previewMessage(`Se descargó la vista previa, pero quedó en ${fmtSize(result.data.length)} y no pudo reducirse a ${limitMB} MB con los ajustes automáticos.`, 'error');else previewMessage(`Vista previa descargada: ${fmtSize(result.data.length)} · ${result.frames} fotogramas · ${result.fps} FPS.`, 'success');setPreviewProgress(1,'Vista previa lista');}
  catch(err){console.error(err);previewMessage('Error al generar la vista previa: '+(err.message||String(err)),'error');hidePreviewProgress();}
- finally{exporting=false;$('previewExportBtn').disabled=!source.type;$('previewExportBtn').innerHTML=`${icon('film')} Descargar Vista Previa`;if(source.type==='video'&&source.obj){await seekVideo(source.obj,Math.min(saveTime,source.duration-.03)).catch(()=>{});if(videoWasPlaying)source.obj.play().catch(()=>{});updatePlayIcon()}render(true)}
+ finally{exporting=false;$('previewExportBtn').disabled=!source.type;$('previewExportBtn').innerHTML=`${icon('film')} Descargar Vista Previa`;if(source.type==='video'&&source.obj){await seekVideo(source.obj,Math.min(saveTime,source.duration-.03)).catch(()=>{});if(videoWasPlaying)source.obj.play().catch(()=>{});updatePlayIcon()}if(source.type==='gif'){previewPlaying=gifWasPlaying;previewClock=performance.now();requestGifPreview();updatePlayIcon()}render(true)}
 }
 
 async function exportAll(){if(!source.type||exporting)return;exporting=true;cancelExport=false;clearOutputs();setStatus('exportando');$('exportBtn').disabled=true;$('exportBtn').innerHTML=`${icon('sliders')} PROCESANDO...`;setProgress(0,'Iniciando…');
- let videoWasPlaying=source.type==='video'&&!source.obj.paused;let saveTime=source.type==='video'?source.obj.currentTime:0;if(source.type==='video')source.obj.pause();
+ let videoWasPlaying=source.type==='video'&&!source.obj.paused;let saveTime=source.type==='video'?source.obj.currentTime:0;const gifWasPlaying=source.type==='gif'&&previewPlaying;previewPlaying=false;if(source.type==='video')source.obj.pause();
  try{
  const fps=Number($('fpsRange').value),colors=Number($('colorsSelect').value),auto=$('autoFit').checked;
  const attempts=[{fps,colors}];if(auto&&source.isAnimated){for(const mult of [.72,.50,.34]){const f=Math.max(3,Math.round(fps*mult)),c=Math.max(24,Math.round(colors*mult));if(!attempts.some(a=>a.fps===f&&a.colors===c))attempts.push({fps:f,colors:c})}}
@@ -318,7 +521,7 @@ async function exportAll(){if(!source.type||exporting)return;exporting=true;canc
  else message(`Exportación completada: ${result.frames} fotogramas, ${result.fps} FPS. Cinco GIF de 150 × ${height} px; descarga los archivos o el ZIP.`);
  setStatus('5 gif generados');setProgress(1,'¡Cinco paneles generados!');
  }catch(err){console.error(err);message('Error al generar GIF: '+(err.message||String(err)),'error');setStatus('error al exportar');hideProgress()}
- finally{exporting=false;$('exportBtn').disabled=!source.type;$('exportBtn').innerHTML=`${icon('package')} GENERAR LOS 5 GIF`;if(source.type==='video'&&source.obj){await seekVideo(source.obj,Math.min(saveTime,source.duration-.03)).catch(()=>{});if(videoWasPlaying)source.obj.play().catch(()=>{});updatePlayIcon()}render(true)}
+ finally{exporting=false;$('exportBtn').disabled=!source.type;$('exportBtn').innerHTML=`${icon('package')} GENERAR LOS 5 GIF`;if(source.type==='video'&&source.obj){await seekVideo(source.obj,Math.min(saveTime,source.duration-.03)).catch(()=>{});if(videoWasPlaying)source.obj.play().catch(()=>{});updatePlayIcon()}if(source.type==='gif'){previewPlaying=gifWasPlaying;previewClock=performance.now();requestGifPreview();updatePlayIcon()}render(true)}
 }
 $('exportBtn').onclick=exportAll;$('previewExportBtn').onclick=exportPreviewGif;
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000)}
