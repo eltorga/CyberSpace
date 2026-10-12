@@ -52,6 +52,12 @@
 .topbar .version{margin-left:4px}
 @media(max-width:1050px){.artwork-name-field{width:300px}.artwork-name-field label{display:none}}
 @media(max-width:680px){.artwork-name-field{margin-left:auto;min-width:0;width:45vw}.artwork-name-input{max-width:100%}.topbar .version{display:none}}
+
+.preview-modes{background:#0d1720;border:1px solid #294038;border-radius:10px;padding:3px}
+.preview-modes .btn{min-height:29px;border:0;background:transparent;color:#a6b4c4}
+.preview-modes .btn.selected{background:#25493c;color:#c2ffdf;border:1px solid #40765e}
+.preview-modes button:disabled{opacity:.45}
+#truePreviewStatus strong{color:#badfd2}
 </style>
 </head>
 <body>
@@ -83,7 +89,7 @@
 <div class="mark"><svg class="icon lg"><use href="#i-layout"/></svg></div>
 <div class="brand"><strong>SHOWCASE STUDIO</strong><small>STEAM WORKSHOP · GIF / VIDEO</small></div>
 <div class="artwork-name-field"><label for="artworkName">ARTWORK NAME</label><input id="artworkName" class="artwork-name-input" type="text" maxlength="100" spellcheck="false" autocomplete="off" placeholder="Enter artwork name" aria-label="Artwork name for downloads and README" title="Used for the ZIP filename, full GIF preview, and README title"></div>
-<div class="version">v1.5 · 5 PANEL EDITOR</div>
+<div class="version">v1.6 · 5 PANEL EDITOR</div>
 </header>
 <main class="app">
 <aside class="side left">
@@ -112,7 +118,7 @@
 </aside>
 <section class="center">
 <div class="headline"><div><h1>Workshop Showcase Editor</h1><p>Frame your animation and create five vertical GIFs for your Steam profile.</p></div><div class="state" id="workStatus">● WAITING FOR FILE</div></div>
-<div class="toolbar"><div class="toolgroup"><span class="pillinfo" id="dimensionsInfo">766 × 1600 px</span><span class="pillinfo">5 × 150 px</span></div><div class="toolgroup"><button class="btn small" id="toggleGaps"><svg class="icon sm"><use href="#i-layout"/></svg> Show divisions</button><button class="btn small" id="fitView"><svg class="icon sm"><use href="#i-zoom"/></svg> Fit to view</button></div></div>
+<div class="toolbar"><div class="toolgroup"><span class="pillinfo" id="dimensionsInfo">766 × 1600 px</span><span class="pillinfo">5 × 150 px</span></div><div class="toolgroup preview-modes" aria-label="Preview mode"><button class="btn small selected" id="originalMode" type="button" aria-pressed="true">Original</button><button class="btn small" id="encodedMode" type="button" aria-pressed="false" disabled>Encoded GIF</button></div><div class="toolgroup"><button class="btn small" id="toggleGaps"><svg class="icon sm"><use href="#i-layout"/></svg> Show divisions</button><button class="btn small" id="fitView"><svg class="icon sm"><use href="#i-zoom"/></svg> Fit to view</button></div></div>
 <div class="stage-shell"><div class="stage-label"><span style="display:flex;gap:7px;align-items:center"><svg class="icon sm"><use href="#i-crop"/></svg><strong>COMPOSITION AREA</strong></span><span class="mono" id="stageDesc">DROP FILE TO BEGIN</span></div>
 <div class="workspace" id="workspace"><div class="empty-state" id="emptyState"><div class="huge"><svg class="icon lg" style="width:37px;height:37px"><use href="#i-image"/></svg></div><strong>Your canvas is empty</strong><p>Upload a GIF, image, or video, then adjust the framing before exporting all five panels.</p><button class="btn primary" id="emptyUpload"><svg class="icon sm"><use href="#i-upload"/></svg> Choose a file</button></div>
 <div class="canvas-wrap" id="canvasWrap"><canvas class="main-canvas" id="mainCanvas"></canvas></div></div>
@@ -147,8 +153,11 @@
 <div class="statgrid"><div class="stat"><span>FILES</span><strong>05 GIF</strong></div><div class="stat"><span>SIZE PER PANEL</span><strong id="partInfo">150 × 1600</strong></div><div class="stat"><span>CANVAS</span><strong id="canvasInfo">766 × 1600</strong></div><div class="stat"><span>FRAMES</span><strong id="framesInfo">—</strong></div></div></section>
 <section class="section"><div class="section-head"><div class="side-head"><span class="num">05</span> GIF EXPORT</div></div>
 <div class="field"><div class="field-label"><span>Frames per second</span><span id="fpsVal" class="value">12 FPS</span></div><input id="fpsRange" class="range" type="range" min="3" max="24" step="1" value="12"></div>
-<div class="field"><div class="field-label"><span>Color palette</span><span class="value" id="colorsVal">128</span></div><select id="colorsSelect" class="select"><option value="256">256 · maximum detail</option><option value="128" selected>128 · balanced</option><option value="64">64 · smaller file</option><option value="32">32 · smallest file</option></select></div>
-<label class="check"><input type="checkbox" id="autoFit" checked><span>Optimize for a 5 MB limit per panel<small>If over the limit, try fewer frames and colors while preserving the selected height.</small></span></label>
+<div class="field"><div class="field-label"><span>Color palette</span><span class="value" id="colorsVal">256</span></div><select id="colorsSelect" class="select"><option value="256" selected>256 · highest detail</option><option value="128">128 · balanced</option><option value="64">64 · smaller file</option><option value="32">32 · smallest file</option></select></div>
+<div class="field"><div class="field-label">Dithering for gradients</div><select class="select" id="ditherSelect"><option value="floyd" selected>Floyd–Steinberg · smooth gradients</option><option value="bayer">Bayer 8×8 · stable fine texture</option><option value="none">None · hard color bands</option></select></div>
+<label class="check"><input type="checkbox" id="autoFit" checked disabled><span><strong>5 MB hard limit per panel</strong><small>Highest quality that fits. The editor adjusts FPS and palette if needed, but never offers an oversized panel for download.</small></span></label>
+<button id="buildTruePreview" class="btn full" disabled><svg class="icon"><use href="#i-eye"/></svg> Build true GIF preview</button>
+<div id="truePreviewStatus" class="help" style="margin-bottom:13px">Compare the video with the <strong>actual encoded five GIFs</strong> before downloading.</div>
 <label class="check"><input type="checkbox" id="hexPatch" checked><span>Enable long GIF mode (HEX 21)<small>Changes the final byte from 3B to 21. This is an unofficial Steam technique; some image viewers may not open the modified files.</small></span></label>
 <button id="exportBtn" class="btn primary full" disabled><svg class="icon"><use href="#i-package"/></svg> GENERATE FIVE GIFS</button>
 <div class="progress-shell" id="progressShell"><div class="progress-line"><span id="progressText">Preparing…</span><span id="progressPercent">0%</span></div><div class="progress"><div id="progressFill"></div></div></div>
@@ -162,7 +171,8 @@
 <section class="section"><div class="section-head"><div class="side-head"><span class="num">06</span> FULL GIF PREVIEW</div></div>
 <div class="help" style="margin-bottom:12px">Export a single animated GIF with all five panels joined together. It preserves the chosen spacing and fills the gaps with <b>#1b2838</b>.</div>
 <div class="field"><div class="field-label"><span>Frames per second</span><span id="previewFpsVal" class="value">12 FPS</span></div><input id="previewFpsRange" class="range" type="range" min="3" max="24" step="1" value="12"></div>
-<div class="field"><div class="field-label"><span>Color palette</span><span class="value" id="previewColorsVal">128</span></div><select id="previewColorsSelect" class="select"><option value="256">256 · maximum detail</option><option value="128" selected>128 · balanced</option><option value="64">64 · smaller file</option><option value="32">32 · smallest file</option></select></div>
+<div class="field"><div class="field-label"><span>Color palette</span><span class="value" id="previewColorsVal">256</span></div><select id="previewColorsSelect" class="select"><option value="256" selected>256 · highest detail</option><option value="128">128 · balanced</option><option value="64">64 · smaller file</option><option value="32">32 · smallest file</option></select></div>
+<div class="field"><div class="field-label">Gradient dithering</div><select id="previewDitherSelect" class="select"><option value="floyd" selected>Floyd–Steinberg</option><option value="bayer">Bayer 8×8</option><option value="none">None</option></select></div>
 <div class="field"><div class="field-label">Automatic file size limit</div><select id="previewLimitSelect" class="select"><option value="0" selected>No fixed limit</option><option value="5">Optimize to 5 MB max.</option><option value="2">Optimize to 2 MB max.</option></select></div>
 <button id="previewExportBtn" class="btn primary full" disabled><svg class="icon"><use href="#i-film"/></svg> Download Full Preview</button>
 <div class="progress-shell" id="previewProgressShell"><div class="progress-line"><span id="previewProgressText">Preparing…</span><span id="previewProgressPercent">0%</span></div><div class="progress"><div id="previewProgressFill"></div></div></div>
@@ -179,6 +189,12 @@ const main=$('mainCanvas'), mini=$('miniCanvas'),ctx=main.getContext('2d',{willR
 const work=document.createElement('canvas'),wctx=work.getContext('2d',{willReadFrequently:true});
 let source={type:null,obj:null,file:null,url:null,w:0,h:0,duration:0,decoder:null,frameTimes:[],isAnimated:false},height=1600,gap=4,zoom=1,panX=0,panY=0,rotateDeg=0,flipH=false,flipV=false;
 let displayGaps=true,exporting=false,cancelExport=false,filesOut=[],lastDraw=0,rafId=0,dragState=null,trimStart=0,trimEnd=3,previewTime=0,previewPlaying=false,previewClock=0,gifPreviewFrame=null,gifPreviewIndex=-1,gifDecodePending=false,gifToken=0,dragEdge=null;
+// True-preview data consists of the exact 5 GIF streams, decoded without the Steam HEX patch.
+let truePreview=null,truePreviewMode=false,truePreviewFrameIndex=-1,truePreviewPending=false,truePreviewToken=0;
+const PANEL_LIMIT=5*1024*1024;
+function disposeTruePreview(){truePreviewToken++;truePreviewPending=false;truePreviewFrameIndex=-1;if(truePreview){for(const d of truePreview.decoders||[])try{d.close()}catch(e){};if(truePreview.fallbackFrames)truePreview.fallbackFrames.length=0;}truePreview=null;truePreviewMode=false;const mode=document.getElementById('encodedMode');if(mode){mode.disabled=true;mode.classList.remove('selected');mode.setAttribute('aria-pressed','false');}const orig=document.getElementById('originalMode');if(orig){orig.classList.add('selected');orig.setAttribute('aria-pressed','true');}}
+function setTruePreviewMode(mode){if(mode&&!truePreview)return;truePreviewMode=!!mode;$('originalMode').classList.toggle('selected',!mode);$('encodedMode').classList.toggle('selected',!!mode);$('originalMode').setAttribute('aria-pressed',String(!mode));$('encodedMode').setAttribute('aria-pressed',String(!!mode));if(mode)requestTruePreviewFrame(true);render(true)}
+function makeReadableGif(data){const bytes=data.slice();bytes[bytes.length-1]=0x3b;return bytes;}
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const icon=(name,cls='')=>`<svg class="icon ${cls}"><use href="#i-${name}"/></svg>`;
 const workshopUploadLink='https://steamcommunity.com/sharedfiles/edititem/767/3/';
@@ -193,7 +209,7 @@ function message(text,type='warning'){const el=$('resultNotice');el.style.displa
 function clearMessage(){$('resultNotice').style.display='none'}
 function previewMessage(text,type='warning'){const el=$('previewNotice');el.style.display='block';el.className='notice'+(type==='error'?' error':type==='success'?' success':'');el.textContent=text}
 function clearPreviewMessage(){$('previewNotice').style.display='none'}
-function clearOutputs(){filesOut=[];$('zipBtn').disabled=true;$('results').classList.remove('show');$('results').textContent='';clearMessage();clearPreviewMessage()}
+function clearOutputs(){disposeTruePreview();$('truePreviewStatus').textContent='Build a preview to inspect the actual GIF colors and motion.';filesOut=[];$('zipBtn').disabled=true;$('results').classList.remove('show');$('results').textContent='';clearMessage();clearPreviewMessage()}
 function setProgress(p,label){$('progressShell').classList.add('show');$('progressFill').style.width=(p*100).toFixed(1)+'%';$('progressPercent').textContent=Math.round(p*100)+'%';$('progressText').textContent=label}
 function hideProgress(){$('progressShell').classList.remove('show')}
 function setPreviewProgress(p,label){$('previewProgressShell').classList.add('show');$('previewProgressFill').style.width=(p*100).toFixed(1)+'%';$('previewProgressPercent').textContent=Math.round(p*100)+'%';$('previewProgressText').textContent=label}
@@ -221,9 +237,11 @@ function compose(target,frame,mode='editor'){const w=totalWidth(),h=height;if(ta
 function drawOverlays(target){if(!displayGaps)return;drawPanelGaps(target,gap?'#0b111bef':'#dfffe766');
  target.save();target.fillStyle='#98ffe7';target.font='bold 17px monospace';for(let i=0;i<5;i++){const x=i*(150+gap);target.fillStyle='#0b111bc9';target.fillRect(x+7,9,29,27);target.fillStyle='#a6ffe3';target.fillText(String(i+1).padStart(2,'0'),x+11,28)}target.restore();}
 function render(force=false){if(!source.type)return;const now=performance.now();if(!force&&now-lastDraw<55)return;lastDraw=now;
- if(source.type==='gif'&&source.gifFrames)setFallbackFrame(previewTime);
- const frame=source.type==='gif'&&source.decoder&&gifPreviewFrame?gifPreviewFrame:source.type==='gif'&&source.gifCanvas?source.gifCanvas:source.obj;
- compose(ctx,frame);drawOverlays(ctx);
+ if(source.type==='gif'&&source.gifFrames&&!truePreviewMode)setFallbackFrame(previewTime);
+ if(truePreviewMode&&truePreview){if(main.width!==totalWidth())main.width=totalWidth();if(main.height!==height)main.height=height;
+  ctx.fillStyle='#1b2838';ctx.fillRect(0,0,main.width,main.height);ctx.drawImage(truePreview.imageCanvas,0,0);requestTruePreviewFrame();}
+ else{const frame=source.type==='gif'&&source.decoder&&gifPreviewFrame?gifPreviewFrame:source.type==='gif'&&source.gifCanvas?source.gifCanvas:source.obj;
+ compose(ctx,frame);drawOverlays(ctx);}
  if(mini.width!==main.width)mini.width=main.width;if(mini.height!==main.height)mini.height=main.height;
  mctx.clearRect(0,0,mini.width,mini.height);mctx.drawImage(main,0,0);
  if(source.type==='video')previewTime=clamp(source.obj.currentTime,trimStart,trimEnd);
@@ -261,7 +279,7 @@ function renderLoop(now){rafId=requestAnimationFrame(renderLoop);if(!source.type
    render();
  }
 }
-function setReady(ready){$('exportBtn').disabled=!ready;$('previewExportBtn').disabled=!ready;
+function setReady(ready){$('buildTruePreview').disabled=!ready;$('exportBtn').disabled=!ready;$('previewExportBtn').disabled=!ready;
  $('emptyState').style.display=ready?'none':'flex';$('canvasWrap').classList.toggle('show',ready);
  $('miniCanvas').style.display=ready?'block':'none';$('miniEmpty').style.display=ready?'none':'block';
  $('timeline').classList.toggle('show',ready&&source.isAnimated);
@@ -471,11 +489,23 @@ async function getFrameAt(t,frameIndex){if(source.type==='video'){await seekVide
  if(source.type==='gif'&&source.isAnimated){if(frameIndex>0)await new Promise(r=>setTimeout(r,Math.max(30,1000/Number($('fpsRange').value))));return {frame:source.obj,cleanup:()=>{}}}
  return{frame:source.obj,cleanup:()=>{}}}
 // Median-cut palette from representative pixels, with RGB 5-bit histogram. Identical palette for all five parts.
+function paletteSample(context,width,height,maxCount=30000){const rgba=context.getImageData(0,0,width,height).data;const stride=Math.max(1,Math.floor(width*height/maxCount));const count=Math.ceil(width*height/stride);const result=new Uint8ClampedArray(count*4);for(let n=0,j=0;n<width*height;n+=stride,j++){const idx=n*4;result[j*4]=rgba[idx];result[j*4+1]=rgba[idx+1];result[j*4+2]=rgba[idx+2];result[j*4+3]=255;}return result;}
 function makePalette(sampleArrays,ncolors){const hist=new Map();for(const pixels of sampleArrays){const stride=Math.max(1,Math.floor(pixels.length/4/42000));for(let j=0;j<pixels.length;j+=4*stride){const r=pixels[j],g=pixels[j+1],b=pixels[j+2];const k=((r>>3)<<10)|((g>>3)<<5)|(b>>3);let it=hist.get(k);if(!it){it={r:0,g:0,b:0,c:0};hist.set(k,it)}it.r+=r;it.g+=g;it.b+=b;it.c++}}
  const items=[...hist.values()].map(p=>({r:p.r/p.c,g:p.g/p.c,b:p.b/p.c,c:p.c}));if(!items.length)items.push({r:0,g:0,b:0,c:1});let boxes=[items];while(boxes.length<ncolors){let best=-1,bestScore=-1,axis='r';for(let k=0;k<boxes.length;k++){let box=boxes[k];if(box.length<2)continue;let rmin=255,gmin=255,bmin=255,rmax=0,gmax=0,bmax=0,weight=0;for(let p of box){rmin=Math.min(rmin,p.r);rmax=Math.max(rmax,p.r);gmin=Math.min(gmin,p.g);gmax=Math.max(gmax,p.g);bmin=Math.min(bmin,p.b);bmax=Math.max(bmax,p.b);weight+=p.c}let spans=[rmax-rmin,gmax-gmin,bmax-bmin];let mi=spans.indexOf(Math.max(...spans));let score=spans[mi]*Math.log2(2+weight);if(score>bestScore){bestScore=score;best=k;axis=['r','g','b'][mi]}}if(best<0)break;let box=boxes.splice(best,1)[0];box.sort((a,b)=>a[axis]-b[axis]);let weight=box.reduce((a,b)=>a+b.c,0),sum=0,index=0;for(;index<box.length-1;index++){sum+=box[index].c;if(sum>=weight/2){index++;break}}index=clamp(index,1,box.length-1);boxes.push(box.slice(0,index),box.slice(index))}
  const pal=new Uint8Array(256*3);boxes.forEach((box,i)=>{let r=0,g=0,b=0,n=0;for(const p of box){r+=p.r*p.c;g+=p.g*p.c;b+=p.b*p.c;n+=p.c}pal[i*3]=Math.round(r/n);pal[i*3+1]=Math.round(g/n);pal[i*3+2]=Math.round(b/n)});return{pal,length:boxes.length}}
-function createMapper(palette){const cache=new Int16Array(32768);cache.fill(-1);const pal=palette.pal,len=palette.length;return function(r,g,b){let key=((r>>3)<<10)|((g>>3)<<5)|(b>>3);if(cache[key]!==-1)return cache[key];let best=0,dist=Infinity;for(let i=0;i<len;i++){const dr=r-pal[i*3],dg=g-pal[i*3+1],db=b-pal[i*3+2];const d=dr*dr*.30+dg*dg*.59+db*db*.11;if(d<dist){dist=d;best=i;if(d<1)break}}cache[key]=best;return best}}
-function mappedPixels(raw,mapper){const out=new Uint8Array(raw.length/4);for(let i=0,j=0;i<raw.length;i+=4,j++)out[j]=mapper(raw[i],raw[i+1],raw[i+2]);return out}
+function createMapper(palette){const cache=new Int16Array(262144);cache.fill(-1);const pal=palette.pal,len=palette.length;return function(r,g,b){let key=((Math.round(r)>>2)<<12)|((Math.round(g)>>2)<<6)|(Math.round(b)>>2);if(cache[key]!==-1)return cache[key];let best=0,dist=Infinity;for(let i=0;i<len;i++){const dr=r-pal[i*3],dg=g-pal[i*3+1],db=b-pal[i*3+2];const d=dr*dr*.30+dg*dg*.59+db*db*.11;if(d<dist){dist=d;best=i;if(d<1)break}}cache[key]=best;return best}}
+const BAYER8=[0,48,12,60,3,51,15,63,32,16,44,28,35,19,47,31,8,56,4,52,11,59,7,55,40,24,36,20,43,27,39,23,2,50,14,62,1,49,13,61,34,18,46,30,33,17,45,29,36,21,41,25,10,58,6,54,9,57,5,53,42,26,38,22];
+function mappedPixelsDither(raw,mapper,palette,width,height,mode){const out=new Uint8Array(width*height),pal=palette.pal;if(mode==='none'){for(let i=0,j=0;i<raw.length;i+=4,j++)out[j]=mapper(raw[i],raw[i+1],raw[i+2]);return out}
+ if(mode==='bayer'){for(let y=0;y<height;y++){for(let x=0;x<width;x++){const i=y*width+x,j=4*i,t=(BAYER8[(y&7)*8+(x&7)]-31.5)*.58;out[i]=mapper(clamp(raw[j]+t,0,255),clamp(raw[j+1]+t,0,255),clamp(raw[j+2]+t,0,255));}}return out;}
+ // Floyd–Steinberg error diffusion, with alternating rows to avoid directional artifacts.
+ const rowlen=(width+2)*3;let current=new Float32Array(rowlen),next=new Float32Array(rowlen);
+ for(let y=0;y<height;y++){const reversed=!!(y&1);for(let step=0;step<width;step++){const x=reversed?width-1-step:step,i=y*width+x,si=i*4,ei=(x+1)*3;
+ const r=clamp(raw[si]+current[ei],0,255),g=clamp(raw[si+1]+current[ei+1],0,255),b=clamp(raw[si+2]+current[ei+2],0,255),p=mapper(r,g,b);out[i]=p;
+ const dr=clamp(r-pal[p*3],-64,64),dg=clamp(g-pal[p*3+1],-64,64),db=clamp(b-pal[p*3+2],-64,64),dir=reversed?-3:3;
+ for(let c=0;c<3;c++){const e=c===0?dr:c===1?dg:db;current[ei+dir+c]+=e*7/16;next[ei-dir+c]+=e*3/16;next[ei+c]+=e*5/16;next[ei+dir+c]+=e/16;}
+ }const tmp=current;current=next;next=tmp;next.fill(0);}return out;}
+function splitIndices(indices,width,height){const parts=[];for(let n=0;n<5;n++){const out=new Uint8Array(150*height),x=n*(150+gap);for(let row=0;row<height;row++){const src=row*width+x;out.set(indices.subarray(src,src+150),row*150)}parts.push(out)}return parts;}
+
 class ByteWriter{constructor(){this.buf=new Uint8Array(65536);this.pos=0}grow(n){if(this.pos+n<=this.buf.length)return;const b=new Uint8Array(Math.max(this.buf.length*2,this.pos+n));b.set(this.buf);this.buf=b}u8(n){this.grow(1);this.buf[this.pos++]=n&255}u16(n){this.u8(n);this.u8(n>>8)}u32(n){this.u16(n);this.u16(n>>>16)}bytes(data){this.grow(data.length);this.buf.set(data,this.pos);this.pos+=data.length}str(s){for(let i=0;i<s.length;i++)this.u8(s.charCodeAt(i))}finish(){return this.buf.slice(0,this.pos)}}
 // GIF-compliant LZW: variable-width (9–12 bit) codes, clear code and LSB-first packing.
 function lzwGif(data){const CLEAR=256,END=257,dict=new Map();let next=258,bits=9,bitBucket=0,bitCount=0;const out=[];
@@ -494,25 +524,80 @@ class GifWriter{constructor(w,h,palette){this.w=w;this.h=h;this.wr=new ByteWrite
  const compressed=lzwGif(pixels);for(let i=0;i<compressed.length;i+=255){const len=Math.min(255,compressed.length-i);wr.u8(len);wr.bytes(compressed.subarray(i,i+len))}wr.u8(0)}
  finish(patch){this.wr.u8(patch?0x21:0x3b);return this.wr.finish()}}
 function yieldThread(){return new Promise(resolve=>setTimeout(resolve,0))}
-async function encodePass(fps,colors,progressBegin,progressSpan){let duration=source.type==='image'?0:Math.max(.05,trimEnd-trimStart);const frames=source.isAnimated?Math.max(1,Math.ceil(duration*fps)):1;
- if(frames>240)throw new Error('The selected segment contains too many frames (>240). Shorten the segment or lower FPS.');
- const samples=[];for(let j=0;j<Math.min(3,frames);j++){const idx=frames<=3?j:Math.floor((frames-1)*j/2);if(idx>=frames)continue;const data=await getFrameAt(source.isAnimated?trimStart+idx/fps:0,idx);compose(wctx,data.frame);data.cleanup();samples.push(wctx.getImageData(0,0,totalWidth(),height).data.slice());setProgress(progressBegin+progressSpan*.12*(j+1)/Math.min(3,frames),'Computing color palette…');await yieldThread()}
- const palette=makePalette(samples,colors);samples.length=0;const mapper=createMapper(palette);const writers=Array.from({length:5},()=>new GifWriter(150,height,palette.pal));
+async function encodePass(fps,colors,progressBegin,progressSpan,ditherMode=$('ditherSelect').value){
+ const duration=source.type==='image'?0:Math.max(.05,trimEnd-trimStart);const frames=source.isAnimated?Math.max(1,Math.ceil(duration*fps)):1;
+ if(frames>240)throw new Error('More than 240 frames: shorten the selected clip or lower FPS.');
+ const count=Math.min(10,frames),samples=[];
+ for(let j=0;j<count;j++){const idx=count===1?0:Math.round((frames-1)*j/(count-1));const f=await getFrameAt(source.isAnimated?Math.min(trimEnd-.001,trimStart+idx/fps):0,idx);compose(wctx,f.frame);f.cleanup();samples.push(paletteSample(wctx,totalWidth(),height));setProgress(progressBegin+progressSpan*.15*(j+1)/count,'Analyzing color changes across the animation…');await yieldThread();}
+ const palette=makePalette(samples,colors);samples.length=0;const mapper=createMapper(palette),writers=Array.from({length:5},()=>new GifWriter(150,height,palette.pal)),frameDelays=[];
  for(let i=0;i<frames;i++){
- if(cancelExport)throw new Error('Export canceled');const f=await getFrameAt(source.isAnimated?trimStart+i/fps:0,i);compose(wctx,f.frame);f.cleanup();
- const delay=source.isAnimated?Math.round((i+1)*100/fps)-Math.round(i*100/fps):100;
- for(let part=0;part<5;part++){
- const x=part*(150+gap);const pixels=wctx.getImageData(x,0,150,height).data;const indices=mappedPixels(pixels,mapper);writers[part].frame(indices,delay);
+  const f=await getFrameAt(source.isAnimated?Math.min(trimEnd-.001,trimStart+i/fps):0,i);compose(wctx,f.frame);f.cleanup();
+  const all=wctx.getImageData(0,0,totalWidth(),height),indices=mappedPixelsDither(all.data,mapper,palette,totalWidth(),height,ditherMode),parts=splitIndices(indices,totalWidth(),height);
+  const delay=source.isAnimated?Math.round((i+1)*100/fps)-Math.round(i*100/fps):100;
+  frameDelays.push(Math.max(2,delay)/100);for(let j=0;j<5;j++)writers[j].frame(parts[j],delay);
+  setProgress(progressBegin+progressSpan*(.15+.85*(i+1)/frames),`Encoding frame ${i+1}/${frames} · ${fps} FPS · ${ditherMode} dithering`);
+  if(i%2===0)await yieldThread();
  }
- setProgress(progressBegin+progressSpan*(.12+.88*(i+1)/frames),`Encoding frame ${i+1} of ${frames} · ${fps} FPS`);
- if(i%2===0)await yieldThread();
+ const out=writers.map(w=>w.finish(false));return{out,frames,fps,colors,ditherMode,frameDelays,maxBytes:Math.max(...out.map(x=>x.length))};
+}
+function chooseNextQuality(previous){if(!source.isAnimated)return null;const over=previous.maxBytes/PANEL_LIMIT;
+ const f=previous.fps,c=previous.colors;
+ if(f>1){const guessed=Math.floor(f*.93/Math.max(1.03,over));const next=Math.max(1,Math.min(f-1,guessed));return{fps:next,colors:c};}
+ if(c>32)return{fps:1,colors:c>=256?160:c>=160?96:c>=96?64:32};
+ return null;
+}
+async function bestFivePanelGif(){let fps=Math.min(Number($('fpsRange').value),Math.floor(240/Math.max(.05,trimEnd-trimStart))),colors=Number($('colorsSelect').value);fps=Math.max(1,fps);let last=null;
+ for(let attempt=0;attempt<8;attempt++){
+  const result=await encodePass(fps,colors,0,1,$('ditherSelect').value);last=result;
+  if(result.maxBytes<=PANEL_LIMIT)return result;
+  const next=chooseNextQuality(result);if(!next||next.fps===fps&&next.colors===colors)break;
+  setProgress(0,`Optimizing for the strict 5 MB limit: ${fmtSize(result.maxBytes)} → trying ${next.fps} FPS / ${next.colors} colors`);
+  fps=next.fps;colors=next.colors;await yieldThread();
  }
- const patch=$('hexPatch').checked;const out=writers.map(w=>w.finish(patch));return{out,frames,fps,colors};}
+ throw new Error(`Cannot fit every panel under 5 MB at ${height}px height. Best attempt: ${last?fmtSize(last.maxBytes):'unknown'}. Shorten the clip or reduce the panel height; oversized files will NOT be downloaded.`);
+}
+async function loadTruePreview(result){disposeTruePreview();const decoders=[],fallbackFrames=[];
+ if('ImageDecoder' in window){
+  try{for(const bytes of result.out){const decoder=new ImageDecoder({data:bytes,type:'image/gif'});await decoder.tracks.ready;decoders.push(decoder)}}catch(err){decoders.forEach(d=>{try{d.close()}catch(e){}});throw new Error('Could not decode the generated GIF in this browser: '+err.message)}
+ }else{
+  // Offline GIF parser provides true output preview even when ImageDecoder is unavailable.
+  // A practical memory guard prevents oversized compositions exhausting the browser.
+  if(result.frames*150*height*4*5>255*1024*1024)throw new Error('Exact GIF preview needs too much memory in this browser. Shorten the clip or use a recent Chrome/Edge with ImageDecoder.');
+  for(const bytes of result.out){const decoded=await decodeGifFramesOffline(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),55*1024*1024);fallbackFrames.push(decoded.frames)}
+ }
+ truePreview={...result,decoders,fallbackFrames,imageCanvas:document.createElement('canvas')};truePreview.imageCanvas.width=totalWidth();truePreview.imageCanvas.height=height;$('encodedMode').disabled=false;
+ $('truePreviewStatus').textContent=`Ready · ${result.fps} FPS · ${result.colors} colors · ${result.ditherMode} · largest file ${fmtSize(result.maxBytes)} (limit 5 MB).`;
+ setTruePreviewMode(true);requestTruePreviewFrame(true);
+}
+function encodedFrameIndex(){if(!truePreview)return 0;const elapsed=Math.max(0,previewTime-trimStart),delays=truePreview.frameDelays;if(!delays)return clamp(Math.floor(elapsed*truePreview.fps),0,truePreview.frames-1);
+ const total=delays.reduce((a,b)=>a+b,0),t=total>0?elapsed%total:0;let sum=0;for(let i=0;i<delays.length;i++){sum+=delays[i];if(t<sum)return i;}return delays.length-1;}
+function requestTruePreviewFrame(force=false){if(!truePreviewMode||!truePreview||truePreviewPending)return;const preview=truePreview;
+ const idx=encodedFrameIndex();if(!force&&idx===truePreviewFrameIndex)return;
+ if(preview.fallbackFrames.length){const c=preview.imageCanvas.getContext('2d');c.fillStyle='#1b2838';c.fillRect(0,0,totalWidth(),height);
+  for(let i=0;i<5;i++){const image=preview.fallbackFrames[i][idx];if(image)c.putImageData(image,i*(150+gap),0)}truePreviewFrameIndex=idx;render(true);return;}
+ truePreviewPending=true;const token=truePreviewToken;
+ Promise.all(preview.decoders.map(d=>d.decode({frameIndex:idx}))).then(frames=>{
+  if(token!==truePreviewToken||preview!==truePreview){frames.forEach(f=>f.image.close());return;}
+  const c=preview.imageCanvas.getContext('2d');c.fillStyle='#1b2838';c.fillRect(0,0,totalWidth(),height);
+  frames.forEach(({image},i)=>{c.drawImage(image,i*(150+gap),0);image.close()});truePreviewFrameIndex=idx;render(true);
+ }).catch(err=>{console.warn('GIF preview decoding failed:',err);$('truePreviewStatus').textContent='The GIF was encoded but this browser cannot decode its frames for preview.';})
+ .finally(()=>{if(token===truePreviewToken){truePreviewPending=false;if(truePreviewMode&&truePreview){const actual=encodedFrameIndex();if(actual!==truePreviewFrameIndex)requestTruePreviewFrame();}}});
+}
+async function buildEncodedPreview(){if(!source.type||exporting)return;exporting=true;$('buildTruePreview').disabled=true;$('exportBtn').disabled=true;setStatus('encoding true preview');
+ const wasVideo=source.type==='video'&&!source.obj.paused,saveTime=source.type==='video'?source.obj.currentTime:0,wasGif=source.type==='gif'&&previewPlaying;
+ previewPlaying=false;if(source.type==='video')source.obj.pause();
+ try{const result=await bestFivePanelGif();await loadTruePreview(result);message('Real GIF preview ready. Switch between Original and Encoded GIF. No files were downloaded yet.','success');setStatus('encoded GIF preview ready');}
+ catch(err){console.error(err);message(err.message||String(err),'error');setStatus('preview error');}
+ finally{exporting=false;$('buildTruePreview').disabled=!source.type;$('exportBtn').disabled=!source.type;
+ if(source.type==='video'){await seekVideo(source.obj,Math.min(saveTime,source.duration-.03)).catch(()=>{});if(wasVideo)source.obj.play().catch(()=>{});}
+ else if(wasGif){previewPlaying=true;previewClock=performance.now()};updatePlayIcon();render(true);}
+}
+
 async function encodePreviewPass(fps,colors,progressBegin,progressSpan){let duration=source.type==='image'?0:Math.max(.05,trimEnd-trimStart);const frames=source.isAnimated?Math.max(1,Math.ceil(duration*fps)):1;
  if(frames>240)throw new Error('The full preview would contain too many frames (>240). Shorten the segment or lower FPS.');
- const samples=[];for(let j=0;j<Math.min(3,frames);j++){const idx=frames<=3?j:Math.floor((frames-1)*j/2);if(idx>=frames)continue;const data=await getFrameAt(source.isAnimated?trimStart+idx/fps:0,idx);compose(wctx,data.frame,'preview');data.cleanup();samples.push(wctx.getImageData(0,0,totalWidth(),height).data.slice());setPreviewProgress(progressBegin+progressSpan*.12*(j+1)/Math.min(3,frames),'Computing preview color palette…');await yieldThread()}
+ const samples=[];for(let j=0;j<Math.min(6,frames);j++){const idx=frames<=3?j:Math.floor((frames-1)*j/2);if(idx>=frames)continue;const data=await getFrameAt(source.isAnimated?trimStart+idx/fps:0,idx);compose(wctx,data.frame,'preview');data.cleanup();samples.push(paletteSample(wctx,totalWidth(),height));setPreviewProgress(progressBegin+progressSpan*.12*(j+1)/Math.min(3,frames),'Computing preview color palette…');await yieldThread()}
  const palette=makePalette(samples,colors);samples.length=0;const mapper=createMapper(palette);const writer=new GifWriter(totalWidth(),height,palette.pal);
- for(let i=0;i<frames;i++){const f=await getFrameAt(source.isAnimated?trimStart+i/fps:0,i);compose(wctx,f.frame,'preview');f.cleanup();const delay=source.isAnimated?Math.round((i+1)*100/fps)-Math.round(i*100/fps):100;const pixels=wctx.getImageData(0,0,totalWidth(),height).data;const indices=mappedPixels(pixels,mapper);writer.frame(indices,delay);setPreviewProgress(progressBegin+progressSpan*(.12+.88*(i+1)/frames),`Encoding preview frame ${i+1} of ${frames} · ${fps} FPS`);if(i%2===0)await yieldThread();}
+ for(let i=0;i<frames;i++){const f=await getFrameAt(source.isAnimated?trimStart+i/fps:0,i);compose(wctx,f.frame,'preview');f.cleanup();const delay=source.isAnimated?Math.round((i+1)*100/fps)-Math.round(i*100/fps):100;const pixels=wctx.getImageData(0,0,totalWidth(),height).data;const indices=mappedPixelsDither(pixels,mapper,palette,totalWidth(),height,$('previewDitherSelect').value);writer.frame(indices,delay);setPreviewProgress(progressBegin+progressSpan*(.12+.88*(i+1)/frames),`Encoding preview frame ${i+1} of ${frames} · ${fps} FPS`);if(i%2===0)await yieldThread();}
  return{data:writer.finish(false),frames,fps,colors};}
 async function exportPreviewGif(){if(!source.type||exporting)return;exporting=true;clearPreviewMessage();setStatus('exporting preview');$('previewExportBtn').disabled=true;$('previewExportBtn').innerHTML=`${icon('film')} PROCESSING...`;setPreviewProgress(0,'Starting…');let videoWasPlaying=source.type==='video'&&!source.obj.paused;let saveTime=source.type==='video'?source.obj.currentTime:0;const gifWasPlaying=source.type==='gif'&&previewPlaying;previewPlaying=false;if(source.type==='video')source.obj.pause();
  try{const fps=Number($('previewFpsRange').value),colors=Number($('previewColorsSelect').value),limitMB=Number($('previewLimitSelect').value||0),limitBytes=limitMB>0?limitMB*1024*1024:0;const attempts=[{fps,colors}];if(limitBytes&&source.isAnimated){for(const mult of [.72,.5,.34,.25]){const f=Math.max(3,Math.round(fps*mult)),c=Math.max(24,Math.round(colors*mult));if(!attempts.some(a=>a.fps===f&&a.colors===c))attempts.push({fps:f,colors:c})}}let result=null;for(let i=0;i<attempts.length;i++){result=await encodePreviewPass(attempts[i].fps,attempts[i].colors,i/attempts.length,1/attempts.length);if(!limitBytes||result.data.length<=limitBytes||i===attempts.length-1)break;}downloadBlob(new Blob([result.data],{type:'image/gif'}),`${getArtworkFilename()} - Preview.gif`);if(limitBytes&&result.data.length>limitBytes)previewMessage(`The preview was downloaded, but it is ${fmtSize(result.data.length)} and could not be reduced to ${limitMB} MB with automatic settings.`, 'error');else previewMessage(`Preview downloaded: ${fmtSize(result.data.length)} · ${result.frames} frames · ${result.fps} FPS.`, 'success');setPreviewProgress(1,'Preview ready');}
@@ -520,27 +605,23 @@ async function exportPreviewGif(){if(!source.type||exporting)return;exporting=tr
  finally{exporting=false;$('previewExportBtn').disabled=!source.type;$('previewExportBtn').innerHTML=`${icon('film')} Download Full Preview`;if(source.type==='video'&&source.obj){await seekVideo(source.obj,Math.min(saveTime,source.duration-.03)).catch(()=>{});if(videoWasPlaying)source.obj.play().catch(()=>{});updatePlayIcon()}if(source.type==='gif'){previewPlaying=gifWasPlaying;previewClock=performance.now();requestGifPreview();updatePlayIcon()}render(true)}
 }
 
-async function exportAll(){if(!source.type||exporting)return;exporting=true;cancelExport=false;clearOutputs();setStatus('exporting');$('exportBtn').disabled=true;$('exportBtn').innerHTML=`${icon('sliders')} PROCESSING...`;setProgress(0,'Starting…');
- let videoWasPlaying=source.type==='video'&&!source.obj.paused;let saveTime=source.type==='video'?source.obj.currentTime:0;const gifWasPlaying=source.type==='gif'&&previewPlaying;previewPlaying=false;if(source.type==='video')source.obj.pause();
+async function exportAll(){if(!source.type||exporting)return;exporting=true;cancelExport=false;filesOut=[];setStatus('generating');$('exportBtn').disabled=true;$('buildTruePreview').disabled=true;$('exportBtn').innerHTML=`${icon('sliders')} PROCESSING...`;setProgress(0,'Starting…');
+ const wasVideo=source.type==='video'&&!source.obj.paused,saveTime=source.type==='video'?source.obj.currentTime:0,wasGif=source.type==='gif'&&previewPlaying;previewPlaying=false;if(source.type==='video')source.obj.pause();
  try{
- const fps=Number($('fpsRange').value),colors=Number($('colorsSelect').value),auto=$('autoFit').checked;
- const attempts=[{fps,colors}];if(auto&&source.isAnimated){for(const mult of [.72,.50,.34]){const f=Math.max(3,Math.round(fps*mult)),c=Math.max(24,Math.round(colors*mult));if(!attempts.some(a=>a.fps===f&&a.colors===c))attempts.push({fps:f,colors:c})}}
- let result=null,attemptUsed=0;for(let k=0;k<attempts.length;k++){
- let attempt=attempts[k];const pass=await encodePass(attempt.fps,attempt.colors,k/attempts.length,1/attempts.length);result=pass;attemptUsed=k;
- if(pass.out.every(b=>b.length<=5*1024*1024)||!auto)break;
- if(k<attempts.length-1){setProgress((k+1)/attempts.length,`Panel exceeds 5 MB; retrying at ${attempts[k+1].fps} FPS…`);await yieldThread()}
- }
- filesOut=result.out.map((data,i)=>({name:`${String(i+1).padStart(2,'0')}.gif`,data}));
- const tooBig=filesOut.filter(f=>f.data.length>5*1024*1024);const results=$('results');results.textContent='';
- for(let i=0;i<filesOut.length;i++){const f=filesOut[i],pass=f.data.length<=5*1024*1024;const row=document.createElement('div');row.className='part';row.innerHTML=`<span class="${pass?'ok':'bad'}">${icon(pass?'check':'info','sm')}</span><span>PANEL ${String(i+1).padStart(2,'0')}</span><span class="size ${pass?'':'bad'}">${fmtSize(f.data.length)}</span>`;const btn=document.createElement('button');btn.className='btn iconbtn small';btn.title='Download '+f.name;btn.innerHTML=icon('download','sm');btn.onclick=()=>downloadBlob(new Blob([f.data],{type:'image/gif'}),f.name);row.append(btn);results.append(row)}results.classList.add('show');$('zipBtn').disabled=false;
- if(tooBig.length)message(`All five GIFs were generated, but ${tooBig.length} exceed 5 MB. Reduce height, FPS, duration, or color palette and export again.`,'error');
- else if(attemptUsed)message(`Files optimized: ${result.fps} FPS, ${result.colors} colors, ${result.frames} frames. All panels are under 5 MB.`);
- else message(`Export complete: ${result.frames} frames at ${result.fps} FPS. Five GIFs at 150 × ${height} px. Download them individually or as a ZIP.`);
- setStatus('5 GIFs generated');setProgress(1,'Five panels generated!');
- }catch(err){console.error(err);message('Could not generate GIF: '+(err.message||String(err)),'error');setStatus('export error');hideProgress()}
- finally{exporting=false;$('exportBtn').disabled=!source.type;$('exportBtn').innerHTML=`${icon('package')} GENERATE FIVE GIFS`;if(source.type==='video'&&source.obj){await seekVideo(source.obj,Math.min(saveTime,source.duration-.03)).catch(()=>{});if(videoWasPlaying)source.obj.play().catch(()=>{});updatePlayIcon()}if(source.type==='gif'){previewPlaying=gifWasPlaying;previewClock=performance.now();requestGifPreview();updatePlayIcon()}render(true)}
+  // Reuse the exact stream the user reviewed, without recompressing it.
+  const result=truePreview||await bestFivePanelGif();
+  if(result.maxBytes>PANEL_LIMIT)throw new Error('A generated panel exceeds the strict 5 MB limit. Nothing was made available for download.');
+  const patch=$('hexPatch').checked;
+  filesOut=result.out.map((validBytes,i)=>({name:`${String(i+1).padStart(2,'0')}.gif`,data:patch?(()=>{const b=validBytes.slice();b[b.length-1]=0x21;return b})():validBytes.slice()}));
+  const results=$('results');results.textContent='';
+  for(let i=0;i<filesOut.length;i++){const f=filesOut[i],row=document.createElement('div');row.className='part';row.innerHTML=`<span class="ok">${icon('check','sm')}</span><span>PANEL ${String(i+1).padStart(2,'0')}</span><span class="size">${fmtSize(f.data.length)}</span>`;const btn=document.createElement('button');btn.className='btn iconbtn small';btn.title='Download '+f.name;btn.innerHTML=icon('download','sm');btn.onclick=()=>downloadBlob(new Blob([f.data],{type:'image/gif'}),f.name);row.append(btn);results.append(row)}results.classList.add('show');$('zipBtn').disabled=false;
+  message(`Export ready: ${result.frames} frames · ${result.fps} FPS · ${result.colors} colors · ${result.ditherMode}. Every GIF fits the strict 5 MB limit. ${patch?'HEX 21 is applied only to download copies.':''}`,'success');setStatus('five GIFs ready');setProgress(1,'Done!');
+  if(!truePreview){await loadTruePreview(result)}
+ }catch(err){console.error(err);message('Could not generate 5 MB GIFs: '+(err.message||String(err)),'error');setStatus('export error');hideProgress();filesOut=[];$('zipBtn').disabled=true}
+ finally{exporting=false;$('exportBtn').disabled=!source.type;$('buildTruePreview').disabled=!source.type;$('exportBtn').innerHTML=`${icon('package')} GENERATE FIVE GIFS`;
+ if(source.type==='video'){await seekVideo(source.obj,Math.min(saveTime,source.duration-.03)).catch(()=>{});if(wasVideo)source.obj.play().catch(()=>{})}else if(wasGif){previewPlaying=true;previewClock=performance.now()};updatePlayIcon();render(true);}
 }
-$('exportBtn').onclick=exportAll;$('previewExportBtn').onclick=exportPreviewGif;
+$('exportBtn').onclick=exportAll;$('buildTruePreview').onclick=buildEncodedPreview;$('originalMode').onclick=()=>setTruePreviewMode(false);$('encodedMode').onclick=()=>setTruePreviewMode(true);$('ditherSelect').onchange=()=>clearOutputs();$('previewExportBtn').onclick=exportPreviewGif;
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000)}
 const CRC_TABLE=(()=>{let table=new Uint32Array(256);for(let i=0;i<256;i++){let c=i;for(let j=0;j<8;j++)c=c&1?0xedb88320^(c>>>1):(c>>>1);table[i]=c>>>0}return table})();
 function crc32(data){let c=0xffffffff;for(let i=0;i<data.length;i++)c=CRC_TABLE[(c^data[i])&255]^(c>>>8);return(c^0xffffffff)>>>0}
