@@ -42,6 +42,16 @@
 .flip-btn[aria-pressed="true"]{border-color:#60d7b7;color:#affee0;background:#214438;box-shadow:inset 0 0 0 1px #4ba58a}
 .rotation-labels{display:flex;justify-content:space-between;color:#78889b;font:10px ui-monospace,monospace;margin-top:5px}
 @media(max-width:640px){.time-tooltip{display:none}.timeline{padding:9px}.timeline-ruler{padding:0;gap:6px;font-size:9px}.edit-handle{width:15px}.timeline-track-wrap{padding:0 10px}}
+
+/* Artwork name is a direct input to the exported filenames and README. */
+.artwork-name-field{display:flex;align-items:center;gap:10px;min-width:185px;width:390px;max-width:40vw;margin-left:auto}
+.artwork-name-field label{white-space:nowrap;color:#b3c5d5;font-size:10px;font-weight:800;letter-spacing:.08em}
+.artwork-name-input{width:100%;min-width:0;max-width:265px;border:1px solid #365447;border-radius:9px;padding:10px 12px;background:#0d1a23;color:var(--text);outline:none;font-size:12px;transition:border-color .16s,box-shadow .16s}
+.artwork-name-input:focus{border-color:var(--mint);box-shadow:0 0 0 3px #8ce9c821}
+.artwork-name-input::placeholder{color:#7892a3}
+.topbar .version{margin-left:4px}
+@media(max-width:1050px){.artwork-name-field{width:300px}.artwork-name-field label{display:none}}
+@media(max-width:680px){.artwork-name-field{margin-left:auto;min-width:0;width:45vw}.artwork-name-input{max-width:100%}.topbar .version{display:none}}
 </style>
 </head>
 <body>
@@ -72,7 +82,8 @@
 <header class="topbar">
 <div class="mark"><svg class="icon lg"><use href="#i-layout"/></svg></div>
 <div class="brand"><strong>SHOWCASE STUDIO</strong><small>STEAM WORKSHOP · GIF / VIDEO</small></div>
-<div class="version">v1.4 · 5 PANEL EDITOR</div>
+<div class="artwork-name-field"><label for="artworkName">ARTWORK NAME</label><input id="artworkName" class="artwork-name-input" type="text" maxlength="100" spellcheck="false" autocomplete="off" placeholder="Enter artwork name" aria-label="Artwork name for downloads and README" title="Used for the ZIP filename, full GIF preview, and README title"></div>
+<div class="version">v1.5 · 5 PANEL EDITOR</div>
 </header>
 <main class="app">
 <aside class="side left">
@@ -146,7 +157,7 @@
 <div class="notice"><svg class="icon sm" style="vertical-align:-3px"><use href="#i-info"/></svg> Steam may change its upload checks. This tool generates files but cannot guarantee that Steam will always accept the HEX patch or perfectly synchronize the five animations.</div>
 <div class="smallline"></div>
 <a class="btn full" href="https://steamcommunity.com/sharedfiles/edititem/767/3/" target="_blank" rel="noopener"><svg class="icon"><use href="#i-link"/></svg> Open Workshop upload page</a>
-<p class="help" style="margin-top:12px"><strong>Easy Workshop upload:</strong> Install <a href="https://chromewebstore.google.com/detail/steam-artwork-hub-essenti/kdappijekicdbempkjaahnnmkookhfnj" target="_blank" rel="noopener noreferrer">Steam Artwork Hub Essentials</a>, choose <strong>Workshop</strong> in its uploader, then upload your five GIFs in order (01–05).</p>
+<p class="help" style="margin-top:12px"><strong>Easy Workshop upload:</strong> Install <a href="https://chromewebstore.google.com/detail/steam-artwork-hub-essenti/kdappijekicdbempkjaahnnmkookhfnj" target="_blank" rel="noopener noreferrer">Steam Artwork Hub Essentials</a>, then open <a href="https://steamcommunity.com/sharedfiles/edititem/767/3/" target="_blank" rel="noopener noreferrer">Steam's Workshop upload page</a>. Choose <strong>Workshop</strong> in the extension and upload your five GIFs individually, in order (01–05).</p>
 <p class="credits">Designed by eltorga · Runs locally without external libraries, CDNs, or file uploads to a server.</p></section>
 <section class="section"><div class="section-head"><div class="side-head"><span class="num">06</span> FULL GIF PREVIEW</div></div>
 <div class="help" style="margin-bottom:12px">Export a single animated GIF with all five panels joined together. It preserves the chosen spacing and fills the gaps with <b>#1b2838</b>.</div>
@@ -170,6 +181,10 @@ let source={type:null,obj:null,file:null,url:null,w:0,h:0,duration:0,decoder:nul
 let displayGaps=true,exporting=false,cancelExport=false,filesOut=[],lastDraw=0,rafId=0,dragState=null,trimStart=0,trimEnd=3,previewTime=0,previewPlaying=false,previewClock=0,gifPreviewFrame=null,gifPreviewIndex=-1,gifDecodePending=false,gifToken=0,dragEdge=null;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const icon=(name,cls='')=>`<svg class="icon ${cls}"><use href="#i-${name}"/></svg>`;
+const workshopUploadLink='https://steamcommunity.com/sharedfiles/edititem/767/3/';
+function getArtworkName(){return ($('artworkName')?.value||'').replace(/[\r\n\t]+/g,' ').replace(/\s+/g,' ').trim().slice(0,100)||'Untitled Artwork'}
+function getArtworkFilename(){const raw=getArtworkName().replace(/[<>:"/\\|?*\x00-\x1f]+/g,'-').replace(/[. ]+$/g,'').trim();return raw||'Untitled Artwork'}
+
 function totalWidth(){return 750+4*gap}
 function fmtTime(s){if(!Number.isFinite(s))return'00:00';return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`}
 function fmtSize(n){return n<1024*1024?`${(n/1024).toFixed(0)} KB`:`${(n/(1024*1024)).toFixed(2)} MB`}
@@ -500,7 +515,7 @@ async function encodePreviewPass(fps,colors,progressBegin,progressSpan){let dura
  for(let i=0;i<frames;i++){const f=await getFrameAt(source.isAnimated?trimStart+i/fps:0,i);compose(wctx,f.frame,'preview');f.cleanup();const delay=source.isAnimated?Math.round((i+1)*100/fps)-Math.round(i*100/fps):100;const pixels=wctx.getImageData(0,0,totalWidth(),height).data;const indices=mappedPixels(pixels,mapper);writer.frame(indices,delay);setPreviewProgress(progressBegin+progressSpan*(.12+.88*(i+1)/frames),`Encoding preview frame ${i+1} of ${frames} · ${fps} FPS`);if(i%2===0)await yieldThread();}
  return{data:writer.finish(false),frames,fps,colors};}
 async function exportPreviewGif(){if(!source.type||exporting)return;exporting=true;clearPreviewMessage();setStatus('exporting preview');$('previewExportBtn').disabled=true;$('previewExportBtn').innerHTML=`${icon('film')} PROCESSING...`;setPreviewProgress(0,'Starting…');let videoWasPlaying=source.type==='video'&&!source.obj.paused;let saveTime=source.type==='video'?source.obj.currentTime:0;const gifWasPlaying=source.type==='gif'&&previewPlaying;previewPlaying=false;if(source.type==='video')source.obj.pause();
- try{const fps=Number($('previewFpsRange').value),colors=Number($('previewColorsSelect').value),limitMB=Number($('previewLimitSelect').value||0),limitBytes=limitMB>0?limitMB*1024*1024:0;const attempts=[{fps,colors}];if(limitBytes&&source.isAnimated){for(const mult of [.72,.5,.34,.25]){const f=Math.max(3,Math.round(fps*mult)),c=Math.max(24,Math.round(colors*mult));if(!attempts.some(a=>a.fps===f&&a.colors===c))attempts.push({fps:f,colors:c})}}let result=null;for(let i=0;i<attempts.length;i++){result=await encodePreviewPass(attempts[i].fps,attempts[i].colors,i/attempts.length,1/attempts.length);if(!limitBytes||result.data.length<=limitBytes||i===attempts.length-1)break;}downloadBlob(new Blob([result.data],{type:'image/gif'}),`Preview_${totalWidth()}x${height}.gif`);if(limitBytes&&result.data.length>limitBytes)previewMessage(`The preview was downloaded, but it is ${fmtSize(result.data.length)} and could not be reduced to ${limitMB} MB with automatic settings.`, 'error');else previewMessage(`Preview downloaded: ${fmtSize(result.data.length)} · ${result.frames} frames · ${result.fps} FPS.`, 'success');setPreviewProgress(1,'Preview ready');}
+ try{const fps=Number($('previewFpsRange').value),colors=Number($('previewColorsSelect').value),limitMB=Number($('previewLimitSelect').value||0),limitBytes=limitMB>0?limitMB*1024*1024:0;const attempts=[{fps,colors}];if(limitBytes&&source.isAnimated){for(const mult of [.72,.5,.34,.25]){const f=Math.max(3,Math.round(fps*mult)),c=Math.max(24,Math.round(colors*mult));if(!attempts.some(a=>a.fps===f&&a.colors===c))attempts.push({fps:f,colors:c})}}let result=null;for(let i=0;i<attempts.length;i++){result=await encodePreviewPass(attempts[i].fps,attempts[i].colors,i/attempts.length,1/attempts.length);if(!limitBytes||result.data.length<=limitBytes||i===attempts.length-1)break;}downloadBlob(new Blob([result.data],{type:'image/gif'}),`${getArtworkFilename()} - Preview.gif`);if(limitBytes&&result.data.length>limitBytes)previewMessage(`The preview was downloaded, but it is ${fmtSize(result.data.length)} and could not be reduced to ${limitMB} MB with automatic settings.`, 'error');else previewMessage(`Preview downloaded: ${fmtSize(result.data.length)} · ${result.frames} frames · ${result.fps} FPS.`, 'success');setPreviewProgress(1,'Preview ready');}
  catch(err){console.error(err);previewMessage('Could not generate preview: '+(err.message||String(err)),'error');hidePreviewProgress();}
  finally{exporting=false;$('previewExportBtn').disabled=!source.type;$('previewExportBtn').innerHTML=`${icon('film')} Download Full Preview`;if(source.type==='video'&&source.obj){await seekVideo(source.obj,Math.min(saveTime,source.duration-.03)).catch(()=>{});if(videoWasPlaying)source.obj.play().catch(()=>{});updatePlayIcon()}if(source.type==='gif'){previewPlaying=gifWasPlaying;previewClock=performance.now();requestGifPreview();updatePlayIcon()}render(true)}
 }
@@ -534,9 +549,10 @@ function makeZip(files){const w=new ByteWriter(),central=[];const txt=new TextEn
  const centralSize=w.pos-centralStart;w.u32(0x06054b50);w.u16(0);w.u16(0);w.u16(central.length);w.u16(central.length);w.u32(centralSize);w.u32(centralStart);w.u16(0);return w.finish()}
 $('zipBtn').onclick=()=>{
  if(filesOut.length!==5)return;
- const readme=`STEAM ARTWORK WORKSHOP\r\n======================\r\n\r\nFILE CONTENTS\r\n-------------\r\n01.gif, 02.gif, 03.gif, 04.gif, 05.gif\r\nThese are five separate animated Workshop panels.\r\nPlace them left to right in numerical order: 01, 02, 03, 04, 05.\r\n\r\nPANEL DETAILS\r\n-------------\r\nEach GIF: 150 x ${height} pixels.\r\nGap between panels in the original layout: ${gap} pixels.\r\nLong GIF patch (HEX 21): ${$('hexPatch').checked?'ENABLED':'DISABLED'}.\r\n\r\nEASIEST WAY TO UPLOAD TO STEAM\r\n-----------------------------\r\nFor a simpler upload, use the Chrome extension Steam Artwork Hub Essentials:\r\n${extensionLink}\r\n\r\n1. Install and enable the extension in your browser.\r\n2. Sign in to your Steam account.\r\n3. Go to the Steam Workshop item upload page.\r\n4. In the extension's upload options, select WORKSHOP as the upload type.\r\n5. Upload 01.gif, 02.gif, 03.gif, 04.gif and 05.gif as individual Workshop items.\r\n6. Add them to your Steam profile's Workshop Showcase in left-to-right order.\r\n\r\nYou do not need to paste any special JavaScript upload commands when using\r\nthe extension's supported Workshop upload flow.\r\n\r\nNOTES\r\n-----\r\n- The HEX 21 patch is an unofficial workaround and may leave GIFs without a\r\n  normal GIF trailer; some local image viewers will not open them.\r\n- Steam may change its upload rules, so availability is not guaranteed.\r\n- Keep each Workshop GIF under 5 MB if the upload flow requires it.\r\n- The full animated preview is a separate file, not a Workshop panel.\r\n- Only upload and share artwork you own or have permission to use.\r\n\r\nDiseñado por eltorga\r\n`;
+ const readmeTitle=`${getArtworkName()} - STEAM ARTWORK WORKSHOP`;
+ const readme=`${readmeTitle}\r\n${'='.repeat(readmeTitle.length)}\r\n\r\nFILE CONTENTS\r\n-------------\r\n01.gif, 02.gif, 03.gif, 04.gif, 05.gif\r\nThese are five separate animated Workshop panels.\r\nPlace them left to right in numerical order: 01, 02, 03, 04, 05.\r\n\r\nPANEL DETAILS\r\n-------------\r\nEach GIF: 150 x ${height} pixels.\r\nGap between panels in the original layout: ${gap} pixels.\r\nLong GIF patch (HEX 21): ${$('hexPatch').checked?'ENABLED':'DISABLED'}.\r\n\r\nEASIEST WAY TO UPLOAD TO STEAM\r\n-----------------------------\r\nFor a simpler upload, use the Chrome extension Steam Artwork Hub Essentials:\r\n${extensionLink}\r\n\r\n1. Install and enable the extension in your browser.\r\n2. Sign in to your Steam account.\r\n3. Open the Steam Workshop upload page here:\r\n   https://steamcommunity.com/sharedfiles/edititem/767/3/\r\n4. With the extension installed, select WORKSHOP as the upload type.\r\n5. Upload 01.gif, 02.gif, 03.gif, 04.gif and 05.gif as separate Workshop items.\r\n6. Add all five items to your Steam profile Workshop Showcase in order, left to right.\r\n\r\nYou do not need to paste any special JavaScript upload commands when using\r\nthe extension's supported Workshop upload flow.\r\n\r\nNOTES\r\n-----\r\n- The HEX 21 patch is an unofficial workaround and may leave GIFs without a\r\n  normal GIF trailer; some local image viewers will not open them.\r\n- Steam may change its upload rules, so availability is not guaranteed.\r\n- Keep each Workshop GIF under 5 MB if the upload flow requires it.\r\n- The full animated preview is a separate file, not a Workshop panel.\r\n- Only upload and share artwork you own or have permission to use.\r\n\r\nDesigned by eltorga\r\n`;
  const all=[...filesOut,{name:'README.txt',data:new TextEncoder().encode(readme)}];
- downloadBlob(new Blob([makeZip(all)],{type:'application/zip'}),'STEAM_ARTWORK_WORKSHOP.zip');
+ downloadBlob(new Blob([makeZip(all)],{type:'application/zip'}),`${getArtworkFilename()}.zip`);
 };
 updateUI();renderLoop();
 </script>
