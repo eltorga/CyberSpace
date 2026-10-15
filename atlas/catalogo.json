@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 2,
+  "settings": {
+    "avatar": "assets/avatar.svg"
+  },
+  "generatedAt": "2026-10-15T14:50:32.685233+00:00",
+  "collections": [
+    {
+      "id": "c_5637bb94b89d3f",
+      "title": "Artes y Humanidades",
+      "description": "",
+      "parentId": null,
+      "icon": "books",
+      "path": "biblioteca/Artes y Humanidades",
+      "cover": null
+    },
+    {
+      "id": "c_f312257e6b2972",
+      "title": "Enciclopedia Universal",
+      "description": "",
+      "parentId": null,
+      "icon": "books",
+      "path": "biblioteca/Enciclopedia Universal",
+      "cover": null
+    }
+  ],
+  "books": [
+    {
+      "id": "b_b27225a3db2f8b",
+      "title": "01 Grandes Músicos",
+      "description": "",
+      "collectionId": "c_5637bb94b89d3f",
+      "path": "biblioteca/Artes y Humanidades/01 Grandes Músicos",
+      "cover": "biblioteca/Artes%20y%20Humanidades/01%20Grandes%20M%C3%BAsicos/portada.jpg",
+      "pageCount": 2,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_4236c71e44154f",
+          "title": "Ludwig van Beethoven",
+          "src": "biblioteca/Artes%20y%20Humanidades/01%20Grandes%20M%C3%BAsicos/paginas/Ludwig%20van%20Beethoven.jpg",
+          "filename": "Ludwig van Beethoven.jpg",
+          "index": 0
+        },
+        {
+          "notes": "",
+          "id": "p_f1bc3ad9981ddc",
+          "title": "Wolfgang Amadeus Mozart",
+          "src": "biblioteca/Artes%20y%20Humanidades/01%20Grandes%20M%C3%BAsicos/paginas/Wolfgang%20Amadeus%20Mozart.jpg",
+          "filename": "Wolfgang Amadeus Mozart.jpg",
+          "index": 1
+        }
+      ]
+    },
+    {
+      "id": "b_fc489918eb0a42",
+      "title": "01 Ciencias Naturales",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/01 Ciencias Naturales",
+      "cover": "biblioteca/Enciclopedia%20Universal/01%20Ciencias%20Naturales/portada.jpg",
+      "pageCount": 3,
+      "pages": [
+        {
+          "notes": "<h2>Apuntes de ejemplo</h2><p>Charles Darwin fue un naturalista cuya obra contribuyó decisivamente a la teoría de la evolución por selección natural.</p><ul><li><strong>Obra destacada:</strong> El origen de las especies (1859).</li><li><strong>Temas:</strong> adaptación, biodiversidad y selección natural.</li></ul><p><a href=\"https://es.wikipedia.org/wiki/Charles_Darwin\" rel=\"noopener noreferrer nofollow\" target=\"_blank\">Consultar biografía</a></p>",
+          "id": "p_2fb2d71ba0d330",
+          "title": "Charles Darwin",
+          "src": "biblioteca/Enciclopedia%20Universal/01%20Ciencias%20Naturales/paginas/Charles%20Darwin.jpg",
+          "filename": "Charles Darwin.jpg",
+          "index": 0
+        },
+        {
+          "notes": "",
+          "id": "p_1529582e16b6d9",
+          "title": "Gregor Mendel",
+          "src": "biblioteca/Enciclopedia%20Universal/01%20Ciencias%20Naturales/paginas/Gregor%20Mendel.jpg",
+          "filename": "Gregor Mendel.jpg",
+          "index": 1
+        },
+        {
+          "notes": "",
+          "id": "p_97816713df0f9f",
+          "title": "Jane Goodall",
+          "src": "biblioteca/Enciclopedia%20Universal/01%20Ciencias%20Naturales/paginas/Jane%20Goodall.jpg",
+          "filename": "Jane Goodall.jpg",
+          "index": 2
+        }
+      ]
+    },
+    {
+      "id": "b_29ae4c883d75e5",
+      "title": "02 Astronomía y Universo",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/02 Astronomía y Universo",
+      "cover": "biblioteca/Enciclopedia%20Universal/02%20Astronom%C3%ADa%20y%20Universo/portada.jpg",
+      "pageCount": 2,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_e4cf8fc65bdf0a",
+          "title": "Galileo Galilei",
+          "src": "biblioteca/Enciclopedia%20Universal/02%20Astronom%C3%ADa%20y%20Universo/paginas/Galileo%20Galilei.jpg",
+          "filename": "Galileo Galilei.jpg",
+          "index": 0
+        },
+        {
+          "notes": "",
+          "id": "p_88c72da3391098",
+          "title": "Nicolás Copérnico",
+          "src": "biblioteca/Enciclopedia%20Universal/02%20Astronom%C3%ADa%20y%20Universo/paginas/Nicol%C3%A1s%20Cop%C3%A9rnico.jpg",
+          "filename": "Nicolás Copérnico.jpg",
+          "index": 1
+        }
+      ]
+    },
+    {
+      "id": "b_4c2ce10ca34218",
+      "title": "03 Medicina y Cuerpo Humano",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/03 Medicina y Cuerpo Humano",
+      "cover": "biblioteca/Enciclopedia%20Universal/03%20Medicina%20y%20Cuerpo%20Humano/portada.jpg",
+      "pageCount": 2,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_bbb8d13e89c830",
+          "title": "Florence Nightingale",
+          "src": "biblioteca/Enciclopedia%20Universal/03%20Medicina%20y%20Cuerpo%20Humano/paginas/Florence%20Nightingale.jpg",
+          "filename": "Florence Nightingale.jpg",
+          "index": 0
+        },
+        {
+          "notes": "",
+          "id": "p_b5d861cf5d9851",
+          "title": "Santiago Ramón y Cajal",
+          "src": "biblioteca/Enciclopedia%20Universal/03%20Medicina%20y%20Cuerpo%20Humano/paginas/Santiago%20Ram%C3%B3n%20y%20Cajal.jpg",
+          "filename": "Santiago Ramón y Cajal.jpg",
+          "index": 1
+        }
+      ]
+    },
+    {
+      "id": "b_b77ddea280e295",
+      "title": "04 Matemáticas y Lógica",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/04 Matemáticas y Lógica",
+      "cover": "biblioteca/Enciclopedia%20Universal/04%20Matem%C3%A1ticas%20y%20L%C3%B3gica/portada.jpg",
+      "pageCount": 2,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_1d1b428b9e358c",
+          "title": "Ada Lovelace",
+          "src": "biblioteca/Enciclopedia%20Universal/04%20Matem%C3%A1ticas%20y%20L%C3%B3gica/paginas/Ada%20Lovelace.jpg",
+          "filename": "Ada Lovelace.jpg",
+          "index": 0
+        },
+        {
+          "notes": "",
+          "id": "p_7c315abc76e259",
+          "title": "Alan Turing",
+          "src": "biblioteca/Enciclopedia%20Universal/04%20Matem%C3%A1ticas%20y%20L%C3%B3gica/paginas/Alan%20Turing.jpg",
+          "filename": "Alan Turing.jpg",
+          "index": 1
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "collections": 2,
+    "books": 5,
+    "pages": 11
+  }
+}

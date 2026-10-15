@@ -1,0 +1,9 @@
+ATLAS V3 - WEB PUBLICA SIN EDICION
+
+1. Crea un repositorio PUBLICO en GitHub.
+2. Sube el CONTENIDO de esta carpeta, no la carpeta en si.
+3. En Settings > Pages selecciona Deploy from a branch, rama main, carpeta /(root).
+4. Guarda y espera a que GitHub Pages publique la pagina.
+5. La web mostrara las fichas y sus notas, pero no dejara editar nada.
+6. Para actualizar, modifica Atlas localmente, vuelve a exportar y reemplaza los archivos.
+No subas .local, el servidor ni tu biblioteca privada original.
