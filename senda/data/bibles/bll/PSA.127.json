@@ -1,0 +1,28 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Si Yahvé no construye la casa, de nada sirve que trabajen los constructores. Si Yahvé no protege la ciudad, de nada sirve que vigilen los centinelas."
+    },
+    {
+      "verse": 2,
+      "text": "Es inútil que se levanten muy temprano, y que se acuesten muy tarde, para comer un pan ganado con tanto sudor; porque él les da descanso a los que ama."
+    },
+    {
+      "verse": 3,
+      "text": "Miren, los hijos son una herencia de Yahvé, el fruto del vientre es una verdadera recompensa."
+    },
+    {
+      "verse": 4,
+      "text": "Como flechas en las manos de un guerrero, así son los hijos que se tienen en la juventud."
+    },
+    {
+      "verse": 5,
+      "text": "Dichoso el hombre que tiene su aljaba llena de ellos. No pasará vergüenza cuando se enfrente a sus enemigos en las puertas de la ciudad."
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

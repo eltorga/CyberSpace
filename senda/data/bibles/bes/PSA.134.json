@@ -1,0 +1,20 @@
+{
+  "translation_id": "bes",
+  "translation": "Biblia en Español Sencillo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Alaben al Señor, todos sus siervos que ocupan su lugar en la casa del Señor de noche."
+    },
+    {
+      "verse": 2,
+      "text": "Alaben al Señor, levantando las manos en su lugar santo."
+    },
+    {
+      "verse": 3,
+      "text": "Que el Señor, que hizo el cielo y la tierra, te bendiga desde Sión."
+    }
+  ],
+  "attribution": "La Biblia en Español Sencillo 2026, traducida y editada por Irma Flores, AudioBiblia.org. Publicada como dominio público. https://ebible.org/find/details.php?id=spabes",
+  "provider": "offline"
+}

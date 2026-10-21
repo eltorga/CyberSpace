@@ -1,0 +1,28 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Yahvé, ¿ quién podrá habitar en tu santuario? ¿ Quién podrá vivir en tu monte santo?"
+    },
+    {
+      "verse": 2,
+      "text": "El que vive con integridad y hace lo justo, y dice la verdad de todo corazón;"
+    },
+    {
+      "verse": 3,
+      "text": "el que no calumnia con su lengua, ni le hace daño a su prójimo, ni lanza ofensas contra su vecino;"
+    },
+    {
+      "verse": 4,
+      "text": "el que desprecia al que es vil, pero honra a los que temen a Yahvé; el que cumple sus promesas aunque le cueste, y no se retracta;"
+    },
+    {
+      "verse": 5,
+      "text": "el que no presta su dinero cobrando intereses, ni acepta sobornos en contra del inocente. El que así se conduce, jamás caerá."
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

@@ -1,0 +1,28 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡Aclamen con alegría a Yahvé, habitantes de toda la tierra!"
+    },
+    {
+      "verse": 2,
+      "text": "Sirvan a Yahvé con alegría; acérquense a su presencia con cánticos."
+    },
+    {
+      "verse": 3,
+      "text": "Reconozcan que Yahvé es Dios; él nos hizo, y a él le pertenecemos; somos su pueblo y las ovejas de su prado."
+    },
+    {
+      "verse": 4,
+      "text": "Entren por sus puertas con acción de gracias, y a sus atrios con alabanzas. ¡Denle gracias y bendigan su nombre!"
+    },
+    {
+      "verse": 5,
+      "text": "Porque Yahvé es bueno; su gran amor perdura para siempre, y su fidelidad por todas las generaciones."
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

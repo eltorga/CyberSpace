@@ -1,0 +1,32 @@
+{
+  "translation_id": "bes",
+  "translation": "Biblia en Español Sencillo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "El Señor es mi pastor; no me faltará ningún bien."
+    },
+    {
+      "verse": 2,
+      "text": "Me hace descansar en verdes campos y me guía junto a aguas tranquilas."
+    },
+    {
+      "verse": 3,
+      "text": "Da nueva vida a mi alma; me guía por caminos de justicia por amor a su nombre."
+    },
+    {
+      "verse": 4,
+      "text": "Aunque atraviese un valle de profunda oscuridad, no temeré ningún mal, porque tú estás conmigo. Tu vara y tu bastón de pastor me dan consuelo."
+    },
+    {
+      "verse": 5,
+      "text": "Preparas una mesa para mí delante de mis enemigos; pones aceite sobre mi cabeza, y mi copa se desborda."
+    },
+    {
+      "verse": 6,
+      "text": "La bendición y el amor fiel me acompañarán todos los días de mi vida; tendré un lugar en la casa del Señor todos mis días."
+    }
+  ],
+  "attribution": "La Biblia en Español Sencillo 2026, traducida y editada por Irma Flores, AudioBiblia.org. Publicada como dominio público. https://ebible.org/find/details.php?id=spabes",
+  "provider": "offline"
+}

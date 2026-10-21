@@ -1,0 +1,10 @@
+{
+  "version": "sblm",
+  "name": "Santa Biblia Libre para el Mundo",
+  "books": 66,
+  "chapters": 1189,
+  "license": "Dominio público",
+  "source": "https://ebible.org/Scriptures/spablm_usfm.zip",
+  "installed_at": "2026-10-21T07:59:27+00:00",
+  "text_modifications": "Solo se retiraron las etiquetas de formato USFM; texto no revisado deliberadamente."
+}

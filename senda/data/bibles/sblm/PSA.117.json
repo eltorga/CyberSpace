@@ -1,0 +1,16 @@
+{
+  "translation_id": "sblm",
+  "translation": "Santa Biblia Libre para el Mundo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡ Alabad a Yahvé, todas las naciones! ¡Exaltadle, todos los pueblos!"
+    },
+    {
+      "verse": 2,
+      "text": "Porque su misericordia es grande para con nosotros. La fidelidad de Yahvé es eterna. ¡Alabado sea Yah!"
+    }
+  ],
+  "attribution": "Santa Biblia libre para el mundo. David Williams y Michael Paul Johnson. Dominio público, traducción en revisión. https://ebible.org/details.php?id=spablm",
+  "provider": "offline"
+}

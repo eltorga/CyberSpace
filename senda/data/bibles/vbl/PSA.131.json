@@ -1,0 +1,20 @@
+{
+  "translation_id": "vbl",
+  "translation": "Versión Biblia Libre",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Señor, no soy orgulloso ni arrogante. No me preocupo de cosas que están más allá de mí, ni de problemas que están más allá de mi experiencia."
+    },
+    {
+      "verse": 2,
+      "text": "Al contrario, he escogido ser calmado y quieto, como un niño recién amamantado en el regazo de su madre. ¡Soy como un niño recién amamantado!"
+    },
+    {
+      "verse": 3,
+      "text": "Israel, pon tu esperanza en el Señor, desde ahora y para siempre."
+    }
+  ],
+  "attribution": "Versión Biblia Libre. Copyright © 2018-2020 Jonathan Gallagher y Shelly Barrios de Ávila. Bajo CC BY-SA 4.0: confirmar aviso incluido en edición oficial. Fuente https://ebible.org/details.php?id=spavbl",
+  "provider": "offline"
+}

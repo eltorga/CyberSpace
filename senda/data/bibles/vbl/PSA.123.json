@@ -1,0 +1,24 @@
+{
+  "translation_id": "vbl",
+  "translation": "Versión Biblia Libre",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Alzo mi vista hacia ti, el único que gobierna desde los cielos."
+    },
+    {
+      "verse": 2,
+      "text": "Tal como los siervos miran a su amo, o como la esclava mira a la señora de su casa, así fijamos nuestra mirada en ti, Señor, esperando que seas misericordioso con nosotros."
+    },
+    {
+      "verse": 3,
+      "text": "Por favor, ten misericordia con nosotros, Señor, tennos misericordia. Ya hemos tenido mucho desprecio por parte de la gente."
+    },
+    {
+      "verse": 4,
+      "text": "Ya hemos tenido más que suficiente de los insultos del orgulloso, y el menosprecio del arrogante."
+    }
+  ],
+  "attribution": "Versión Biblia Libre. Copyright © 2018-2020 Jonathan Gallagher y Shelly Barrios de Ávila. Bajo CC BY-SA 4.0: confirmar aviso incluido en edición oficial. Fuente https://ebible.org/details.php?id=spavbl",
+  "provider": "offline"
+}

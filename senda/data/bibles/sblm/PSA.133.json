@@ -1,0 +1,20 @@
+{
+  "translation_id": "sblm",
+  "translation": "Santa Biblia Libre para el Mundo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡ Mirad cuán bueno y cuán delicioso es habitar los hermanos juntos en armonía!"
+    },
+    {
+      "verse": 2,
+      "text": "Es como el buen óleo sobre la cabeza, el cual desciende sobre la barba, la barba de Aarón, y baja hasta el borde de sus vestiduras;"
+    },
+    {
+      "verse": 3,
+      "text": "como el rocío de Hermón, que desciende sobre los montes de Sión; porque allí envía Yahvé bendición, y vida eterna."
+    }
+  ],
+  "attribution": "Santa Biblia libre para el mundo. David Williams y Michael Paul Johnson. Dominio público, traducción en revisión. https://ebible.org/details.php?id=spablm",
+  "provider": "offline"
+}

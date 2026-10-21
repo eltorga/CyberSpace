@@ -1,0 +1,20 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡Miren qué bueno y qué agradable es que los hermanos vivan juntos en armonía!"
+    },
+    {
+      "verse": 2,
+      "text": "Es como el aceite precioso derramado sobre la cabeza, que baja por la barba, hasta la barba de Aarón, y llega hasta el borde de su manto."
+    },
+    {
+      "verse": 3,
+      "text": "Es como el rocío del monte Hermón, que cae sobre las montañas de Sión; porque allí manda Yahvé su bendición, la vida para siempre."
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

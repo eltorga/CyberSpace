@@ -1,0 +1,32 @@
+{
+  "translation_id": "sblm",
+  "translation": "Santa Biblia Libre para el Mundo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Bienaventurado todo aquel que teme a Yahvé, que anda en sus caminos."
+    },
+    {
+      "verse": 2,
+      "text": "Cuando comas del trabajo de tus manos, bienaventurado serás, y te irá bien."
+    },
+    {
+      "verse": 3,
+      "text": "Tu mujer será como vid que lleva fruto a los lados de tu casa; tus hijos como plantas de olivo alrededor de tu mesa."
+    },
+    {
+      "verse": 4,
+      "text": "He aquí que así será bendecido el hombre que teme a Yahvé."
+    },
+    {
+      "verse": 5,
+      "text": "Bendígate Yahvé desde Sión, y veas el bien de Jerusalén todos los días de tu vida."
+    },
+    {
+      "verse": 6,
+      "text": "Y veas a los hijos de tus hijos. ¡ Paz sea sobre Israel!"
+    }
+  ],
+  "attribution": "Santa Biblia libre para el mundo. David Williams y Michael Paul Johnson. Dominio público, traducción en revisión. https://ebible.org/details.php?id=spablm",
+  "provider": "offline"
+}

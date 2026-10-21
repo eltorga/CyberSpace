@@ -1,0 +1,28 @@
+{
+  "translation_id": "sblm",
+  "translation": "Santa Biblia Libre para el Mundo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡ Cantad alegres a Yahvé, habitantes de toda la tierra!"
+    },
+    {
+      "verse": 2,
+      "text": "Servid a Yahvé con alegría; venid ante su presencia con regocijo."
+    },
+    {
+      "verse": 3,
+      "text": "Reconoced que Yahvé es Dios; él nos hizo, y suyos somos; pueblo suyo somos, y ovejas de su prado."
+    },
+    {
+      "verse": 4,
+      "text": "Entrad por sus puertas con acción de gracias, por sus atrios con alabanza; alabadle, bendecid su nombre."
+    },
+    {
+      "verse": 5,
+      "text": "Porque Yahvé es bueno; para siempre es su misericordia, y su fidelidad por todas las generaciones."
+    }
+  ],
+  "attribution": "Santa Biblia libre para el mundo. David Williams y Michael Paul Johnson. Dominio público, traducción en revisión. https://ebible.org/details.php?id=spablm",
+  "provider": "offline"
+}

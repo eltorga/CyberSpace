@@ -1,0 +1,20 @@
+{
+  "translation_id": "vbl",
+  "translation": "Versión Biblia Libre",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Alaben al Señor, todos ustedes, sus siervos, que adoran en su casa al anochecer."
+    },
+    {
+      "verse": 2,
+      "text": "Levanten sus manos frente al lugar santo y adórenlo."
+    },
+    {
+      "verse": 3,
+      "text": "Que el Señor te bendiga desde Sión. Él, que hizo los cielos y la tierra."
+    }
+  ],
+  "attribution": "Versión Biblia Libre. Copyright © 2018-2020 Jonathan Gallagher y Shelly Barrios de Ávila. Bajo CC BY-SA 4.0: confirmar aviso incluido en edición oficial. Fuente https://ebible.org/details.php?id=spavbl",
+  "provider": "offline"
+}

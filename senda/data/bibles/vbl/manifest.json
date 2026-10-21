@@ -1,0 +1,10 @@
+{
+  "version": "vbl",
+  "name": "Versión Biblia Libre",
+  "books": 66,
+  "chapters": 1189,
+  "license": "CC BY-SA 4.0",
+  "source": "https://ebible.org/Scriptures/spavbl_usfm.zip",
+  "installed_at": "2026-10-21T07:59:30+00:00",
+  "text_modifications": "Solo se retiraron las etiquetas de formato USFM; texto no revisado deliberadamente."
+}

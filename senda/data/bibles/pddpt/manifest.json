@@ -1,0 +1,10 @@
+{
+  "version": "pddpt",
+  "name": "Palabra de Dios para ti",
+  "books": 66,
+  "chapters": 1189,
+  "license": "CC BY 4.0",
+  "source": "https://ebible.org/Scriptures/spapddpt_usfm.zip",
+  "installed_at": "2026-10-21T07:59:22+00:00",
+  "text_modifications": "Solo se retiraron las etiquetas de formato USFM; texto no revisado deliberadamente."
+}

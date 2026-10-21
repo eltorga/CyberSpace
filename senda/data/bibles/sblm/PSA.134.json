@@ -1,0 +1,20 @@
+{
+  "translation_id": "sblm",
+  "translation": "Santa Biblia Libre para el Mundo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡ Mirad! Bendecid a Yahvé, vosotros todos los siervos de Yahvé, los que de noche estáis en la casa de Yahvé."
+    },
+    {
+      "verse": 2,
+      "text": "Alzad vuestras manos al santuario, y bendecid a Yahvé."
+    },
+    {
+      "verse": 3,
+      "text": "Desde Sión te bendiga Yahvé, el cual hizo los cielos y la tierra."
+    }
+  ],
+  "attribution": "Santa Biblia libre para el mundo. David Williams y Michael Paul Johnson. Dominio público, traducción en revisión. https://ebible.org/details.php?id=spablm",
+  "provider": "offline"
+}
