@@ -1,10 +1,59 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 6,
   "settings": {
-    "avatar": "assets/avatar.svg"
+    "avatar": "assets/avatar.svg",
+    "imageOptimization": "lossless",
+    "imageOptimizationSummary": {
+      "files": 44,
+      "optimized": 43,
+      "originalBytes": 125700707,
+      "exportBytes": 90243612,
+      "savedBytes": 35457095,
+      "savedPercent": 28.21
+    }
   },
-  "generatedAt": "2026-10-15T14:50:32.685233+00:00",
+  "generatedAt": "2026-10-22T06:39:43.928197+00:00",
   "collections": [
+    {
+      "id": "c_063e55d5ce9b58",
+      "title": "Administración de Empresas",
+      "description": "",
+      "parentId": null,
+      "icon": "building",
+      "path": "biblioteca/Administración de Empresas",
+      "cover": null,
+      "sortOrder": 10
+    },
+    {
+      "id": "c_76762a62d306c6",
+      "title": "Administración I",
+      "description": "",
+      "parentId": "c_063e55d5ce9b58",
+      "icon": "books",
+      "path": "biblioteca/Administración de Empresas/Administración I",
+      "cover": null,
+      "sortOrder": null
+    },
+    {
+      "id": "c_70d14eccc41a57",
+      "title": "Administración II",
+      "description": "",
+      "parentId": "c_063e55d5ce9b58",
+      "icon": "books",
+      "path": "biblioteca/Administración de Empresas/Administración II",
+      "cover": null,
+      "sortOrder": null
+    },
+    {
+      "id": "c_562ec1d2295d2d",
+      "title": "Administración III",
+      "description": "",
+      "parentId": "c_063e55d5ce9b58",
+      "icon": "books",
+      "path": "biblioteca/Administración de Empresas/Administración III",
+      "cover": null,
+      "sortOrder": null
+    },
     {
       "id": "c_5637bb94b89d3f",
       "title": "Artes y Humanidades",
@@ -12,7 +61,28 @@
       "parentId": null,
       "icon": "books",
       "path": "biblioteca/Artes y Humanidades",
-      "cover": null
+      "cover": null,
+      "sortOrder": 30
+    },
+    {
+      "id": "c_e7445e70e3dc08",
+      "title": "Diseño Gráfico",
+      "description": "",
+      "parentId": null,
+      "icon": "palette",
+      "path": "biblioteca/Diseño Gráfico",
+      "cover": null,
+      "sortOrder": 20
+    },
+    {
+      "id": "c_aa4aef58e8b3f5",
+      "title": "Diseño Gráfico I",
+      "description": "",
+      "parentId": "c_e7445e70e3dc08",
+      "icon": "palette",
+      "path": "biblioteca/Diseño Gráfico/Diseño Gráfico I",
+      "cover": null,
+      "sortOrder": null
     },
     {
       "id": "c_f312257e6b2972",
@@ -21,157 +91,454 @@
       "parentId": null,
       "icon": "books",
       "path": "biblioteca/Enciclopedia Universal",
-      "cover": null
+      "cover": null,
+      "sortOrder": 0
     }
   ],
   "books": [
     {
-      "id": "b_b27225a3db2f8b",
-      "title": "01 Grandes Músicos",
+      "id": "b_db9eaa3f209413",
+      "title": "Antropología Básica",
       "description": "",
-      "collectionId": "c_5637bb94b89d3f",
-      "path": "biblioteca/Artes y Humanidades/01 Grandes Músicos",
-      "cover": "biblioteca/Artes%20y%20Humanidades/01%20Grandes%20M%C3%BAsicos/portada.jpg",
-      "pageCount": 2,
+      "collectionId": "c_562ec1d2295d2d",
+      "path": "biblioteca/Administración de Empresas/Administración III/Antropología Básica",
+      "cover": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Antropolog%C3%ADa%20B%C3%A1sica/portada.webp",
+      "pageCount": 6,
+      "sortOrder": null,
+      "libraryOrder": 0,
       "pages": [
         {
           "notes": "",
-          "id": "p_4236c71e44154f",
-          "title": "Ludwig van Beethoven",
-          "src": "biblioteca/Artes%20y%20Humanidades/01%20Grandes%20M%C3%BAsicos/paginas/Ludwig%20van%20Beethoven.jpg",
-          "filename": "Ludwig van Beethoven.jpg",
+          "id": "p_f952c81c9783ea",
+          "title": "Portada de Antropología Básica",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Antropolog%C3%ADa%20B%C3%A1sica/paginas/Portada%20de%20Antropolog%C3%ADa%20B%C3%A1sica.webp",
+          "filename": "Portada de Antropología Básica.png",
           "index": 0
         },
         {
           "notes": "",
-          "id": "p_f1bc3ad9981ddc",
-          "title": "Wolfgang Amadeus Mozart",
-          "src": "biblioteca/Artes%20y%20Humanidades/01%20Grandes%20M%C3%BAsicos/paginas/Wolfgang%20Amadeus%20Mozart.jpg",
-          "filename": "Wolfgang Amadeus Mozart.jpg",
-          "index": 1
-        }
-      ]
-    },
-    {
-      "id": "b_fc489918eb0a42",
-      "title": "01 Ciencias Naturales",
-      "description": "",
-      "collectionId": "c_f312257e6b2972",
-      "path": "biblioteca/Enciclopedia Universal/01 Ciencias Naturales",
-      "cover": "biblioteca/Enciclopedia%20Universal/01%20Ciencias%20Naturales/portada.jpg",
-      "pageCount": 3,
-      "pages": [
-        {
-          "notes": "<h2>Apuntes de ejemplo</h2><p>Charles Darwin fue un naturalista cuya obra contribuyó decisivamente a la teoría de la evolución por selección natural.</p><ul><li><strong>Obra destacada:</strong> El origen de las especies (1859).</li><li><strong>Temas:</strong> adaptación, biodiversidad y selección natural.</li></ul><p><a href=\"https://es.wikipedia.org/wiki/Charles_Darwin\" rel=\"noopener noreferrer nofollow\" target=\"_blank\">Consultar biografía</a></p>",
-          "id": "p_2fb2d71ba0d330",
-          "title": "Charles Darwin",
-          "src": "biblioteca/Enciclopedia%20Universal/01%20Ciencias%20Naturales/paginas/Charles%20Darwin.jpg",
-          "filename": "Charles Darwin.jpg",
-          "index": 0
-        },
-        {
-          "notes": "",
-          "id": "p_1529582e16b6d9",
-          "title": "Gregor Mendel",
-          "src": "biblioteca/Enciclopedia%20Universal/01%20Ciencias%20Naturales/paginas/Gregor%20Mendel.jpg",
-          "filename": "Gregor Mendel.jpg",
+          "id": "p_eef0c5a6663484",
+          "title": "1.1. Antropología Básica",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Antropolog%C3%ADa%20B%C3%A1sica/paginas/1.1.%20Antropolog%C3%ADa%20B%C3%A1sica.webp",
+          "filename": "1.1. Antropología Básica.png",
           "index": 1
         },
         {
           "notes": "",
-          "id": "p_97816713df0f9f",
-          "title": "Jane Goodall",
-          "src": "biblioteca/Enciclopedia%20Universal/01%20Ciencias%20Naturales/paginas/Jane%20Goodall.jpg",
-          "filename": "Jane Goodall.jpg",
+          "id": "p_9c9b466875163e",
+          "title": "1.2. Antropología Filosófica",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Antropolog%C3%ADa%20B%C3%A1sica/paginas/1.2.%20Antropolog%C3%ADa%20Filos%C3%B3fica.webp",
+          "filename": "1.2. Antropología Filosófica.png",
           "index": 2
+        },
+        {
+          "notes": "",
+          "id": "p_af407926603aba",
+          "title": "2.1. Creacionismo y Evolución",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Antropolog%C3%ADa%20B%C3%A1sica/paginas/2.1.%20Creacionismo%20y%20Evoluci%C3%B3n.webp",
+          "filename": "2.1. Creacionismo y Evolución.png",
+          "index": 3
+        },
+        {
+          "notes": "",
+          "id": "p_7207b2caea7b5d",
+          "title": "2.2. Evolución Darwinista",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Antropolog%C3%ADa%20B%C3%A1sica/paginas/2.2.%20Evoluci%C3%B3n%20Darwinista.webp",
+          "filename": "2.2. Evolución Darwinista.png",
+          "index": 4
+        },
+        {
+          "notes": "",
+          "id": "p_b8b1f99b1e3b9f",
+          "title": "2.3. Creación y Evolución",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Antropolog%C3%ADa%20B%C3%A1sica/paginas/2.3.%20Creaci%C3%B3n%20y%20Evoluci%C3%B3n.webp",
+          "filename": "2.3. Creación y Evolución.png",
+          "index": 5
         }
       ]
     },
     {
-      "id": "b_29ae4c883d75e5",
-      "title": "02 Astronomía y Universo",
+      "id": "b_9ea3d1d16811de",
+      "title": "Comportamiento Organizacional",
       "description": "",
-      "collectionId": "c_f312257e6b2972",
-      "path": "biblioteca/Enciclopedia Universal/02 Astronomía y Universo",
-      "cover": "biblioteca/Enciclopedia%20Universal/02%20Astronom%C3%ADa%20y%20Universo/portada.jpg",
-      "pageCount": 2,
+      "collectionId": "c_562ec1d2295d2d",
+      "path": "biblioteca/Administración de Empresas/Administración III/Comportamiento Organizacional",
+      "cover": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Comportamiento%20Organizacional/portada.webp",
+      "pageCount": 1,
+      "sortOrder": null,
+      "libraryOrder": 10,
       "pages": [
         {
           "notes": "",
-          "id": "p_e4cf8fc65bdf0a",
-          "title": "Galileo Galilei",
-          "src": "biblioteca/Enciclopedia%20Universal/02%20Astronom%C3%ADa%20y%20Universo/paginas/Galileo%20Galilei.jpg",
-          "filename": "Galileo Galilei.jpg",
+          "id": "p_a14853de94ce71",
+          "title": "Comportamiento Organizacional  Engranaje del Éxito",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Comportamiento%20Organizacional/paginas/Comportamiento%20Organizacional_%20Engranaje%20del%20%C3%89xito.webp",
+          "filename": "Comportamiento Organizacional_ Engranaje del Éxito.png",
           "index": 0
-        },
-        {
-          "notes": "",
-          "id": "p_88c72da3391098",
-          "title": "Nicolás Copérnico",
-          "src": "biblioteca/Enciclopedia%20Universal/02%20Astronom%C3%ADa%20y%20Universo/paginas/Nicol%C3%A1s%20Cop%C3%A9rnico.jpg",
-          "filename": "Nicolás Copérnico.jpg",
-          "index": 1
         }
       ]
     },
     {
-      "id": "b_4c2ce10ca34218",
-      "title": "03 Medicina y Cuerpo Humano",
+      "id": "b_f52a21b5fc8613",
+      "title": "Derecho Tributario",
       "description": "",
-      "collectionId": "c_f312257e6b2972",
-      "path": "biblioteca/Enciclopedia Universal/03 Medicina y Cuerpo Humano",
-      "cover": "biblioteca/Enciclopedia%20Universal/03%20Medicina%20y%20Cuerpo%20Humano/portada.jpg",
-      "pageCount": 2,
+      "collectionId": "c_562ec1d2295d2d",
+      "path": "biblioteca/Administración de Empresas/Administración III/Derecho Tributario",
+      "cover": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Derecho%20Tributario/portada.webp",
+      "pageCount": 1,
+      "sortOrder": null,
+      "libraryOrder": 20,
       "pages": [
         {
           "notes": "",
-          "id": "p_bbb8d13e89c830",
-          "title": "Florence Nightingale",
-          "src": "biblioteca/Enciclopedia%20Universal/03%20Medicina%20y%20Cuerpo%20Humano/paginas/Florence%20Nightingale.jpg",
-          "filename": "Florence Nightingale.jpg",
+          "id": "p_9b51f389ea3f47",
+          "title": "Derecho Tributario  Finanzas y Justicia",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Derecho%20Tributario/paginas/Derecho%20Tributario_%20Finanzas%20y%20Justicia.webp",
+          "filename": "Derecho Tributario_ Finanzas y Justicia.png",
           "index": 0
-        },
-        {
-          "notes": "",
-          "id": "p_b5d861cf5d9851",
-          "title": "Santiago Ramón y Cajal",
-          "src": "biblioteca/Enciclopedia%20Universal/03%20Medicina%20y%20Cuerpo%20Humano/paginas/Santiago%20Ram%C3%B3n%20y%20Cajal.jpg",
-          "filename": "Santiago Ramón y Cajal.jpg",
-          "index": 1
         }
       ]
     },
     {
-      "id": "b_b77ddea280e295",
-      "title": "04 Matemáticas y Lógica",
+      "id": "b_fff6ade94e488a",
+      "title": "Legislación Empresarial",
       "description": "",
-      "collectionId": "c_f312257e6b2972",
-      "path": "biblioteca/Enciclopedia Universal/04 Matemáticas y Lógica",
-      "cover": "biblioteca/Enciclopedia%20Universal/04%20Matem%C3%A1ticas%20y%20L%C3%B3gica/portada.jpg",
-      "pageCount": 2,
+      "collectionId": "c_562ec1d2295d2d",
+      "path": "biblioteca/Administración de Empresas/Administración III/Legislación Empresarial",
+      "cover": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Legislaci%C3%B3n%20Empresarial/portada.webp",
+      "pageCount": 1,
+      "sortOrder": null,
+      "libraryOrder": 30,
       "pages": [
         {
           "notes": "",
-          "id": "p_1d1b428b9e358c",
-          "title": "Ada Lovelace",
-          "src": "biblioteca/Enciclopedia%20Universal/04%20Matem%C3%A1ticas%20y%20L%C3%B3gica/paginas/Ada%20Lovelace.jpg",
-          "filename": "Ada Lovelace.jpg",
+          "id": "p_c81fc8c0adcafb",
+          "title": "Legislación Empresarial",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Legislaci%C3%B3n%20Empresarial/paginas/Legislaci%C3%B3n%20Empresarial.webp",
+          "filename": "Legislación Empresarial.png",
           "index": 0
-        },
+        }
+      ]
+    },
+    {
+      "id": "b_ce144dcbcb68f8",
+      "title": "Teoría Microeconómica",
+      "description": "",
+      "collectionId": "c_562ec1d2295d2d",
+      "path": "biblioteca/Administración de Empresas/Administración III/Teoría Microeconómica",
+      "cover": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Teor%C3%ADa%20Microecon%C3%B3mica/portada.webp",
+      "pageCount": 1,
+      "sortOrder": null,
+      "libraryOrder": 40,
+      "pages": [
         {
           "notes": "",
-          "id": "p_7c315abc76e259",
-          "title": "Alan Turing",
-          "src": "biblioteca/Enciclopedia%20Universal/04%20Matem%C3%A1ticas%20y%20L%C3%B3gica/paginas/Alan%20Turing.jpg",
-          "filename": "Alan Turing.jpg",
-          "index": 1
+          "id": "p_f6bc531be0694c",
+          "title": "Teoría Microeconómica",
+          "src": "biblioteca/Administraci%C3%B3n%20de%20Empresas/Administraci%C3%B3n%20III/Teor%C3%ADa%20Microecon%C3%B3mica/paginas/Teor%C3%ADa%20Microecon%C3%B3mica.webp",
+          "filename": "Teoría Microeconómica.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_2de1639f5333ae",
+      "title": "Arte y Arquitectura",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Arte y Arquitectura",
+      "cover": "biblioteca/Enciclopedia%20Universal/Arte%20y%20Arquitectura/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 90,
+      "libraryOrder": 110,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_2b325f9a35db16",
+          "title": "Enciclopedia ilustrada  Arte y arquitectura",
+          "src": "biblioteca/Enciclopedia%20Universal/Arte%20y%20Arquitectura/paginas/Enciclopedia%20ilustrada_%20Arte%20y%20arquitectura.webp",
+          "filename": "Enciclopedia ilustrada_ Arte y arquitectura.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_20916130b2093e",
+      "title": "Astronomía y Universo",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Astronomía y Universo",
+      "cover": "biblioteca/Enciclopedia%20Universal/Astronom%C3%ADa%20y%20Universo/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 10,
+      "libraryOrder": 60,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_7244455f715588",
+          "title": "Enciclopedia Ilustrada  Astronomía y Universo",
+          "src": "biblioteca/Enciclopedia%20Universal/Astronom%C3%ADa%20y%20Universo/paginas/Enciclopedia%20Ilustrada_%20Astronom%C3%ADa%20y%20Universo.webp",
+          "filename": "Enciclopedia Ilustrada_ Astronomía y Universo.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_ebe1f6ec52eade",
+      "title": "Ciencias Naturales",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Ciencias Naturales",
+      "cover": "biblioteca/Enciclopedia%20Universal/Ciencias%20Naturales/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 0,
+      "libraryOrder": 50,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_bb2bcb25ce2ede",
+          "title": "Enciclopedia Ilustrada  Ciencias Naturales",
+          "src": "biblioteca/Enciclopedia%20Universal/Ciencias%20Naturales/paginas/Enciclopedia%20Ilustrada_%20Ciencias%20Naturales.webp",
+          "filename": "Enciclopedia Ilustrada_ Ciencias Naturales.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_33eb04b73c8df8",
+      "title": "Culturas, Mitología y Religiones",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Culturas, Mitología y Religiones",
+      "cover": "biblioteca/Enciclopedia%20Universal/Culturas%2C%20Mitolog%C3%ADa%20y%20Religiones/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 110,
+      "libraryOrder": 150,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_360a462b024d40",
+          "title": "Enciclopedia de Culturas y Religiones",
+          "src": "biblioteca/Enciclopedia%20Universal/Culturas%2C%20Mitolog%C3%ADa%20y%20Religiones/paginas/Enciclopedia%20de%20Culturas%20y%20Religiones.webp",
+          "filename": "Enciclopedia de Culturas y Religiones.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_1c179e9d029674",
+      "title": "Filosofía y Pensamiento",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Filosofía y Pensamiento",
+      "cover": "biblioteca/Enciclopedia%20Universal/Filosof%C3%ADa%20y%20Pensamiento/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 100,
+      "libraryOrder": 160,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_062fbb54684a9e",
+          "title": "Enciclopedia Ilustrada  Filosofía y Pensamiento",
+          "src": "biblioteca/Enciclopedia%20Universal/Filosof%C3%ADa%20y%20Pensamiento/paginas/Enciclopedia%20Ilustrada_%20Filosof%C3%ADa%20y%20Pensamiento.webp",
+          "filename": "Enciclopedia Ilustrada_ Filosofía y Pensamiento.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_0a9c3fcc706e4a",
+      "title": "Geografía y Medioambiente",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Geografía y Medioambiente",
+      "cover": "biblioteca/Enciclopedia%20Universal/Geograf%C3%ADa%20y%20Medioambiente/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 60,
+      "libraryOrder": 120,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_66bd153bcd0b8e",
+          "title": "Enciclopedia ilustrada  geografía y biodiversidad",
+          "src": "biblioteca/Enciclopedia%20Universal/Geograf%C3%ADa%20y%20Medioambiente/paginas/Enciclopedia%20ilustrada_%20geograf%C3%ADa%20y%20biodiversidad.webp",
+          "filename": "Enciclopedia ilustrada_ geografía y biodiversidad.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_7020da6699e88c",
+      "title": "Historia Universal",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Historia Universal",
+      "cover": "biblioteca/Enciclopedia%20Universal/Historia%20Universal/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 50,
+      "libraryOrder": 100,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_f733328cc9d6e8",
+          "title": "Historia Universal  Antigüedad y Revoluciones",
+          "src": "biblioteca/Enciclopedia%20Universal/Historia%20Universal/paginas/Historia%20Universal_%20Antig%C3%BCedad%20y%20Revoluciones.webp",
+          "filename": "Historia Universal_ Antigüedad y Revoluciones.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_b16772a8f111b9",
+      "title": "Lenguas y Comunicación",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Lenguas y Comunicación",
+      "cover": "biblioteca/Enciclopedia%20Universal/Lenguas%20y%20Comunicaci%C3%B3n/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 130,
+      "libraryOrder": 170,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_b60bdeffb6cf4d",
+          "title": "Lenguas y Comunicación",
+          "src": "biblioteca/Enciclopedia%20Universal/Lenguas%20y%20Comunicaci%C3%B3n/paginas/Lenguas%20y%20Comunicaci%C3%B3n.webp",
+          "filename": "Lenguas y Comunicación.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_9b59ba642fbf03",
+      "title": "Literatura Universal",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Literatura Universal",
+      "cover": "biblioteca/Enciclopedia%20Universal/Literatura%20Universal/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 70,
+      "libraryOrder": 130,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_d49c271332313b",
+          "title": "Enciclopedia ilustrada  Literatura universal",
+          "src": "biblioteca/Enciclopedia%20Universal/Literatura%20Universal/paginas/Enciclopedia%20ilustrada_%20Literatura%20universal.webp",
+          "filename": "Enciclopedia ilustrada_ Literatura universal.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_a93041888eca32",
+      "title": "Matemáticas y Lógica",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Matemáticas y Lógica",
+      "cover": "biblioteca/Enciclopedia%20Universal/Matem%C3%A1ticas%20y%20L%C3%B3gica/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 30,
+      "libraryOrder": 80,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_a48be436184d4a",
+          "title": "Enciclopedia de Matemáticas y Lógica",
+          "src": "biblioteca/Enciclopedia%20Universal/Matem%C3%A1ticas%20y%20L%C3%B3gica/paginas/Enciclopedia%20de%20Matem%C3%A1ticas%20y%20L%C3%B3gica.webp",
+          "filename": "Enciclopedia de Matemáticas y Lógica.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_418b93aceae592",
+      "title": "Medicina y Cuerpo Humano",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Medicina y Cuerpo Humano",
+      "cover": "biblioteca/Enciclopedia%20Universal/Medicina%20y%20Cuerpo%20Humano/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 20,
+      "libraryOrder": 70,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_2d3c300795c3cf",
+          "title": "Enciclopedia Ilustrada  Medicina y Cuerpo Humano",
+          "src": "biblioteca/Enciclopedia%20Universal/Medicina%20y%20Cuerpo%20Humano/paginas/Enciclopedia%20Ilustrada_%20Medicina%20y%20Cuerpo%20Humano.webp",
+          "filename": "Enciclopedia Ilustrada_ Medicina y Cuerpo Humano.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_0fbda4dd5d7489",
+      "title": "Música Universal",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Música Universal",
+      "cover": "biblioteca/Enciclopedia%20Universal/M%C3%BAsica%20Universal/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 80,
+      "libraryOrder": 140,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_a03ba2ab676296",
+          "title": "Enciclopedia ilustrada  Música universal",
+          "src": "biblioteca/Enciclopedia%20Universal/M%C3%BAsica%20Universal/paginas/Enciclopedia%20ilustrada_%20M%C3%BAsica%20universal.webp",
+          "filename": "Enciclopedia ilustrada_ Música universal.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_d6e93f95af48ed",
+      "title": "Sociedad y Ciencias Sociales",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Sociedad y Ciencias Sociales",
+      "cover": "biblioteca/Enciclopedia%20Universal/Sociedad%20y%20Ciencias%20Sociales/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 120,
+      "libraryOrder": 180,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_a2b9a87fea8487",
+          "title": "Enciclopedia Ilustrada 13  Sociedad y Ciencias Sociales",
+          "src": "biblioteca/Enciclopedia%20Universal/Sociedad%20y%20Ciencias%20Sociales/paginas/Enciclopedia%20Ilustrada%2013_%20Sociedad%20y%20Ciencias%20Sociales.webp",
+          "filename": "Enciclopedia Ilustrada 13_ Sociedad y Ciencias Sociales.png",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "b_d7600faafc802b",
+      "title": "Tecnología e Inventos",
+      "description": "",
+      "collectionId": "c_f312257e6b2972",
+      "path": "biblioteca/Enciclopedia Universal/Tecnología e Inventos",
+      "cover": "biblioteca/Enciclopedia%20Universal/Tecnolog%C3%ADa%20e%20Inventos/portada.webp",
+      "pageCount": 1,
+      "sortOrder": 40,
+      "libraryOrder": 90,
+      "pages": [
+        {
+          "notes": "",
+          "id": "p_d49c18508d2df9",
+          "title": "Enciclopedia Ilustrada  Tecnología e Inventos",
+          "src": "biblioteca/Enciclopedia%20Universal/Tecnolog%C3%ADa%20e%20Inventos/paginas/Enciclopedia%20Ilustrada_%20Tecnolog%C3%ADa%20e%20Inventos.webp",
+          "filename": "Enciclopedia Ilustrada_ Tecnología e Inventos.png",
+          "index": 0
         }
       ]
     }
   ],
   "stats": {
-    "collections": 2,
-    "books": 5,
-    "pages": 11
+    "collections": 8,
+    "books": 19,
+    "pages": 24
   }
 }
