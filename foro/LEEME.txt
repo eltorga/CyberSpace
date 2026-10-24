@@ -1,0 +1,21 @@
+ELTORGA FORO v0.1 — Edición local Windows
+
+1. Instala Python 3 si aún no lo tienes.
+2. Haz doble clic en ADMIN.bat.
+3. Se abrirá el panel local: http://127.0.0.1:8765/admin/
+4. Edita publicaciones, foros, fondos, imágenes, Giscus y configuración.
+5. Para publicar en GitHub Pages sube index.html y las carpetas data/ y assets/.
+   No necesitas subir ADMIN.bat ni admin/ al repositorio público.
+6. En GitHub Pages utiliza la carpeta raíz del repositorio como fuente.
+
+IMPORTANTE: En esta versión el panel funciona exclusivamente en la PC que
+inicia ADMIN.bat. Los JSON y las imágenes se guardan directamente en disco.
+Las fotos de las bases originales no fueron incluidas: se limpiaron las
+referencias a archivos gráficos externos en campos de foros y Markdown.
+
+GISCUS: requiere Discussions activo en eltorga/CyberSpace y la app Giscus
+instalada. Cada post usa el ID permanente para data-term.
+La pestaña Reacciones guarda iconos Remix Icon como preferencias para una
+capa visual posterior: no altera las reacciones nativas del iframe Giscus.
+
+Recomendación: conserva siempre una copia de seguridad de data/ y assets/.

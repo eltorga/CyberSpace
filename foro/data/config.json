@@ -1,0 +1,35 @@
+{
+  "siteTitle": "Eltorga Foro",
+  "heroTitle": "Foro Online",
+  "logo": "",
+  "heroMedia": "",
+  "globalBackground": "",
+  "avatar": "",
+  "socialLinks": {
+    "steam": "https://steamcommunity.com/",
+    "discord": "https://discord.com/",
+    "youtube": "https://youtube.com/"
+  },
+  "giscus": {
+    "enabled": true,
+    "repo": "eltorga/CyberSpace",
+    "repoId": "R_kgDOTQBogQ",
+    "category": "Comentarios del Foro",
+    "categoryId": "DIC_kwDOTQBogc4DJVNi",
+    "theme": "noborder_dark",
+    "lang": "es"
+  },
+  "reactions": {
+    "mode": "native",
+    "icons": {
+      "THUMBS_UP": "ri-thumb-up-line",
+      "THUMBS_DOWN": "ri-thumb-down-line",
+      "LAUGH": "ri-emotion-happy-line",
+      "HOORAY": "ri-party-popper-line",
+      "CONFUSED": "ri-question-line",
+      "HEART": "ri-heart-line",
+      "ROCKET": "ri-rocket-line",
+      "EYES": "ri-eye-line"
+    }
+  }
+}
