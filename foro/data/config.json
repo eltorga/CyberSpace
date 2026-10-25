@@ -1,9 +1,9 @@
 {
   "siteTitle": "Eltorga Foro",
   "heroTitle": "Foro Online",
-  "logo": "",
+  "logo": "assets/logos/eltorgaforo_logo_v3-56d7a741.png",
   "heroMedia": "",
-  "globalBackground": "",
+  "globalBackground": "assets/fondos/b9ab43211c8f592a416a2235faf50b33-99967a89.jpg",
   "avatar": "",
   "socialLinks": {
     "steam": "https://steamcommunity.com/",
@@ -31,5 +31,63 @@
       "ROCKET": "ri-rocket-line",
       "EYES": "ri-eye-line"
     }
-  }
+  },
+  "downloads": {
+    "disclaimer": "Eltorga no aloja archivos de terceros. Compartimos enlaces disponibles públicamente en Internet. Cada usuario es responsable de comprobar la procedencia, seguridad y legalidad de los archivos antes de descargarlos.",
+    "scripts": "",
+    "icons": [
+      {
+        "name": "Archivo",
+        "icon": "si:files"
+      },
+      {
+        "name": "MEGA",
+        "icon": "si:mega"
+      },
+      {
+        "name": "MediaFire",
+        "icon": "si:mediafire"
+      }
+    ]
+  },
+  "heroLinks": [
+    {
+      "name": "Steam",
+      "url": "https://steamcommunity.com/",
+      "icon": "si:steam"
+    },
+    {
+      "name": "Discord",
+      "url": "https://discord.com/",
+      "icon": "si:discord"
+    },
+    {
+      "name": "YouTube",
+      "url": "https://youtube.com/",
+      "icon": "si:youtube"
+    }
+  ],
+  "navItems": [
+    {
+      "title": "Streams",
+      "children": [
+        {
+          "title": "YouTube",
+          "url": "https://youtube.com"
+        },
+        {
+          "title": "Twitch",
+          "url": "https://twitch.tv"
+        }
+      ]
+    },
+    {
+      "title": "Foro",
+      "url": "#"
+    },
+    {
+      "title": "Blog",
+      "url": "#"
+    }
+  ]
 }

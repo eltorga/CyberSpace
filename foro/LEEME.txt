@@ -1,21 +1,20 @@
-ELTORGA FORO v0.1 — Edición local Windows
+Eltorga Foro v0.2.2
 
-1. Instala Python 3 si aún no lo tienes.
-2. Haz doble clic en ADMIN.bat.
-3. Se abrirá el panel local: http://127.0.0.1:8765/admin/
-4. Edita publicaciones, foros, fondos, imágenes, Giscus y configuración.
-5. Para publicar en GitHub Pages sube index.html y las carpetas data/ y assets/.
-   No necesitas subir ADMIN.bat ni admin/ al repositorio público.
-6. En GitHub Pages utiliza la carpeta raíz del repositorio como fuente.
+Ejecuta ADMIN.bat con Python 3 instalado. Admin: http://127.0.0.1:8765/admin/
 
-IMPORTANTE: En esta versión el panel funciona exclusivamente en la PC que
-inicia ADMIN.bat. Los JSON y las imágenes se guardan directamente en disco.
-Las fotos de las bases originales no fueron incluidas: se limpiaron las
-referencias a archivos gráficos externos en campos de foros y Markdown.
+Respaldo: apartado Respaldo completo. Exporta ZIP con JSON, HTML, medios y CSS/JS. Importa ZIP compatible para restaurar. Se conserva una copia previa local en backups/.
 
-GISCUS: requiere Discussions activo en eltorga/CyberSpace y la app Giscus
-instalada. Cada post usa el ID permanente para data-term.
-La pestaña Reacciones guarda iconos Remix Icon como preferencias para una
-capa visual posterior: no altera las reacciones nativas del iframe Giscus.
+Antes de subir a GitHub Pages excluye admin/, ADMIN.bat, backups/ y archivos sensibles. Giscus nativo puede mostrar comentarios; para contador, avatar y último comentarista por lista hace falta GitHub API y autenticación o un proxy seguro. No se implementa aquí para no dar información falsa.
 
-Recomendación: conserva siempre una copia de seguridad de data/ y assets/.
+La traducción automática de Google depende de terceros y no es posible ocultar por completo su UI ni garantizar traducción perfecta en SPA.
+
+Prueba en Chrome/Edge y verifica el contenido migrado y los elementos personalizados antes de publicar.
+
+
+CORRECCIONES v0.2.2:
+- Todas las cargas de imagen/video crean la carpeta assets correspondiente si no existe.
+- Incluidas carpetas assets vacías en el ZIP para evitar el error [Errno 2].
+- Hero y Cabecera: eliminar con icono de papelera compacto, mover con flechas o arrastrar.
+- Al reordenar Hero se conservan los textos, URL, iconos y fondo aún no guardados.
+- Para mantener tus publicaciones/ediciones de una instalación anterior, aplica el ZIP PARCHE (solo admin y carpetas vacías), no reemplaces data/*.json.
+- Después de cambios del panel Hero o Cabecera pulsa Guardar correspondiente.

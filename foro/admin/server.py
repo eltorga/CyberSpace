@@ -1,16 +1,25 @@
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit, unquote
-import json, mimetypes, os, re, shutil, uuid
+import json, mimetypes, os, re, shutil, uuid, io, zipfile, datetime
 ROOT=Path(__file__).resolve().parent.parent
 os.chdir(ROOT)
-MAX_UPLOAD=30*1024*1024
+MAX_UPLOAD=1024*1024*1024
 DATA={'foros':'data/foros.json','posts':'data/posts.json','config':'data/config.json'}
 class Handler(SimpleHTTPRequestHandler):
     def send_json(self,value,status=200):
         raw=json.dumps(value,ensure_ascii=False).encode('utf8');self.send_response(status)
         self.send_header('Content-Type','application/json; charset=utf-8');self.send_header('Content-Length',str(len(raw)));self.send_header('Cache-Control','no-store');self.end_headers();self.wfile.write(raw)
     def do_GET(self):
+        if urlsplit(self.path).path=='/api/backup':
+            output=io.BytesIO()
+            with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED) as z:
+                for dirname in ('data','assets','css','js'):
+                    for f in (ROOT/dirname).rglob('*'):
+                        if f.is_file():z.write(f,f.relative_to(ROOT).as_posix())
+                for name in ('index.html','descarga.html'):
+                    if (ROOT/name).is_file():z.write(ROOT/name,name)
+            raw=output.getvalue();self.send_response(200);self.send_header('Content-Type','application/zip');self.send_header('Content-Disposition','attachment; filename="eltorga-respaldo.zip"');self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw);return
         if urlsplit(self.path).path=='/admin':self.send_response(302);self.send_header('Location','/admin/');self.end_headers();return
         if urlsplit(self.path).path.startswith('/api/'):
             key=urlsplit(self.path).path.split('/')[-1]
@@ -25,6 +34,32 @@ class Handler(SimpleHTTPRequestHandler):
             length=int(self.headers.get('Content-Length','0'))
             if length<1 or length>MAX_UPLOAD: return self.send_json({'error':'Tamaño inválido o demasiado grande'},413)
             body=self.rfile.read(length)
+            if path=='/api/restore':
+                if not zipfile.is_zipfile(io.BytesIO(body)):raise ValueError('ZIP inválido')
+                with zipfile.ZipFile(io.BytesIO(body)) as archive:
+                    files=[x for x in archive.infolist() if not x.is_dir()]
+                    if len(files)>10000 or sum(x.file_size for x in files)>1024*1024*1024:raise ValueError('Respaldo demasiado grande')
+                    allowed=('data/','assets/','css/','js/')
+                    for info in files:
+                        n=info.filename
+                        if n.startswith('/') or '\\' in n or '..' in Path(n).parts or not(n.startswith(allowed) or n in ('index.html','descarga.html')):raise ValueError('Ruta no permitida en ZIP')
+                    names={x.filename for x in files}
+                    for required in DATA.values():
+                        if required not in names:raise ValueError('Falta '+required)
+                    for required in DATA.values():
+                        val=json.loads(archive.read(required))
+                        if not isinstance(val,dict if required.endswith('config.json') else list):raise ValueError('JSON inválido: '+required)
+                    snapshots=ROOT/'backups';snapshots.mkdir(exist_ok=True)
+                    timestamp=datetime.datetime.now().strftime('%Y%m%d-%H%M%S');snapshot=snapshots/('antes-de-restaurar-'+timestamp+'.zip')
+                    with zipfile.ZipFile(snapshot,'w',zipfile.ZIP_DEFLATED) as old:
+                        for directory in ('data','assets','css','js'):
+                            for f in (ROOT/directory).rglob('*'):
+                                if f.is_file():old.write(f,f.relative_to(ROOT).as_posix())
+                        for name in ('index.html','descarga.html'):
+                            if (ROOT/name).exists():old.write(ROOT/name,name)
+                    for info in files:
+                        dest=ROOT/info.filename;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(archive.read(info))
+                return self.send_json({'ok':True,'pre_restore_backup':str(snapshot.relative_to(ROOT))})
             if path.startswith('/api/save/'):
                 key=path.rsplit('/',1)[-1]
                 if key not in DATA:return self.send_json({'error':'Recurso inválido'},404)
@@ -51,7 +86,11 @@ class Handler(SimpleHTTPRequestHandler):
                 if ext=='.svg':return self.send_json({'error':'SVG deshabilitado por seguridad. Usa PNG o WEBP.'},415)
                 clean=re.sub('[^a-zA-Z0-9_-]+','-',Path(filename).stem).strip('-')[:45] or 'imagen'
                 name=clean+'-'+uuid.uuid4().hex[:8]+ext
-                target=ROOT/'assets'/group/name;target.write_bytes(body)
+                # Las carpetas de recursos pueden no existir después de descomprimir
+                # un ZIP que no guardaba directorios vacíos. Crear siempre el destino.
+                target=ROOT/'assets'/group/name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(body)
                 return self.send_json({'ok':True,'path':f'assets/{group}/{name}'})
             return self.send_json({'error':'Ruta desconocida'},404)
         except (ValueError,json.JSONDecodeError) as e:self.send_json({'error':str(e)},400)

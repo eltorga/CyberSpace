@@ -278,7 +278,7 @@
         .related-title-sep { font-size: 0.85rem; color: var(--steam-grey); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--steam-border); padding-bottom: 5px; }
         .related-posts-container { background: var(--steam-panel); border: 1px solid var(--steam-border); border-radius: 4px; margin-bottom: 20px; overflow: hidden;}
         
-        .related-post-row { display: grid; grid-template-columns: minmax(0, 2fr) auto 100px 110px; gap: 15px; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background 0.2s; }
+        .related-post-row { display: grid; grid-template-columns: minmax(0, 2fr) 100px 110px; gap: 15px; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background 0.2s; }
         .related-post-row:hover { background: rgba(255,255,255,0.1); }
         .related-post-row:last-child { border-bottom: none; }
         
@@ -326,7 +326,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
 <script defer src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
-</head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons-font@v15/font/simple-icons.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><style>.elt-code pre{padding:15px;overflow:auto}.elt-code .elt-copy{border:0;border-radius:4px;background:#32648c;color:white;padding:6px 12px;cursor:pointer}.comment-meta{font-size:12px;color:var(--steam-grey)}</style></head>
 <body>
 
     <div class="bg-global-container" id="bg-global-container"></div>
@@ -455,12 +455,24 @@
                 if(config.heroMedia) {hv.src=config.heroMedia;hv.style.display='block';}
                 const av=document.getElementById('author-avatar');
                 if(av && config.avatar){av.src=config.avatar;av.style.display='block';}
-                procesarDatos(struct.filter(r=>r.ESTADO === 'Publicado'),posts.filter(r=>r.ESTADO === 'Publicado'));
-                renderizarSidebarWidgets(); manejarRuta();
+                procesarDatos(struct.filter(r=>['Publicado','Fijado'].includes(r.ESTADO)),posts.filter(r=>['Publicado','Fijado'].includes(r.ESTADO)));
+                renderizarSidebarWidgets();renderDynamicHeader(); manejarRuta();
                 window.addEventListener('hashchange',manejarRuta);
             } catch(e) {console.error(e);document.getElementById('app-content').textContent='No se pudieron cargar los datos. Abre la web con un servidor local (ADMIN.bat).';}
         });
         function safeAttr(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+        function renderLocalReactions(post) {
+            const r=siteConfig.reactions||{}; if(!['stars','remix','emojis'].includes(r.mode))return;
+            const mount=document.getElementById('local-reactions');if(!mount)return;
+            const key='eltorga-vote-'+(post.ROUTE_ID||post.ID),old=localStorage.getItem(key)||'';
+            const opts=r.mode==='stars'?Array.from({length:5},(_,i)=>({key:String(i+1),icon:'ri-star-fill',label:(i+1)+' estrellas'})):r.mode==='emojis'?[{key:'heart',icon:'ri-heart-fill',label:'Me encanta'},{key:'fire',icon:'ri-fire-fill',label:'Genial'},{key:'laugh',icon:'ri-emotion-laugh-fill',label:'Divertido'}]:Object.entries(r.icons||{}).map(([key,icon])=>({key,icon,label:key}));
+            mount.innerHTML='<div style="padding:15px;background:#202a36;border:1px solid #3a404d;border-radius:5px"><strong>Tu reacción</strong><div id="vote-buttons" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"></div><small style="color:#8f98a0">Preferencia guardada solo en este navegador; no es un recuento público.</small></div>';
+            const box=document.getElementById('vote-buttons');opts.forEach(o=>{if(!/^ri-[a-z0-9-]+$/.test(o.icon))return;const btn=document.createElement('button');btn.type='button';btn.style.cssText='background:'+(old===o.key?'#2a718b':'#2a475e')+';border:1px solid #52718b;color:#fff;padding:8px 12px;cursor:pointer;border-radius:4px';btn.innerHTML='<i class="'+o.icon+'"></i> '+o.label;btn.onclick=()=>{localStorage.setItem(key,o.key);renderLocalReactions(post)};box.append(btn)})
+        }
+        function slugTitulo(value) { return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ñ/gi,m=>m==='Ñ'?'N':'n').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'publicacion'; }
+        function iconMarkup(value) { if(!value)return ''; if(/^ri-[a-z0-9-]+$/.test(value))return '<i class="'+value+'"></i>'; if(/^si:[a-z0-9-]+$/.test(value))return '<i class="si si-'+value.slice(3)+'"></i>';return ''; }
+        function postContent(post) { const raw=post.POST||''; return post.CONTENT_FORMAT==='html' ? DOMPurify.sanitize(raw,{ADD_TAGS:['iframe'],ADD_ATTR:['allowfullscreen','allow','frameborder','loading','referrerpolicy','target','rel','data-download-url','data-download-title']}) : customMarkdownParse(raw); }
         function procesarDatos(struct, posts) {
             foroData = {};
             postsGlobal = [];
@@ -496,18 +508,18 @@
             });
 
             posts.forEach(post => {
-                const target = (post.FORO || post.SUBFORO)?.trim(); 
+                const target = (post.SUBFORO || post.FORO)?.trim(); 
                 if(!target) return;
                 
                 let asignado = false;
-                post.slug = post.ID || post.TITULO?.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                post.slug = (post.ROUTE_ID || post.ID) + '/' + slugTitulo(post.TITULO || 'publicacion');
                 post.palabras = contarPalabras(post.POST);
                 post.primeraImagen = extraerPrimeraImagen(post.POST);
                 
                 let cleanTags = [];
                 if(post.ETIQUETAS) {
                     cleanTags = post.ETIQUETAS.split(',').map(t=>t.trim());
-                    post.isPinned = cleanTags.some(t => t.toLowerCase() === 'pin');
+                    post.isPinned = post.ESTADO === 'Fijado' || cleanTags.some(t => t.toLowerCase() === 'pin');
                     post.cleanTagsArray = cleanTags.filter(t => t.toLowerCase() !== 'pin');
                     
                     post.cleanTagsArray.forEach(t => {
@@ -758,7 +770,7 @@
                 heroSection.style.display = 'none';
                 
                 if (parts[0] === 'foro' || parts[0] === 'subforo') {
-                    sidebar.style.display = 'none';
+                    sidebar.style.display = 'flex';
                 } else if (parts[0] === 'post') {
                     sidebar.style.display = 'flex';
                 }
@@ -768,7 +780,7 @@
                 } else if (parts[0] === 'subforo') {
                     renderSubforoView(content, decodeURIComponent(parts[1]), decodeURIComponent(parts[2]), tagFiltro);
                 } else if (parts[0] === 'post') {
-                    renderPostView(content, decodeURIComponent(parts[1]));
+                    renderPostView(content, decodeURIComponent(parts.slice(1).join("/")));
                 }
             }
         }
@@ -823,7 +835,7 @@
                             <div class="fr-latest">
                                 ${lastPost ? `
                                     <a href="#post/${lastPost.slug}" class="fr-latest-link" onclick="event.stopPropagation()">${lastPost.TITULO}</a>
-                                    <span class="fr-latest-author">Por: eltorga</span>
+                                    <span class="fr-latest-author">Por: ${siteConfig.profile?.name||"eltorga"}</span>
                                 ` : '<span style="color:var(--steam-border)">Sin actividad</span>'}
                             </div>
                         </div>
@@ -887,7 +899,7 @@
                             <div class="fr-latest">
                                 ${lastPost ? `
                                     <a href="#post/${lastPost.slug}" class="fr-latest-link" onclick="event.stopPropagation()">${lastPost.TITULO}</a>
-                                    <span class="fr-latest-author">Por: eltorga</span>
+                                    <span class="fr-latest-author">Por: ${siteConfig.profile?.name||"eltorga"}</span>
                                 ` : '<span style="color:var(--steam-border)">Sin actividad</span>'}
                             </div>
                         </div>
@@ -985,18 +997,18 @@
                         ${imgHTML}
                         <div class="post-row-info">
                             <div class="post-row-title">${pinIcon}${p.TITULO} ${newBadge}</div>
-                            <div style="font-size:0.75rem; color:var(--steam-grey);">Por eltorga</div>
+                            <div style="font-size:0.75rem; color:var(--steam-grey);display:flex;gap:5px;flex-wrap:wrap">${tagsHTML}</div>
                         </div>
                     </div>
                     <div class="post-row-words"><span>${p.palabras}</span> palabras</div>
-                    <div class="tags-container">${tagsHTML}</div>
+                    <div class="tags-container"><span class="comment-meta" data-post-id="${p.ID}"><i class="ri-chat-3-line"></i> Comentarios en GitHub</span></div>
                 </div>`;
             });
             return html;
         }
 
         function renderPostView(container, slug) {
-            const post = postsGlobal.find(p => p.slug === slug);
+            const post = postsGlobal.find(p => p.slug === slug || p.slug.split("/")[0] === slug.split("/")[0] || p.ID === slug);
             if(!post) { container.innerHTML = "Post no encontrado."; return; }
 
             setFondoGlobal(post.bgHeredado);
@@ -1029,7 +1041,7 @@
                 </div>
             `;
 
-            const parsedContent = customMarkdownParse(post.POST);
+            const parsedContent = postContent(post);
 
             let relatedForumHtml = '';
             let relatedOtherHtml = '';
@@ -1104,9 +1116,10 @@
             </div>
             ${relatedForumHtml}
             ${relatedOtherHtml}
-            <section class="forum-section" id="giscus-section" style="margin-top:30px;padding:20px"><div class="shared-header-style">Comentarios</div><div id="giscus-slot" style="padding-top:18px"></div></section>
+            <div id="local-reactions" style="margin-top:22px"></div><section class="forum-section" id="giscus-section" style="margin-top:30px;padding:20px"><div class="shared-header-style">Comentarios</div><div id="giscus-slot" style="padding-top:18px"></div></section>
             `;
-            montarGiscus(post);
+            montarGiscus(post);applyAdminProfile();
+            renderLocalReactions(post);
 
             setTimeout(() => {
                 const imagenesPost = document.querySelectorAll('#post-content-area img');
@@ -1136,9 +1149,9 @@
                 <div class="related-post-row" onclick="location.hash='#post/${r.slug}'">
                     <div class="related-post-left">
                         ${rImg}
-                        <div class="related-title">${r.TITULO}</div>
+                        <div><div class="related-title">${r.TITULO}</div><small style="color:var(--steam-grey)">${originText}</small></div>
                     </div>
-                    <div class="related-origin-tag">${originText}</div>
+                    
                     <div class="related-words">${r.palabras} palabras</div>
                     <div class="related-author">
                         <span>eltorga</span>
@@ -1196,7 +1209,9 @@
                 return `<a href="${p.link}">${p.text}</a>${sep}`;
             }).join('');
         }
-        function montarGiscus(post) {
+        function renderDynamicHeader(){const items=siteConfig.navItems;if(!items?.length)return;const nav=document.querySelector('.header-nav');if(!nav)return;nav.innerHTML=items.map(x=>x.children?.length?`<div class="dropdown"><span class="nav-item">${x.title} <i class="ri-arrow-down-s-line"></i></span><div class="dropdown-menu">${x.children.map(v=>`<a href="${v.url}" target="_blank" rel="noopener noreferrer">${v.title}</a>`).join('')}</div></div>`:`<a class="nav-item" href="${x.url||'#'}" ${x.url?.startsWith('http')?'target="_blank" rel="noopener noreferrer"':''}>${x.title}</a>`).join('')}
+function applyAdminProfile(){const p=siteConfig.profile;if(!p)return;document.querySelectorAll('.author-name').forEach(x=>x.textContent=p.name||'eltorga');if(p.avatar)document.querySelectorAll('.author-avatar').forEach(x=>x.src=p.avatar);document.querySelectorAll('.badge-admin').forEach(x=>x.textContent=p.role||'Administrador');document.querySelectorAll('.badge-dev').forEach(x=>x.textContent=p.role2||'Desarrollador');}
+function montarGiscus(post) {
             const slot=document.getElementById('giscus-slot'); const cfg=siteConfig.giscus || {};
             if(!slot)return;
             if(!cfg.enabled){document.getElementById('giscus-section').style.display='none';return;}
@@ -1206,6 +1221,9 @@
             Object.entries(fields).forEach(([key,val])=>script.setAttribute('data-'+key,val));
             slot.replaceChildren(script);
         }
-    </script>
+    
+        // Download redirect on the same GitHub Pages origin.
+        document.addEventListener('click', event=> {const copy=event.target.closest('.elt-copy');if(copy){const code=copy.closest('.elt-code')?.querySelector('code');if(code&&navigator.clipboard)navigator.clipboard.writeText(code.innerText);return;}const a=event.target.closest('.md-dl-btn');if(!a)return;const href=a.getAttribute('href');if(!href)return;event.preventDefault(); const title=a.closest('.md-download-box')?.querySelector('.md-dl-title')?.textContent||'Archivo';window.open('descarga.html?url='+encodeURIComponent(href)+'&title='+encodeURIComponent(title),'_blank','noopener,noreferrer');});
+</script>
 </body>
 </html>
