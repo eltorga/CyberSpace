@@ -1,0 +1,32 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡Alabado sea Yah! ¡ Alaben a Dios en su santuario! ¡Alábenlo en su majestuoso firmamento!"
+    },
+    {
+      "verse": 2,
+      "text": "¡Alábenlo por sus hechos poderosos! ¡Alábenlo por su inmensa grandeza!"
+    },
+    {
+      "verse": 3,
+      "text": "¡Alábenlo al son de la trompeta! ¡Alábenlo con el arpa y la lira!"
+    },
+    {
+      "verse": 4,
+      "text": "¡Alábenlo con panderetas y danzas! ¡Alábenlo con instrumentos de cuerda y flautas!"
+    },
+    {
+      "verse": 5,
+      "text": "¡Alábenlo con platillos sonoros! ¡Alábenlo con platillos resonantes!"
+    },
+    {
+      "verse": 6,
+      "text": "¡ Que todo lo que respira alabe a Yah! ¡Alabado sea Yah!"
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

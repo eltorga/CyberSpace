@@ -1,0 +1,32 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Dichoso el hombre que no sigue el consejo de los malvados, ni se detiene en el camino de los pecadores, ni se sienta en la reunión de los burlones;"
+    },
+    {
+      "verse": 2,
+      "text": "sino que en la ley de Yahvé encuentra su alegría. + 1:2 “Yahvé” es el nombre propio de Dios, a veces traducido como “SEÑOR” (en mayúsculas) en otras traducciones. En su ley medita de día y de noche."
+    },
+    {
+      "verse": 3,
+      "text": "Es como un árbol plantado junto a corrientes de agua, que da su fruto a su tiempo, y cuyas hojas no se marchitan. Todo lo que hace prospera."
+    },
+    {
+      "verse": 4,
+      "text": "No sucede así con los malvados, que son como la paja que se lleva el viento."
+    },
+    {
+      "verse": 5,
+      "text": "Por eso no se mantendrán en pie los malvados en el juicio, ni los pecadores en la asamblea de los justos."
+    },
+    {
+      "verse": 6,
+      "text": "Porque Yahvé conoce el camino de los justos, pero el camino de los malvados lleva a la ruina."
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

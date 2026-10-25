@@ -1,0 +1,20 @@
+{
+  "translation_id": "sblm",
+  "translation": "Santa Biblia Libre para el Mundo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Yahvé, mi corazón no se ha enaltecido, ni mis ojos son altivos; ni ando tras grandezas, ni en cosas demasiado sublimes para mí."
+    },
+    {
+      "verse": 2,
+      "text": "En verdad he acallado y calmado mi alma; como un niño destetado en el regazo de su madre, como un niño destetado está mi alma dentro de mí."
+    },
+    {
+      "verse": 3,
+      "text": "Espera, oh Israel, en Yahvé, desde ahora y para siempre."
+    }
+  ],
+  "attribution": "Santa Biblia libre para el mundo. David Williams y Michael Paul Johnson. Dominio público, traducción en revisión. https://ebible.org/details.php?id=spablm",
+  "provider": "offline"
+}

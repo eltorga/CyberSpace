@@ -1,0 +1,10 @@
+{
+  "version": "bes",
+  "name": "Biblia en Español Sencillo",
+  "books": 66,
+  "chapters": 1189,
+  "license": "Dominio público",
+  "source": "https://ebible.org/Scriptures/spabes_usfm.zip",
+  "installed_at": "2026-10-25T12:11:49+00:00",
+  "text_modifications": "Solo se retiraron las etiquetas de formato USFM; texto no revisado deliberadamente."
+}

@@ -1,0 +1,288 @@
+{
+  "translation_id": "bes",
+  "translation": "Biblia en Español Sencillo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Estos son los habitantes de la provincia que regresaron del destierro. Nabucodonosor, rey de Babilonia, los había llevado cautivos a Babilonia, y ahora volvieron a Jerusalén y Judá, cada uno a su propia ciudad."
+    },
+    {
+      "verse": 2,
+      "text": "Regresaron con Zorobabel, Jesúa, Nehemías, Seraías, Reelaías, Mardoqueo, Bilsan, Mispar, Bigvai, Rehum y Baana. Este es el número de los hombres del pueblo de Israel:"
+    },
+    {
+      "verse": 3,
+      "text": "Los descendientes de Paros: dos mil ciento setenta y dos."
+    },
+    {
+      "verse": 4,
+      "text": "Los descendientes de Sefatías: trescientos setenta y dos."
+    },
+    {
+      "verse": 5,
+      "text": "Los descendientes de Ara: setecientos setenta y cinco."
+    },
+    {
+      "verse": 6,
+      "text": "Los descendientes de Pahat-moab, de las familias de Jesúa y Joab: dos mil ochocientos doce."
+    },
+    {
+      "verse": 7,
+      "text": "Los descendientes de Elam: mil doscientos cincuenta y cuatro."
+    },
+    {
+      "verse": 8,
+      "text": "Los descendientes de Zatu: novecientos cuarenta y cinco."
+    },
+    {
+      "verse": 9,
+      "text": "Los descendientes de Zacai: setecientos sesenta."
+    },
+    {
+      "verse": 10,
+      "text": "Los descendientes de Bani: seiscientos cuarenta y dos."
+    },
+    {
+      "verse": 11,
+      "text": "Los descendientes de Bebai: seiscientos veintitrés."
+    },
+    {
+      "verse": 12,
+      "text": "Los descendientes de Azgad: mil doscientos veintidós."
+    },
+    {
+      "verse": 13,
+      "text": "Los descendientes de Adonicam: seiscientos sesenta y seis."
+    },
+    {
+      "verse": 14,
+      "text": "Los descendientes de Bigvai: dos mil cincuenta y seis."
+    },
+    {
+      "verse": 15,
+      "text": "Los descendientes de Adín: cuatrocientos cincuenta y cuatro."
+    },
+    {
+      "verse": 16,
+      "text": "Los descendientes de Ater, de la familia de Ezequías: noventa y ocho."
+    },
+    {
+      "verse": 17,
+      "text": "Los descendientes de Bezai: trescientos veintitrés."
+    },
+    {
+      "verse": 18,
+      "text": "Los descendientes de Jora: ciento doce."
+    },
+    {
+      "verse": 19,
+      "text": "Los descendientes de Hasum: doscientos veintitrés."
+    },
+    {
+      "verse": 20,
+      "text": "Los descendientes de Gibbar: noventa y cinco."
+    },
+    {
+      "verse": 21,
+      "text": "Los de Belén: ciento veintitrés."
+    },
+    {
+      "verse": 22,
+      "text": "Los hombres de Netofa: cincuenta y seis."
+    },
+    {
+      "verse": 23,
+      "text": "Los hombres de Anatot: ciento veintiocho."
+    },
+    {
+      "verse": 24,
+      "text": "Los descendientes de Azmavet: cuarenta y dos."
+    },
+    {
+      "verse": 25,
+      "text": "Los de Quiriat-arim, Cafira y Beerot: setecientos cuarenta y tres."
+    },
+    {
+      "verse": 26,
+      "text": "Los de Ramá y Geba: seiscientos veintiuno."
+    },
+    {
+      "verse": 27,
+      "text": "Los hombres de Micmas: ciento veintidós."
+    },
+    {
+      "verse": 28,
+      "text": "Los hombres de Betel y Hai: doscientos veintitrés."
+    },
+    {
+      "verse": 29,
+      "text": "Los de Nebo: cincuenta y dos."
+    },
+    {
+      "verse": 30,
+      "text": "Los de Magbis: ciento cincuenta y seis."
+    },
+    {
+      "verse": 31,
+      "text": "Los descendientes del otro Elam: mil doscientos cincuenta y cuatro."
+    },
+    {
+      "verse": 32,
+      "text": "Los descendientes de Harim: trescientos veinte."
+    },
+    {
+      "verse": 33,
+      "text": "Los de Lod, Hadid y Ono: setecientos veinticinco."
+    },
+    {
+      "verse": 34,
+      "text": "Los de Jericó: trescientos cuarenta y cinco."
+    },
+    {
+      "verse": 35,
+      "text": "Los de Senaa: tres mil seiscientos treinta."
+    },
+    {
+      "verse": 36,
+      "text": "Los sacerdotes: los descendientes de Jedaías, de la familia de Jesúa: novecientos setenta y tres."
+    },
+    {
+      "verse": 37,
+      "text": "Los descendientes de Imer: mil cincuenta y dos."
+    },
+    {
+      "verse": 38,
+      "text": "Los descendientes de Pasur: mil doscientos cuarenta y siete."
+    },
+    {
+      "verse": 39,
+      "text": "Los descendientes de Harim: mil diecisiete."
+    },
+    {
+      "verse": 40,
+      "text": "Los levitas: los descendientes de Jesúa y Cadmiel, de la familia de Hodavías: setenta y cuatro."
+    },
+    {
+      "verse": 41,
+      "text": "Los cantores: los descendientes de Asaf: ciento veintiocho."
+    },
+    {
+      "verse": 42,
+      "text": "Los porteros: los descendientes de Salum, Ater, Talmon, Acub, Hatita y Sobai: ciento treinta y nueve en total."
+    },
+    {
+      "verse": 43,
+      "text": "Los servidores del templo: los descendientes de Ziha, Hasufa y Tabaot;"
+    },
+    {
+      "verse": 44,
+      "text": "los descendientes de Queros, Siaha y Padon;"
+    },
+    {
+      "verse": 45,
+      "text": "los descendientes de Lebana, Hagaba y Acub;"
+    },
+    {
+      "verse": 46,
+      "text": "los descendientes de Hagab, Salmai y Hanán;"
+    },
+    {
+      "verse": 47,
+      "text": "los descendientes de Gidel, Gahar y Reaía;"
+    },
+    {
+      "verse": 48,
+      "text": "los descendientes de Rezín, Necoda y Gazam;"
+    },
+    {
+      "verse": 49,
+      "text": "los descendientes de Uza, Paseah y Besai;"
+    },
+    {
+      "verse": 50,
+      "text": "los descendientes de Asna, Meunim y Nefusim;"
+    },
+    {
+      "verse": 51,
+      "text": "los descendientes de Bacbuc, Hacufa y Harhur;"
+    },
+    {
+      "verse": 52,
+      "text": "los descendientes de Bazlut, Mehida y Harsa;"
+    },
+    {
+      "verse": 53,
+      "text": "los descendientes de Barcos, Sísara y Tema;"
+    },
+    {
+      "verse": 54,
+      "text": "los descendientes de Nezía y Hatifa."
+    },
+    {
+      "verse": 55,
+      "text": "Los descendientes de los siervos de Salomón: los descendientes de Sotai, Hasoferet y Peruda;"
+    },
+    {
+      "verse": 56,
+      "text": "los descendientes de Jaala, Darcón y Gidel;"
+    },
+    {
+      "verse": 57,
+      "text": "los descendientes de Sefatías, Hattil, Poqueret-hazebaim y Ami."
+    },
+    {
+      "verse": 58,
+      "text": "Todos los servidores del templo y los descendientes de los siervos de Salomón eran trescientos noventa y dos."
+    },
+    {
+      "verse": 59,
+      "text": "También regresaron personas de Tel-mela, Tel-harsa, Querub, Adán e Imer, pero no pudieron demostrar a qué familias pertenecían ni si eran descendientes de Israel."
+    },
+    {
+      "verse": 60,
+      "text": "Eran los descendientes de Delaía, Tobías y Necoda: seiscientos cincuenta y dos."
+    },
+    {
+      "verse": 61,
+      "text": "De los descendientes de los sacerdotes estaban los de Habaías, Hacós y Barzilai. Barzilai se había casado con una hija de Barzilai de Galaad y había tomado el nombre de esa familia."
+    },
+    {
+      "verse": 62,
+      "text": "Buscaron sus nombres en los registros genealógicos, pero no los encontraron. Por eso fueron considerados no aptos y excluidos del sacerdocio."
+    },
+    {
+      "verse": 63,
+      "text": "El gobernador les ordenó que no comieran de las cosas más santas hasta que hubiera un sacerdote que pudiera consultar con Urim y Tumim."
+    },
+    {
+      "verse": 64,
+      "text": "Toda la asamblea reunida sumaba cuarenta y dos mil trescientos sesenta personas,"
+    },
+    {
+      "verse": 65,
+      "text": "sin contar sus siete mil trescientos treinta y siete siervos y siervas. También tenían doscientos cantores y cantoras."
+    },
+    {
+      "verse": 66,
+      "text": "Tenían setecientos treinta y seis caballos y doscientas cuarenta y cinco mulas;"
+    },
+    {
+      "verse": 67,
+      "text": "cuatrocientos treinta y cinco camellos y seis mil setecientos veinte asnos."
+    },
+    {
+      "verse": 68,
+      "text": "Cuando llegaron al templo del Señor en Jerusalén, algunos jefes de familia dieron voluntariamente de sus bienes para reconstruir el templo de Dios en su lugar."
+    },
+    {
+      "verse": 69,
+      "text": "Cada uno dio según sus posibilidades para el fondo de la obra: sesenta y un mil dáricos de oro, cinco mil minas de plata y cien ropas sacerdotales."
+    },
+    {
+      "verse": 70,
+      "text": "Así los sacerdotes, levitas, parte del pueblo, cantores, porteros y servidores del templo se establecieron en sus ciudades. Todo Israel se estableció en sus ciudades."
+    }
+  ],
+  "attribution": "La Biblia en Español Sencillo 2026, traducida y editada por Irma Flores, AudioBiblia.org. Publicada como dominio público. https://ebible.org/find/details.php?id=spabes",
+  "provider": "offline"
+}

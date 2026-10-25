@@ -1,0 +1,44 @@
+{
+  "translation_id": "bes",
+  "translation": "Biblia en Español Sencillo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Canten al Señor un canto nuevo, porque ha hecho maravillas; con su mano derecha y su brazo santo ha vencido."
+    },
+    {
+      "verse": 2,
+      "text": "El Señor ha dado a conocer su salvación a todos; ha mostrado su justicia ante las naciones."
+    },
+    {
+      "verse": 3,
+      "text": "Ha recordado su misericordia y su fidelidad constante hacia la casa de Israel; todos los confines de la tierra han visto la salvación de nuestro Dios."
+    },
+    {
+      "verse": 4,
+      "text": "Que toda la tierra aclame al Señor con alegría; que lo alabe en voz alta con cantos de gozo."
+    },
+    {
+      "verse": 5,
+      "text": "Canten al Señor con instrumentos de música, con un instrumento de cuerda y con la voz."
+    },
+    {
+      "verse": 6,
+      "text": "Con instrumentos de viento y el sonido del cuerno, aclamen con alegría al Señor, el rey."
+    },
+    {
+      "verse": 7,
+      "text": "Que resuene el mar con todas sus aguas; que resuenen el mundo y sus habitantes."
+    },
+    {
+      "verse": 8,
+      "text": "Que los ríos aplaudan de alegría y las montañas se alegren juntas"
+    },
+    {
+      "verse": 9,
+      "text": "ante el Señor, porque ha venido a juzgar la tierra. Juzgará al mundo con justicia y tomará decisiones justas para los pueblos."
+    }
+  ],
+  "attribution": "La Biblia en Español Sencillo 2026, traducida y editada por Irma Flores, AudioBiblia.org. Publicada como dominio público. https://ebible.org/find/details.php?id=spabes",
+  "provider": "offline"
+}

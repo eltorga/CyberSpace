@@ -1,0 +1,20 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Yahvé, mi corazón no es orgulloso, ni mis ojos son altaneros; no me meto en asuntos muy grandes, ni en cosas demasiado maravillosas para mí."
+    },
+    {
+      "verse": 2,
+      "text": "De veras que he calmado y tranquilizado mi alma; como un niño destetado que descansa en los brazos de su madre, así de tranquila está mi alma en mi interior."
+    },
+    {
+      "verse": 3,
+      "text": "Israel, pon tu esperanza en Yahvé, desde ahora y para siempre."
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

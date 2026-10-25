@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamer Odyssey - Foro Avanzado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- SCRIPT GOOGLE TRANSLATE -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'es',
+                includedLanguages: 'es,en,pt,fr,it,zh-CN',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <style>
+        :root {
+            --steam-bg: #171d25;
+            --steam-header: #171a21;
+            --steam-blue: #66c0f4; 
+            --steam-green: #4caf50; 
+            --steam-grey: #8f98a0; 
+            --steam-dark-blue: #2a475e;
+            --steam-panel: rgba(0, 0, 0, 0.6);
+            --steam-border: #3a404d;
+            --steam-text: #c7d5e0;
+            --steam-light: #ebebeb;
+            --steam-red: #d32f2f;
+        }
+
+        /* FUENTES (Permitiendo Negritas y FontAwesome) */
+        body, h1, h2, h3, h4, h5, h6, p, select, input { font-weight: 400; }
+        b, strong { font-weight: bold !important; }
+
+        /* PREVENIR EL SALTO DE GOOGLE TRANSLATE */
+        html { height: 100%; }
+        body {
+            font-family: "Motiva Sans", Sans-serif, Arial;
+            background-color: var(--steam-bg);
+            color: var(--steam-text);
+            margin: 0; padding: 0; min-height: 100vh;
+            display: flex; flex-direction: column; overflow-x: hidden;
+            scroll-behavior: smooth;
+            position: static !important; top: 0px !important;
+        }
+        
+        /* TOOLTIPS ESTILO STEAM */
+        [data-tooltip] { position: relative; cursor: pointer; }
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            background: #2a2a2a; color: #fff; padding: 6px 10px; border-radius: 3px;
+            font-size: 12px; white-space: nowrap; z-index: 10000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none; margin-bottom: 8px;
+        }
+        [data-tooltip]:hover::before {
+            content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            border: 5px solid transparent; border-top-color: #2a2a2a; margin-bottom: -2px; z-index: 10000; pointer-events: none;
+        }
+
+        .bg-global-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #000;
+        }
+        .bg-global-container video, .bg-global-container img { 
+            width: 100%; height: 100%; object-fit: cover; opacity: 0.25; transition: opacity 0.5s ease;
+        }
+
+        header {
+            background-color: var(--steam-header); display: flex; align-items: center; justify-content: center;
+            padding: 15px 20px; border-bottom: 1px solid var(--steam-border); z-index: 100; position: relative;
+        }
+        .header-content { width: 100%; max-width: 1300px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+        .header-left { display: flex; align-items: center; gap: 40px; }
+        .header-logo img { height: 65px; cursor: pointer; transition: transform 0.2s; }
+        .header-logo img:hover { transform: scale(1.05); }
+        .header-nav { display: flex; align-items: center; gap: 25px; flex-wrap: wrap; }
+        .nav-item { color: var(--steam-text); text-decoration: none; font-size: 0.95rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+        .nav-item:hover { color: var(--steam-light); }
+        
+        .dropdown { position: relative; }
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background-color: #3d4450; min-width: 160px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 100; flex-direction: column; border-radius: 2px; }
+        .dropdown:hover .dropdown-menu { display: flex; }
+        .dropdown-menu a { color: var(--steam-text); padding: 12px 15px; text-decoration: none; font-size: 0.85rem; transition: background 0.2s; display: flex; align-items: center; gap: 10px; }
+        .dropdown-menu a:hover { background-color: var(--steam-blue); color: #fff; }
+
+        .hero-section { width: 100%; height: 400px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .hero-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; z-index: 1; opacity: 0.6; }
+        .hero-gradient { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; background: linear-gradient(to bottom, rgba(23,29,37,0) 0%, var(--steam-bg) 100%); }
+        .hero-content { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 600px; padding: 0 20px; box-sizing: border-box; }
+        .hero-title { font-size: 3.5rem; color: #fff; margin: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 2px 2px 5px #000; }
+        
+        .hero-search-wrapper { width: 100%; position: relative; }
+        .hero-search { display: flex; align-items: center; background: rgba(0,0,0,0.7); border: 1px solid var(--steam-blue); border-radius: 4px; padding: 12px 20px; width: 100%; box-sizing: border-box; backdrop-filter: blur(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .hero-search input { background: transparent; border: none; color: #fff; outline: none; font-size: 1.1rem; width: 100%; }
+        .hero-search input::placeholder { color: var(--steam-grey); }
+        .hero-search .search-icon { color: var(--steam-blue); font-size: 1.2rem; margin-right: 15px; }
+        .hero-search .clear-icon { color: var(--steam-grey); font-size: 1.2rem; cursor: pointer; display: none; transition: 0.2s; }
+        .hero-search .clear-icon:hover { color: var(--steam-red); }
+
+        .hero-buttons { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+        .btn-hero { background: rgba(0,0,0,0.6); color: var(--steam-light); border: 1px solid var(--steam-border); padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; text-decoration: none; }
+        .btn-hero:hover { background: var(--steam-blue); color: #fff; border-color: var(--steam-blue); }
+
+        /* CONTENEDOR PRINCIPAL - 2 COLUMNAS */
+        .main-container { max-width: 1300px; width: 100%; margin: 0 auto; padding: 0 20px; box-sizing: border-box; flex-grow: 1; position: relative; z-index: 5; display: flex; flex-direction: column; }
+        
+        .breadcrumb { margin: 20px 0; font-size: 0.9rem; color: var(--steam-grey); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%; }
+        .breadcrumb a { color: var(--steam-blue); text-decoration: none; cursor: pointer; }
+        .breadcrumb a:hover { color: #fff; }
+
+        .layout-wrapper { display: flex; gap: 25px; align-items: flex-start; width: 100%; padding-bottom: 40px; }
+        .content-left { flex-grow: 1; min-width: 0; }
+        .sidebar-right { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; position: sticky; top: 20px; }
+
+        .badge-new { background: #4caf50; color: #fff; padding: 2px 6px; border-radius: 2px; font-size: 0.65rem; text-transform: uppercase; margin-left: 10px; vertical-align: middle; }
+        .badge-hot { background: #ff5722; color: #fff; padding: 2px 6px; border-radius: 2px; font-size: 0.65rem; text-transform: uppercase; margin-left: 10px; vertical-align: middle; }
+
+        /* HEADER UNIFICADO (FOROS Y WIDGETS) - ICONOS REDUCIDOS (20px) */
+        .shared-header-style {
+            background: linear-gradient(to right, rgba(42, 71, 94, 0.9), rgba(0,0,0,0.4)); padding: 8px 20px; border-bottom: 1px solid var(--steam-border);
+            display: flex; align-items: center; font-size: 0.75rem; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin: 0; gap: 12px;
+        }
+        .shared-header-style .custom-icon { width: 20px; height: 20px; object-fit: contain; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.5)); flex-shrink: 0; }
+        .shared-header-style .fa-fallback { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+
+        /* WIDGETS GLOBALES EN SIDEBAR DERECHO */
+        .widget { background: var(--steam-panel); border: 1px solid var(--steam-border); border-radius: 4px; overflow: hidden; backdrop-filter: blur(10px); margin-bottom: 25px; }
+        .widget-content { padding: 15px; display: flex; flex-direction: column; }
+        
+        /* TRADUCTOR GOOGLE ESTILIZADO PARA STEAM */
+        #google_translate_element { position: relative; width: 100%; }
+        .goog-te-combo {
+            background: var(--steam-dark-blue) !important; color: var(--steam-light) !important; border: 1px solid var(--steam-border) !important;
+            padding: 8px !important; width: 100% !important; border-radius: 4px !important; outline: none !important; cursor: pointer !important; font-size: 0.9rem !important;
+        }
+        .goog-te-banner-frame.skiptranslate, #goog-gt-tt { display: none !important; }
+        .goog-logo-link { display: none !important; }
+        .goog-te-gadget { font-size: 0px !important; color: transparent !important; } 
+        .goog-te-gadget > span { display: none; }
+
+        .widget-list-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; padding: 5px; border-radius: 4px; }
+        .widget-list-item:hover { background: rgba(255,255,255,0.05); }
+        .widget-list-item:last-child { margin-bottom: 0; }
+        
+        .widget-ico-container { width: 35px; height: 35px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .widget-ico-container img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.6)); }
+        
+        .widget-top-foro-title { flex-grow: 1; font-size: 0.85rem; color: var(--steam-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; transition: color 0.2s; }
+        .widget-post-title { flex-grow: 1; font-size: 0.85rem; color: var(--steam-light); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.2s; }
+        
+        .widget-list-item:hover .widget-top-foro-title, .widget-list-item:hover .widget-post-title { color: var(--steam-blue); }
+        .widget-count-circle { background: rgba(0,0,0,0.5); border: 1px solid var(--steam-border); padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; color: var(--steam-grey); flex-shrink: 0; white-space: nowrap; }
+        
+        .widget-post-thumb { width: 45px; height: 45px; border-radius: 4px; object-fit: cover; background: var(--steam-header); flex-shrink: 0; }
+        .widget-post-subico { width: 25px; height: 25px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+
+        .widget-tag-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; padding: 6px 0; border-bottom: 1px dashed var(--steam-border); cursor: pointer; color: var(--steam-grey); }
+        .widget-tag-item:hover { color: var(--steam-blue); }
+        .widget-tag-item:last-child { border-bottom: none; }
+
+        /* ESTRUCTURA FOROS (IZQUIERDA) */
+        .forum-section { margin-bottom: 30px; background: var(--steam-panel); backdrop-filter: blur(10px); border-radius: 4px; border: 1px solid var(--steam-border); overflow: hidden; }
+        
+        .forum-row { display: flex; align-items: center; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; position: relative; overflow: hidden; transition: background 0.2s; }
+        .forum-row:hover { background: rgba(255,255,255,0.1); }
+        .forum-row:last-child { border-bottom: none; }
+        .row-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.15; pointer-events: none; transition: opacity 0.3s; }
+        .forum-row:hover .row-bg { opacity: 0.3; }
+
+        .fr-content { display: flex; align-items: center; width: 100%; z-index: 1; position: relative; }
+        .forum-row .custom-icon { width: 55px; height: 55px; object-fit: contain; margin-right: 20px; flex-shrink: 0; filter: drop-shadow(0px 4px 5px rgba(0,0,0,0.6)); }
+        .forum-row .fa-fallback { font-size: 2.2rem; color: var(--steam-blue); margin-right: 20px; text-align: center; width: 55px; flex-shrink: 0; filter: drop-shadow(0px 4px 5px rgba(0,0,0,0.6)); }
+        
+        .fr-info { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+        .fr-title { font-size: 1.1rem; color: var(--steam-light); margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
+        .forum-row:hover .fr-title { color: var(--steam-blue); }
+        .fr-desc { font-size: 0.85rem; color: var(--steam-grey); margin: 0; }
+        .fr-stats { display: flex; gap: 25px; align-items: center; margin-right: 30px; text-align: center; font-size: 0.85rem; color: var(--steam-grey); flex-shrink: 0; }
+        .fr-stats div { display: flex; flex-direction: column; }
+        .fr-stats span { color: var(--steam-light); font-size: 1.1rem; }
+        
+        .fr-latest { font-size: 0.85rem; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; text-align: right; width: 250px; flex-shrink: 0; }
+        .fr-latest-link { color: var(--steam-text); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; transition: color 0.2s; }
+        .fr-latest-link:hover { color: var(--steam-blue); }
+        .fr-latest-author { color: var(--steam-grey); font-size: 0.75rem; margin-top: 3px; }
+
+        /* ROWS DE POSTS EN COLUMNAS (Titulo - Palabras - Etiquetas) */
+        .post-row { display: grid; grid-template-columns: minmax(0, 1fr) 90px 180px; gap: 20px; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; cursor: pointer; transition: 0.2s; position: relative; z-index: 1; }
+        .post-row:hover { background: rgba(255,255,255,0.1); }
+        .post-row-left { display: flex; align-items: center; overflow: hidden; }
+        .post-thumbnail { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; margin-right: 15px; flex-shrink: 0; background: var(--steam-header); display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .post-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+        .post-row-info { display: flex; flex-direction: column; min-width: 0; }
+        .post-row-title { font-size: 1rem; color: var(--steam-light); margin-bottom: 5px; transition: color 0.2s; display: flex; align-items: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; gap: 6px;}
+        .post-row:hover .post-row-title { color: var(--steam-blue); }
+        
+        .post-row-words { text-align: center; font-size: 0.85rem; color: var(--steam-grey); }
+        .post-row-words span { color: var(--steam-light); }
+        .tags-container { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+        .tag-badge { font-size: 0.75rem; background: var(--steam-dark-blue); padding: 4px 10px; border-radius: 2px; color: var(--steam-blue); cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+        .tag-badge:hover { background: var(--steam-bg); border-color: var(--steam-blue); }
+
+        /* POST DETALLE Y SIDEBAR */
+        .post-container { display: flex; flex-direction: column; background: var(--steam-panel); border: 1px solid var(--steam-border); border-radius: 4px; }
+        
+        /* HEADER ALINEADO */
+        .post-header { padding: 20px; background: linear-gradient(to right, rgba(42, 71, 94, 0.8), transparent); border-bottom: 1px solid var(--steam-border); display: flex; flex-direction: column; gap: 10px; }
+        .post-header-top { display: flex; align-items: center; gap: 15px; width: 100%; }
+        .post-header-icon { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .post-header-icon img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6)); }
+        .post-header-info { display: flex; flex-direction: column; gap: 5px; justify-content: center; }
+        .post-header-title { font-size: 1.5rem; color: #fff; display: flex; align-items: center; margin: 0; }
+        
+        .post-body { display: flex; }
+        
+        /* SIDEBAR DE USUARIO (170px) */
+        .post-sidebar { width: 170px; flex-shrink: 0; padding: 15px; background: rgba(0,0,0,0.3); border-right: 1px solid var(--steam-border); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .author-avatar { width: 100px; height: 100px; border: 2px solid #546377; border-radius: 4px; object-fit: cover; }
+        .author-name-wrapper { display: flex; align-items: center; gap: 6px; }
+        .author-name { color: var(--steam-blue); font-size: 1.1rem; text-align: center; }
+        .online-dot { width: 8px; height: 8px; background-color: var(--steam-green); border-radius: 50%; box-shadow: 0 0 5px var(--steam-green); }
+        .badge-admin { background: var(--steam-red); color: #fff; padding: 4px 8px; border-radius: 2px; font-size: 0.75rem; display: flex; align-items: center; gap: 5px; width: 100%; justify-content: center; box-sizing: border-box; }
+        .badge-dev { background: var(--steam-blue); color: var(--steam-bg); padding: 4px 8px; border-radius: 2px; font-size: 0.75rem; display: flex; align-items: center; gap: 5px; width: 100%; justify-content: center; box-sizing: border-box; margin-top: -5px; }
+        .author-stars { color: #fbc02d; font-size: 1.3rem; letter-spacing: 2px; margin: 5px 0;}
+        .author-stats { width: 100%; font-size: 0.8rem; color: var(--steam-grey); border-top: 1px dashed var(--steam-border); padding-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+        .author-stats-row { display: flex; justify-content: space-between; align-items: center; }
+        .author-stats-row i { width: 15px; text-align: center; color: var(--steam-text); }
+        
+        /* LOGROS GRID 3x3 AJUSTADO Y SEPARADO */
+        .achievements-title { font-size: 0.85rem; color: var(--steam-blue); text-transform: uppercase; margin-top: 15px; text-align: center; width: 100%; border-bottom: 1px solid var(--steam-border); padding-bottom: 5px; letter-spacing: 1px; }
+        .badges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 85%; margin: 15px auto; padding: 0; box-sizing: border-box;}
+        .badges-grid a { display: flex; justify-content: center; align-items: center; background: transparent; }
+        .badges-grid img { width: 100%; max-width: 100%; aspect-ratio: 1; object-fit: contain; transition: transform 0.2s; }
+        .badges-grid img:hover { transform: scale(1.15); }
+        
+        /* CONTENIDO DEL POST - IMAGENES CENTRADAS Y BLOCKQUOTES STEAM */
+        .post-content { padding: 25px; flex-grow: 1; font-size: 0.95rem; line-height: 1.6; color: var(--steam-light); overflow-wrap: anywhere; min-width: 0; }
+        .post-content img { display: block; margin: 15px auto; max-width: 100%; border-radius: 4px; border: 1px solid var(--steam-border); cursor: pointer; transition: transform 0.2s; }
+        .post-content img:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        
+        /* CITAS Y CITAS ANIDADAS (Estilo Steam Oscuro) */
+        .post-content blockquote { border-left: 3px solid var(--steam-blue); background: #1f252d; padding: 10px 15px; margin: 15px 0; color: #a1a7b3; font-style: normal; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 0.95rem; }
+        .post-content blockquote blockquote { border-left: 3px solid var(--steam-blue); background: #262c35; margin-top: 10px; }
+
+        /* BLOQUES DE CÓDIGO (Markdown) */
+        .post-content pre { background: #1a1e24; padding: 15px; border-radius: 4px; border: 1px solid var(--steam-border); overflow-x: auto; font-family: 'Courier New', Courier, monospace; color: #c7d5e0; }
+        .post-content code { font-family: 'Courier New', Courier, monospace; background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 3px; color: #66c0f4; }
+        .post-content pre code { background: transparent; padding: 0; color: inherit; }
+
+        /* POSTS FOOTER (ETIQUETAS REGRESAN ABAJO) */
+        .post-footer-tags { padding: 15px 20px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--steam-border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        /* CUSTOM MARKDOWN ELEMENTS */
+        .md-download-box { display: flex; align-items: center; justify-content: space-between; background: #2c323f; border: 1px solid #4a5468; border-radius: 6px; padding: 12px 20px; margin: 15px 0; flex-wrap: wrap; gap: 15px;}
+        .md-dl-left { display: flex; align-items: center; gap: 15px; }
+        .md-dl-icon { font-size: 2.2rem; color: #4caf50; }
+        .md-dl-info { display: flex; flex-direction: column; gap: 2px; }
+        .md-dl-title { font-size: 1rem; color: #fff; }
+        .md-dl-size { font-size: 0.8rem; color: #8f98a0; }
+        .md-dl-btn { background: #2196f3; color: #fff; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap;}
+        .md-dl-btn:hover { background: #1976d2; }
+        
+        .md-separator { background: #1565c0; color: #fff; padding: 10px 15px; border-radius: 4px; margin: 20px 0; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
+        .md-separator i { display: flex; align-items: center; justify-content: center; }
+        
+        .md-yt-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; margin: 15px 0; border-radius: 4px; overflow: hidden; border: 1px solid var(--steam-border); }
+        .md-yt-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* POSTS RELACIONADOS (COLUMNAS EXACTAS C/ RECTÁNGULO DE ORIGEN) */
+        .related-section { margin-top: 30px; }
+        .related-title-sep { font-size: 0.85rem; color: var(--steam-grey); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--steam-border); padding-bottom: 5px; }
+        .related-posts-container { background: var(--steam-panel); border: 1px solid var(--steam-border); border-radius: 4px; margin-bottom: 20px; overflow: hidden;}
+        
+        .related-post-row { display: grid; grid-template-columns: minmax(0, 2fr) auto 100px 110px; gap: 15px; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background 0.2s; }
+        .related-post-row:hover { background: rgba(255,255,255,0.1); }
+        .related-post-row:last-child { border-bottom: none; }
+        
+        .related-post-left { display: flex; align-items: center; gap: 15px; overflow: hidden; }
+        .related-thumb { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; background: var(--steam-header); flex-shrink: 0; }
+        .related-title { font-size: 0.95rem; color: var(--steam-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.2s;}
+        .related-post-row:hover .related-title { color: var(--steam-blue); }
+        
+        /* RECTÁNGULO DE ORIGEN (FORO) */
+        .related-origin-tag { background: rgba(42, 71, 94, 0.8); border: 1px solid var(--steam-blue); padding: 5px 12px; border-radius: 4px; font-size: 0.75rem; color: #fff; text-align: center; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; flex-shrink: 0; min-width: 80px; max-width: 150px; }
+        
+        .related-words { font-size: 0.8rem; color: var(--steam-grey); text-align: right; flex-shrink: 0;}
+        .related-author { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-shrink: 0;}
+        .related-author span { font-size: 0.8rem; color: var(--steam-grey); }
+        .related-author-img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid var(--steam-border); }
+
+        .lightbox { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; }
+        .lightbox.active { display: flex; opacity: 1; }
+        .lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 4px; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
+        .lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 2.5rem; color: var(--steam-grey); cursor: pointer; transition: color 0.2s; z-index: 10001;}
+        .lightbox-close:hover { color: #fff; }
+
+        footer { background-color: var(--steam-header); color: var(--steam-grey); text-align: center; padding: 40px 20px; border-top: 1px solid var(--steam-border); width: 100%; box-sizing: border-box; margin-top: auto; z-index: 10; position: relative; }
+        footer p { margin: 5px 0; font-size: 0.85rem;}
+
+        /* RESPONSIVIDAD MÓVIL */
+        @media (max-width: 950px) {
+            .layout-wrapper { flex-direction: column; }
+            .sidebar-right { width: 100%; display: none !important; position: static; }
+            .fr-stats { display: none; }
+            .fr-latest { width: auto; align-items: flex-start; text-align: left; margin-top: 10px; }
+            .forum-row { flex-direction: column; align-items: flex-start; }
+            .post-row { grid-template-columns: 1fr; gap: 10px; }
+            .post-row-words { text-align: left; }
+            .tags-container { justify-content: flex-start; }
+            .post-body { flex-direction: column; }
+            .post-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--steam-border); flex-direction: row; flex-wrap: wrap; justify-content: center;}
+            .author-stats { width: auto; border-top: none; border-left: 1px dashed var(--steam-border); padding-left: 15px; margin-left: 15px;}
+            .related-post-row { grid-template-columns: 1fr; gap: 8px;}
+            .related-origin-tag { order: -1; margin-bottom: 5px; max-width: 100%; text-align: left; }
+            .related-words, .related-author { text-align: left; justify-content: flex-start; }
+            .related-post-left { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-global-container" id="bg-global-container"></div>
+
+    <div id="lightbox" class="lightbox" onclick="cerrarLightbox()">
+        <i class="fa-solid fa-xmark lightbox-close"></i>
+        <img id="lightbox-img" src="" alt="Ampliación" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo" onclick="irAInicio()">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjElTTl9nzZmj_GSIsNIOXh04Jj35pYD06SGygnvOVAc37PAArgWuHSKQ4YCJEG5SsjYmYh_kinQjMALFy7OG4Emj8fEG2qNSrZ3Mwo8KS9ohP5Ro7aqBlErI6gLeqOKvOEh_KlXp1yf3zt3J65sprZgjw_xlIhFnRtBttptTC20mSu-VE/w800/eltorgaforo_logo_v3.png" alt="Gamer Odyssey">
+                </div>
+                <nav class="header-nav">
+                    <a class="nav-item" onclick="irAInicio()">Blog</a>
+                    <div class="dropdown">
+                        <span class="nav-item">Streams <i class="fa-solid fa-caret-down"></i></span>
+                        <div class="dropdown-menu">
+                            <a href="#" target="_blank"><i class="fa-brands fa-youtube"></i> YouTube</a>
+                            <a href="#" target="_blank"><i class="fa-brands fa-twitch"></i> Twitch</a>
+                            <a href="#" target="_blank"><i class="fa-brands fa-kickstarter"></i> Kick</a>
+                        </div>
+                    </div>
+                    <a class="nav-item" href="#" target="_blank">Discord</a>
+                    <div class="dropdown">
+                        <span class="nav-item">Social <i class="fa-solid fa-caret-down"></i></span>
+                        <div class="dropdown-menu">
+                            <a href="#" target="_blank"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+                            <a href="#" target="_blank"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                            <a href="#" target="_blank"><i class="fa-brands fa-tiktok"></i> TikTok</a>
+                        </div>
+                    </div>
+                    <a class="nav-item" onclick="irAInicio()">Foro</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <div class="hero-section" id="hero-section">
+        <video class="hero-video" id="hero-video-el" src="https://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/2139460/44e80c65cbbf011d3c80e8ac7f0a7d3376507249.mp4" autoplay loop muted playsinline></video>
+        <div class="hero-gradient"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Foro Online</h1>
+            <div class="hero-search-wrapper">
+                <div class="hero-search">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="hero-search-input" placeholder="Buscar discusiones..." oninput="ejecutarBusqueda()">
+                    <i class="fa-solid fa-xmark clear-icon" id="hero-search-clear" onclick="limpiarBusqueda()"></i>
+                </div>
+            </div>
+            <div class="hero-buttons">
+                <a href="https://steamcommunity.com/" target="_blank" class="btn-hero"><i class="fa-brands fa-steam"></i> Steam</a>
+                <a href="https://discord.com/" target="_blank" class="btn-hero"><i class="fa-brands fa-discord"></i> Discord</a>
+                <a href="https://youtube.com/" target="_blank" class="btn-hero"><i class="fa-brands fa-youtube"></i> YouTube</a>
+                <a href="#" target="_blank" class="btn-hero"><i class="fa-solid fa-gamepad"></i> Biblioteca</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER (2 COLUMNAS ALINEADAS ARRIBA) -->
+    <div class="main-container">
+        <!-- BREADCRUMB -->
+        <div id="breadcrumb" class="breadcrumb"></div>
+        
+        <div class="layout-wrapper">
+            <!-- CONTENIDO IZQUIERDO -->
+            <div class="content-left" id="app-content"></div>
+
+            <!-- SIDEBAR DERECHO GLOBAL (ESTÁTICO TRADUCTOR) -->
+            <aside class="sidebar-right" id="right-sidebar">
+                <!-- 1. WIDGET TRADUCTOR -->
+                <div class="widget">
+                    <div class="shared-header-style widget-header" style="border-bottom: 1px solid var(--steam-border); margin-bottom: 0;">
+                        <i class="fa-solid fa-language"></i> Idioma
+                    </div>
+                    <div class="widget-content">
+                        <div id="google_translate_element"></div>
+                    </div>
+                </div>
+                <!-- AQUÍ SE INYECTAN LOS DEMÁS WIDGETS -->
+                <div id="dynamic-widgets"></div>
+            </aside>
+        </div>
+    </div>
+
+    <footer>
+        <p>© Gamer Odyssey All Rights Reserved. 2026 Creado por César Aguilar.</p>
+        <p>Estilo inspirado en la plataforma de videojuegos. Motor de Foro Custom SPA.</p>
+    </footer>
+
+    <script>
+        const CSV_STRUCT = "https://docs.google.com/spreadsheets/d/1vEMxpL0Rb_0Z169YzKX4T2ArRAdSPqU2L1p6P_yelCY/export?format=csv";
+        const CSV_POSTS = "https://docs.google.com/spreadsheets/d/147go051TmnQ_sEUl4VqEzolgmYKytkPrew8pVk1uPwY/export?format=csv";
+        
+        let foroData = {}; 
+        let postsGlobal = [];
+        
+        let ultimos5PostsSlugs = [];
+        let foroMasActivo = "";
+        let subforoMasActivo = "";
+        
+        let arrTopForos = [];
+        let arrTopTags = [];
+
+        const DEFAULT_BG = "https://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/1239690/dcfed8cceb3d7c74432294aec5fff49050b2ef1b.mp4";
+
+        // Codificador de HASH seguro (arregla bug de Assassin's Creed)
+        function safeHash(str) {
+            if(!str) return "";
+            return encodeURIComponent(str).replace(/'/g, "%27").replace(/"/g, "%22");
+        }
+
+        // CARGA CON DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            Promise.all([
+                new Promise(res => Papa.parse(CSV_STRUCT, {download: true, header: true, complete: res})),
+                new Promise(res => Papa.parse(CSV_POSTS, {download: true, header: true, complete: res}))
+            ]).then(results => {
+                const structData = results[0].data.filter(r => r.ESTADO === 'Publicado');
+                const postsData = results[1].data.filter(r => r.ESTADO === 'Publicado');
+                procesarDatos(structData, postsData);
+                renderizarSidebarWidgets();
+                manejarRuta();
+                window.addEventListener("hashchange", manejarRuta);
+            }).catch(e => console.error("Error cargando CSVs:", e));
+        });
+
+        function procesarDatos(struct, posts) {
+            foroData = {};
+            postsGlobal = [];
+            arrTopForos = [];
+            let tagCounts = {};
+
+            struct.forEach(row => {
+                const sec = row.SECCION?.trim();
+                if (!sec) return;
+
+                const secIco = row.SECCION_ICO?.trim();
+                const foro = row.FORO?.trim();
+                const foroRes = row.FORO_RES?.trim();
+                const foroIco = row.FORO_ICO?.trim();
+                const foroBar = row.FORO_BAR?.trim();
+                const foroBg = row.FORO_BG?.trim();
+                
+                const sub = row.SUBFORO?.trim();
+                const subRes = row.SUBFORO_RES?.trim();
+                const subIco = row.SUBFORO_ICO?.trim();
+                const subBar = row.SUBFORO_BAR?.trim();
+                const subBg = row.SUBFORO_BG?.trim();
+                
+                if(!foroData[sec]) foroData[sec] = { ico: '', foros: {} };
+                if(secIco && secIco !== '') foroData[sec].ico = secIco; 
+                
+                if(foro) {
+                    if(!foroData[sec].foros[foro]) foroData[sec].foros[foro] = { ico: foroIco, res: foroRes, bar: foroBar, bg: foroBg, subforos: {}, posts: [] };
+                    if(sub) {
+                        if(!foroData[sec].foros[foro].subforos[sub]) foroData[sec].foros[foro].subforos[sub] = { ico: subIco, res: subRes, bar: subBar, bg: subBg, posts: [] };
+                    }
+                }
+            });
+
+            posts.forEach(post => {
+                const target = (post.FORO || post.SUBFORO)?.trim(); 
+                if(!target) return;
+                
+                let asignado = false;
+                post.slug = post.TITULO?.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                post.palabras = contarPalabras(post.POST);
+                post.primeraImagen = extraerPrimeraImagen(post.POST);
+                
+                let cleanTags = [];
+                if(post.ETIQUETAS) {
+                    cleanTags = post.ETIQUETAS.split(',').map(t=>t.trim());
+                    post.isPinned = cleanTags.some(t => t.toLowerCase() === 'pin');
+                    post.cleanTagsArray = cleanTags.filter(t => t.toLowerCase() !== 'pin');
+                    
+                    post.cleanTagsArray.forEach(t => {
+                        let tLower = t.toLowerCase();
+                        tagCounts[tLower] = tagCounts[tLower] || {name: t, count: 0};
+                        tagCounts[tLower].count++;
+                    });
+                } else {
+                    post.isPinned = false;
+                    post.cleanTagsArray = [];
+                }
+
+                for(const sec in foroData) {
+                    for(const foro in foroData[sec].foros) {
+                        if (foro === target) {
+                            post.foroParent = foro;
+                            post.secParent = sec;
+                            post.SUBFORO = ""; 
+                            post.bgHeredado = foroData[sec].foros[foro].bg;
+                            foroData[sec].foros[foro].posts.push(post);
+                            postsGlobal.push(post);
+                            asignado = true;
+                            break;
+                        }
+                        if(foroData[sec].foros[foro].subforos[target]) {
+                            post.foroParent = foro;
+                            post.secParent = sec;
+                            post.SUBFORO = target;
+                            post.bgHeredado = foroData[sec].foros[foro].subforos[target].bg || foroData[sec].foros[foro].bg;
+                            foroData[sec].foros[foro].subforos[target].posts.push(post);
+                            postsGlobal.push(post);
+                            asignado = true;
+                            break;
+                        }
+                    }
+                    if(asignado) break;
+                }
+            });
+
+            // ULTIMOS POSTS: Las primeras 5 filas del CSV
+            const recents = postsGlobal.slice(0, 5);
+            ultimos5PostsSlugs = recents.map(p => p.slug);
+
+            let maxForoPosts = 0;
+            let maxSubPosts = 0;
+            
+            for(const sec in foroData) {
+                for(const foro in foroData[sec].foros) {
+                    let fTotal = foroData[sec].foros[foro].posts.length;
+                    for(const sub in foroData[sec].foros[foro].subforos) {
+                        let sTotal = foroData[sec].foros[foro].subforos[sub].posts.length;
+                        fTotal += sTotal;
+                        if(sTotal > maxSubPosts) { maxSubPosts = sTotal; subforoMasActivo = sub; }
+                    }
+                    if(fTotal > maxForoPosts) { maxForoPosts = fTotal; foroMasActivo = foro; }
+                    arrTopForos.push({ name: foro, count: fTotal, ico: foroData[sec].foros[foro].ico });
+                }
+            }
+            
+            arrTopForos = arrTopForos.sort((a,b) => b.count - a.count).slice(0,5);
+            arrTopTags = Object.values(tagCounts).sort((a,b) => b.count - a.count).slice(0,5); 
+        }
+
+        function renderizarSidebarWidgets() {
+            const dynamicContainer = document.getElementById('dynamic-widgets');
+            let html = '';
+            
+            html += `
+            <div class="widget">
+                <div class="shared-header-style widget-header" style="border-bottom: 1px solid var(--steam-border); margin-bottom: 0;">
+                    <i class="fa-solid fa-fire"></i> Top 5 Foros
+                </div>
+                <div class="widget-content">
+                ${arrTopForos.map(f => `
+                    <div class="widget-list-item" onclick="location.hash='#foro/${safeHash(f.name)}'">
+                        <div class="widget-ico-container">${renderizarIcono(f.ico, 'fa-comments')}</div>
+                        <div class="widget-top-foro-title">${f.name}</div>
+                        <div class="widget-count-circle">${f.count} posts</div>
+                    </div>
+                `).join('')}
+                </div>
+            </div>`;
+
+            // OBLIGADO LAS PRIMERAS 5 ENTRADAS
+            const recents = postsGlobal.slice(0, 5);
+            html += `
+            <div class="widget">
+                <div class="shared-header-style widget-header" style="border-bottom: 1px solid var(--steam-border); margin-bottom: 0;">
+                    <i class="fa-solid fa-clock"></i> Últimos Posts
+                </div>
+                <div class="widget-content">
+                ${recents.map(p => {
+                    let thumb = p.primeraImagen ? `<img src="${p.primeraImagen}" class="widget-post-thumb">` : `<div class="widget-post-thumb" style="display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-file-lines" style="color:var(--steam-grey);"></i></div>`;
+                    
+                    let subIcoHtml = '';
+                    if(p.SUBFORO !== "") {
+                        let objIco = foroData[p.secParent].foros[p.foroParent].subforos[p.SUBFORO].ico;
+                        subIcoHtml = renderizarIcono(objIco, 'fa-file-lines', true);
+                        subIcoHtml = subIcoHtml.replace('custom-icon', 'widget-post-subico');
+                    } else {
+                        let objIco = foroData[p.secParent].foros[p.foroParent].ico;
+                        subIcoHtml = renderizarIcono(objIco, 'fa-comments', true);
+                        subIcoHtml = subIcoHtml.replace('custom-icon', 'widget-post-subico');
+                    }
+
+                    return `
+                    <div class="widget-list-item" onclick="location.hash='#post/${p.slug}'">
+                        ${thumb}
+                        <div class="widget-post-title">${p.TITULO}</div>
+                        ${subIcoHtml}
+                    </div>
+                    `;
+                }).join('')}
+                </div>
+            </div>`;
+
+            html += `
+            <div class="widget" style="margin-bottom: 30px;">
+                <div class="shared-header-style widget-header" style="border-bottom: 1px solid var(--steam-border); margin-bottom: 0;">
+                    <i class="fa-solid fa-tags"></i> Categorías
+                </div>
+                <div class="widget-content" style="display:flex; flex-direction:column;">
+                ${arrTopTags.map(t => `
+                    <div class="widget-tag-item" onclick="location.hash='?tag=${safeHash(t.name)}'">
+                        <span>${t.name}</span>
+                        <span style="background:var(--steam-dark-blue); color:var(--steam-blue); padding: 2px 6px; border-radius:2px; font-size:0.7rem;">${t.count}</span>
+                    </div>
+                `).join('')}
+                </div>
+            </div>`;
+
+            dynamicContainer.innerHTML = html;
+        }
+
+        function setFondoGlobal(urlBg) {
+            const container = document.getElementById('bg-global-container');
+            const url = urlBg || DEFAULT_BG;
+            if(url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.webm')) {
+                container.innerHTML = `<video src="${url}" autoplay loop muted playsinline></video>`;
+            } else {
+                container.innerHTML = `<img src="${url}">`;
+            }
+        }
+
+        function renderizarFondoFila(urlBar) {
+            if(!urlBar) return '';
+            const lw = urlBar.toLowerCase();
+            if(lw.endsWith('.mp4') || lw.endsWith('.webm')) {
+                return `<video class="row-bg" src="${urlBar}" autoplay loop muted playsinline></video>`;
+            }
+            return `<img class="row-bg" src="${urlBar}">`;
+        }
+
+        function customMarkdownParse(rawStr) {
+            if(!rawStr) return "Sin contenido.";
+            let txt = rawStr;
+            
+            // Custom Elements (Descarga, Separador, YouTube, Center, Bandera)
+            txt = txt.replace(/\[bandera=(.*?)\]/gi, '<img src="https://flagcdn.com/w20/$1.png" alt="$1" style="width: 20px; vertical-align: middle; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.5); display: inline-block; margin: 0;">');
+            txt = txt.replace(/\[descarga url="(.*?)" titulo="(.*?)" peso="(.*?)" icono="(.*?)"\]/gi, 
+                '<div class="md-download-box"><div class="md-dl-left"><i class="fa-brands $4 md-dl-icon"></i><div class="md-dl-info"><div class="md-dl-title">$2</div><div class="md-dl-size"><i class="fa-solid fa-database"></i> $3</div></div></div><a href="$1" target="_blank" class="md-dl-btn">Descargar</a></div>');
+            txt = txt.replace(/\[separador icono="(.*?)" texto="(.*?)"\]/gi, 
+                '<div class="md-separator"><i class="fa-solid $1"></i> $2</div>');
+            txt = txt.replace(/\[youtube id="(.*?)"\]/gi, 
+                '<div class="md-yt-container"><iframe src="https://www.youtube.com/embed/$1?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe></div>');
+            txt = txt.replace(/\[center\]([\s\S]*?)\[\/center\]/gi, 
+                '<div style="text-align:center;">$1</div>');
+            
+            return marked.parse(txt);
+        }
+
+        function ejecutarBusqueda() {
+            const input = document.getElementById('hero-search-input');
+            const clearBtn = document.getElementById('hero-search-clear');
+            const content = document.getElementById('app-content');
+            const val = input.value.trim().toLowerCase();
+            
+            if(val.length > 0) {
+                clearBtn.style.display = 'block';
+                document.getElementById('breadcrumb').innerHTML = ''; 
+                document.getElementById('right-sidebar').style.display = 'none'; 
+                
+                const resultados = postsGlobal.filter(p => 
+                    p.TITULO.toLowerCase().includes(val) || 
+                    (p.ETIQUETAS && p.ETIQUETAS.toLowerCase().includes(val))
+                );
+
+                let html = `
+                <div class="forum-section">
+                    <div class="shared-header-style forum-section-header">
+                        <i class="fa-solid fa-magnifying-glass" style="margin-right:12px; font-size:1.05rem;"></i> Resultados de búsqueda
+                    </div>
+                `;
+                html += generarHtmlPosts(resultados, '#');
+                html += `</div>`;
+                content.innerHTML = html;
+            } else {
+                limpiarBusqueda();
+            }
+        }
+        
+        function limpiarBusqueda() {
+            document.getElementById('hero-search-input').value = '';
+            document.getElementById('hero-search-clear').style.display = 'none';
+            manejarRuta(); 
+        }
+
+        function manejarRuta() {
+            const hashTotal = window.location.hash.replace('#', '');
+            const [ruta, query] = hashTotal.split('?');
+            const parts = ruta.split('/');
+            const content = document.getElementById('app-content');
+            const sidebar = document.getElementById('right-sidebar');
+            
+            const params = new URLSearchParams(query || "");
+            const tagFiltro = params.get('tag');
+            const heroSection = document.getElementById('hero-section');
+
+            window.scrollTo(0,0); 
+
+            if (ruta === '' && !tagFiltro) {
+                sidebar.style.display = 'flex'; 
+                setFondoGlobal(DEFAULT_BG);
+                heroSection.style.display = 'flex';
+                document.getElementById('hero-search-input').value = '';
+                document.getElementById('hero-search-clear').style.display = 'none';
+                renderHome(content);
+            } else if (ruta === '' && tagFiltro) {
+                sidebar.style.display = 'none'; 
+                heroSection.style.display = 'none';
+                let resultados = postsGlobal.filter(p => p.cleanTagsArray.some(t => t.toLowerCase() === tagFiltro.toLowerCase()));
+                
+                actualizarBreadcrumb([{text: "Inicio", link: "javascript:irAInicio()"}]);
+                let html = `<div class="tag-badge" style="display:inline-block; margin-bottom:15px; font-size:1rem;" onclick="location.hash=''" data-tooltip="Quitar filtro"><i class="fa-solid fa-xmark"></i> Etiqueta Global: ${tagFiltro}</div>`;
+                
+                html += `
+                <div class="forum-section">
+                    <div class="shared-header-style forum-section-header">
+                        <i class="fa-solid fa-tags" style="margin-right:12px; font-size:1.05rem;"></i> Mostrando posts con "${tagFiltro}"
+                    </div>
+                `;
+                html += generarHtmlPosts(resultados, '#');
+                html += `</div>`;
+                content.innerHTML = html;
+
+            } else {
+                heroSection.style.display = 'none';
+                
+                if (parts[0] === 'foro' || parts[0] === 'subforo') {
+                    sidebar.style.display = 'none';
+                } else if (parts[0] === 'post') {
+                    sidebar.style.display = 'flex';
+                }
+                
+                if (parts[0] === 'foro') {
+                    renderForoView(content, decodeURIComponent(parts[1]), tagFiltro);
+                } else if (parts[0] === 'subforo') {
+                    renderSubforoView(content, decodeURIComponent(parts[1]), decodeURIComponent(parts[2]), tagFiltro);
+                } else if (parts[0] === 'post') {
+                    renderPostView(content, decodeURIComponent(parts[1]));
+                }
+            }
+        }
+
+        function tienePostNuevo(objPostsArray) {
+            return objPostsArray.some(p => ultimos5PostsSlugs.includes(p.slug));
+        }
+
+        function renderHome(container) {
+            actualizarBreadcrumb([{text: "Inicio", link: "javascript:irAInicio()"}]);
+            let html = "";
+
+            for (const [secName, secData] of Object.entries(foroData)) {
+                html += `
+                <div class="forum-section">
+                    <div class="shared-header-style forum-section-header">
+                        ${renderizarIcono(secData.ico, 'fa-folder-open', true)} ${secName}
+                    </div>
+                `;
+                for (const [foroName, foroDataInfo] of Object.entries(secData.foros)) {
+                    let totalSubs = Object.keys(foroDataInfo.subforos).length;
+                    let totalPosts = foroDataInfo.posts.length; 
+                    let lastPost = foroDataInfo.posts.length > 0 ? foroDataInfo.posts[foroDataInfo.posts.length - 1] : null;
+                    let foroHasNew = tienePostNuevo(foroDataInfo.posts);
+
+                    for (const subs of Object.values(foroDataInfo.subforos)) {
+                        totalPosts += subs.posts.length;
+                        if (subs.posts.length > 0) { lastPost = subs.posts[subs.posts.length - 1]; }
+                        if(tienePostNuevo(subs.posts)) foroHasNew = true;
+                    }
+
+                    const isHot = foroName === foroMasActivo;
+                    const descTexto = foroDataInfo.res || `Entra a las discusiones de ${foroName}`;
+                    
+                    let badgesHtml = "";
+                    if(foroHasNew) badgesHtml += `<span class="badge-new">New</span>`;
+                    if(isHot) badgesHtml += `<span class="badge-hot">Hot</span>`;
+
+                    html += `
+                    <div class="forum-row" onclick="location.hash='#foro/${safeHash(foroName)}'">
+                        ${renderizarFondoFila(foroDataInfo.bar)}
+                        <div class="fr-content">
+                            ${renderizarIcono(foroDataInfo.ico, 'fa-comments')}
+                            <div class="fr-info">
+                                <h3 class="fr-title">${foroName} ${badgesHtml}</h3>
+                                <p class="fr-desc">${descTexto}</p>
+                            </div>
+                            <div class="fr-stats">
+                                <div><span>${totalSubs}</span> Subforos</div>
+                                <div><span>${totalPosts}</span> Posts</div>
+                            </div>
+                            <div class="fr-latest">
+                                ${lastPost ? `
+                                    <a href="#post/${lastPost.slug}" class="fr-latest-link" onclick="event.stopPropagation()">${lastPost.TITULO}</a>
+                                    <span class="fr-latest-author">Por: eltorga</span>
+                                ` : '<span style="color:var(--steam-border)">Sin actividad</span>'}
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function renderForoView(container, targetForo, tagFiltro) {
+            actualizarBreadcrumb([{text: "Inicio", link: "javascript:irAInicio()"}, {text: targetForo, link: `#foro/${safeHash(targetForo)}`}]);
+            
+            let currentForoInfo = null;
+            for (const sec in foroData) {
+                if (foroData[sec].foros[targetForo]) {
+                    currentForoInfo = foroData[sec].foros[targetForo];
+                    break;
+                }
+            }
+
+            if (!currentForoInfo) { container.innerHTML = "<p>Foro no encontrado.</p>"; return; }
+            setFondoGlobal(currentForoInfo.bg);
+
+            let html = '';
+
+            if(Object.keys(currentForoInfo.subforos).length > 0) {
+                html += `
+                <div class="forum-section">
+                    <div class="shared-header-style forum-section-header" style="position:relative; overflow:hidden;">
+                        ${renderizarFondoFila(currentForoInfo.bar)}
+                        <div style="z-index:1; display:flex; align-items:center; gap: 12px;">
+                            ${renderizarIcono(currentForoInfo.ico, 'fa-list', true)} SUBFOROS DE ${targetForo}
+                        </div>
+                    </div>
+                `;
+
+                for (const [subName, subInfo] of Object.entries(currentForoInfo.subforos)) {
+                    const postsArr = subInfo.posts;
+                    const lastPost = postsArr.length > 0 ? postsArr[postsArr.length - 1] : null;
+                    const descTexto = subInfo.res || `Todo sobre ${subName}`;
+                    
+                    const isNew = tienePostNuevo(postsArr);
+                    const isHot = subName === subforoMasActivo;
+                    let badgesHtml = "";
+                    if(isNew) badgesHtml += `<span class="badge-new">New</span>`;
+                    if(isHot) badgesHtml += `<span class="badge-hot">Hot</span>`;
+
+                    html += `
+                    <div class="forum-row" onclick="location.hash='#subforo/${safeHash(targetForo)}/${safeHash(subName)}'">
+                        ${renderizarFondoFila(subInfo.bar)}
+                        <div class="fr-content">
+                            ${renderizarIcono(subInfo.ico, 'fa-file-lines')}
+                            <div class="fr-info">
+                                <h3 class="fr-title">${subName} ${badgesHtml}</h3>
+                                <p class="fr-desc">${descTexto}</p>
+                            </div>
+                            <div class="fr-stats">
+                                <div><span>${postsArr.length}</span> Posts</div>
+                            </div>
+                            <div class="fr-latest">
+                                ${lastPost ? `
+                                    <a href="#post/${lastPost.slug}" class="fr-latest-link" onclick="event.stopPropagation()">${lastPost.TITULO}</a>
+                                    <span class="fr-latest-author">Por: eltorga</span>
+                                ` : '<span style="color:var(--steam-border)">Sin actividad</span>'}
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                html += `</div>`;
+            }
+
+            let postsDirectos = currentForoInfo.posts;
+            if(tagFiltro) {
+                postsDirectos = postsDirectos.filter(p => p.cleanTagsArray.some(t => t.toLowerCase() === tagFiltro.toLowerCase()));
+                html += `<div class="tag-badge" style="display:inline-block; margin-bottom:15px; font-size:1rem;" onclick="location.hash='#foro/${safeHash(targetForo)}'" data-tooltip="Quitar filtro"><i class="fa-solid fa-xmark"></i> Etiqueta: ${tagFiltro}</div>`;
+            }
+
+            if(postsDirectos.length > 0) {
+                html += `
+                <div class="forum-section">
+                    <div class="shared-header-style forum-section-header" style="position:relative; overflow:hidden;">
+                        <div style="z-index:1; display:flex; align-items:center; gap: 12px;">
+                            ${renderizarIcono(currentForoInfo.ico, 'fa-list', true)} ÚLTIMOS POSTS DE ${targetForo}
+                        </div>
+                    </div>
+                    ${generarHtmlPosts(postsDirectos, `#foro/${safeHash(targetForo)}`)}
+                </div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderSubforoView(container, targetForo, targetSubforo, tagFiltro) {
+            const baseHash = `#subforo/${safeHash(targetForo)}/${safeHash(targetSubforo)}`;
+            actualizarBreadcrumb([
+                {text: "Inicio", link: "javascript:irAInicio()"}, 
+                {text: targetForo, link: `#foro/${safeHash(targetForo)}`},
+                {text: targetSubforo, link: baseHash}
+            ]);
+
+            let todosLosPosts = postsGlobal.filter(p => p.foroParent === targetForo && p.SUBFORO === targetSubforo);
+            if(todosLosPosts.length > 0) setFondoGlobal(todosLosPosts[0].bgHeredado);
+
+            let subIcoStr = '';
+            let subBg = '';
+            for(const sec in foroData) {
+                if(foroData[sec].foros[targetForo] && foroData[sec].foros[targetForo].subforos[targetSubforo]) {
+                    subIcoStr = renderizarIcono(foroData[sec].foros[targetForo].subforos[targetSubforo].ico, 'fa-file-lines', true);
+                    subBg = renderizarFondoFila(foroData[sec].foros[targetForo].subforos[targetSubforo].bar);
+                    break;
+                }
+            }
+
+            let postsAMostrar = todosLosPosts;
+            let html = '';
+            if(tagFiltro) {
+                postsAMostrar = todosLosPosts.filter(p => p.cleanTagsArray.some(t => t.toLowerCase() === tagFiltro.toLowerCase()));
+                html += `<div class="tag-badge" style="display:inline-block; margin-bottom:15px; font-size:1rem;" onclick="location.hash='${baseHash}'" data-tooltip="Quitar filtro"><i class="fa-solid fa-xmark"></i> Etiqueta: ${tagFiltro}</div>`;
+            } 
+
+            html += `
+            <div class="forum-section">
+                <div class="shared-header-style forum-section-header" style="position:relative; overflow:hidden;">
+                    ${subBg}
+                    <div style="z-index:1; display:flex; align-items:center; gap: 12px;">
+                        ${subIcoStr} ÚLTIMOS POSTS DE ${targetSubforo}
+                    </div>
+                </div>
+            `;
+            html += generarHtmlPosts(postsAMostrar, baseHash);
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function generarHtmlPosts(postsArray, baseHash) {
+            if(postsArray.length === 0) return `<div style="padding: 20px;">No hay posts aquí.</div>`;
+            
+            const sorted = [...postsArray].sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
+            
+            let html = '';
+            sorted.forEach(p => {
+                let imgHTML = p.primeraImagen 
+                    ? `<div class="post-thumbnail"><img src="${p.primeraImagen}"></div>` 
+                    : `<div class="post-thumbnail"><i class="fa-solid fa-comments fa-xl" style="color:var(--steam-grey);"></i></div>`;
+                    
+                let pinIcon = p.isPinned ? `<i class="fa-solid fa-thumbtack" style="color:var(--steam-red); margin-right:8px;" data-tooltip="Tema Fijo"></i>` : '';
+                let isNew = ultimos5PostsSlugs.includes(p.slug);
+                let newBadge = isNew ? `<span class="badge-new">New</span>` : '';
+
+                let tagsHTML = "";
+                if(p.cleanTagsArray.length > 0) {
+                    tagsHTML = p.cleanTagsArray.map(t => `<span class="tag-badge" onclick="event.stopPropagation(); location.hash='${baseHash}?tag=${safeHash(t)}'">${t}</span>`).join('');
+                }
+
+                html += `
+                <div class="post-row" onclick="location.hash='#post/${p.slug}'">
+                    <div class="post-row-left">
+                        ${imgHTML}
+                        <div class="post-row-info">
+                            <div class="post-row-title">${pinIcon}${p.TITULO} ${newBadge}</div>
+                            <div style="font-size:0.75rem; color:var(--steam-grey);">Por eltorga</div>
+                        </div>
+                    </div>
+                    <div class="post-row-words"><span>${p.palabras}</span> palabras</div>
+                    <div class="tags-container">${tagsHTML}</div>
+                </div>`;
+            });
+            return html;
+        }
+
+        function renderPostView(container, slug) {
+            const post = postsGlobal.find(p => p.slug === slug);
+            if(!post) { container.innerHTML = "Post no encontrado."; return; }
+
+            setFondoGlobal(post.bgHeredado);
+
+            let breadcrumbs = [
+                {text: "Inicio", link: "javascript:irAInicio()"}, 
+                {text: post.foroParent, link: `#foro/${safeHash(post.foroParent)}`}
+            ];
+            let postIconHTML = '';
+            
+            if (post.SUBFORO !== "") {
+                breadcrumbs.push({text: post.SUBFORO, link: `#subforo/${safeHash(post.foroParent)}/${safeHash(post.SUBFORO)}`});
+                postIconHTML = renderizarIcono(foroData[post.secParent].foros[post.foroParent].subforos[post.SUBFORO].ico, 'fa-file-lines');
+            } else {
+                postIconHTML = renderizarIcono(foroData[post.secParent].foros[post.foroParent].ico, 'fa-comments');
+            }
+            breadcrumbs.push({text: post.TITULO, link: `#post/${slug}`});
+            actualizarBreadcrumb(breadcrumbs);
+
+            postIconHTML = postIconHTML.replace('custom-icon', 'post-header-icon-img');
+
+            let headerHTML = `
+                <div class="post-header">
+                    <div class="post-header-top">
+                        <div class="post-header-icon">${postIconHTML}</div>
+                        <div class="post-header-info">
+                            <div class="post-header-title">${post.isPinned ? `<i class="fa-solid fa-thumbtack" style="color:var(--steam-red); margin-right:10px; font-size:1.2rem;"></i>` : ''}${post.TITULO}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const parsedContent = customMarkdownParse(post.POST);
+
+            let relatedForumHtml = '';
+            let relatedOtherHtml = '';
+            let footerTagsHtml = '';
+            
+            const baseHashSub = post.SUBFORO !== "" ? `#subforo/${safeHash(post.foroParent)}/${safeHash(post.SUBFORO)}` : `#foro/${safeHash(post.foroParent)}`;
+
+            if (post.cleanTagsArray.length > 0) {
+                footerTagsHtml = `
+                <div class="post-footer-tags">
+                    <i class="fa-solid fa-tags" style="color:var(--steam-grey);"></i>
+                    ${post.cleanTagsArray.map(t => `<span class="tag-badge" onclick="location.hash='${baseHashSub}?tag=${safeHash(t)}'">${t}</span>`).join('')}
+                </div>`;
+
+                let relatedInForum = postsGlobal.filter(p => {
+                    if (p.slug === post.slug || p.foroParent !== post.foroParent || p.SUBFORO !== post.SUBFORO) return false;
+                    return post.cleanTagsArray.some(tag => p.cleanTagsArray.map(x=>x.toLowerCase()).includes(tag.toLowerCase()));
+                }).slice(0,5);
+
+                if(relatedInForum.length > 0) {
+                    relatedForumHtml = `<div class="related-section">
+                        <div class="related-title-sep">Posts en este foro con etiquetas similares</div>
+                        <div class="related-posts-container">
+                            ${generarFilasRelacionadas(relatedInForum)}
+                        </div>
+                    </div>`;
+                }
+
+                let relatedOthers = postsGlobal.filter(p => {
+                    if (p.slug === post.slug || (p.foroParent === post.foroParent && p.SUBFORO === post.SUBFORO)) return false;
+                    return post.cleanTagsArray.some(tag => p.cleanTagsArray.map(x=>x.toLowerCase()).includes(tag.toLowerCase()));
+                }).slice(0,5);
+
+                if(relatedOthers.length > 0) {
+                    relatedOtherHtml = `<div class="related-section">
+                        <div class="related-title-sep">Otros foros similares con las mismas etiquetas</div>
+                        <div class="related-posts-container">
+                            ${generarFilasRelacionadas(relatedOthers)}
+                        </div>
+                    </div>`;
+                }
+            }
+
+            container.innerHTML = `
+            <div class="post-container">
+                ${headerHTML}
+                <div class="post-body">
+                    <div class="post-sidebar">
+                        <img src="https://avatars.fastly.steamstatic.com/fe6c30d1abea5d3632a041acb1775ba7f985b392_full.jpg" class="author-avatar" alt="eltorga">
+                        <div class="author-name-wrapper">
+                            <div class="author-name">eltorga</div>
+                            <div class="online-dot" data-tooltip="Conectado"></div>
+                        </div>
+                        <div class="badge-admin"><i class="fa-solid fa-users"></i> Administrador</div>
+                        <div class="badge-dev"><i class="fa-solid fa-code"></i> Desarrollador</div>
+                        <div class="author-stars">★★★★★</div>
+                        
+                        <div class="author-stats">
+                            <div class="author-stats-row"><span><i class="fa-solid fa-pencil"></i> Posts creados</span> <span style="color:var(--steam-light)">142</span></div>
+                            <div class="author-stats-row"><span><i class="fa-solid fa-heart"></i> Likes recibidos</span> <span style="color:var(--steam-light)">396</span></div>
+                            <div class="author-stats-row"><span><i class="fa-solid fa-arrow-up"></i> Reputación</span> <span style="color:var(--steam-green)">530</span></div>
+                        </div>
+                        <div class="achievements-title">LOGROS</div>
+                        ${renderizarBadges()}
+                    </div>
+                    
+                    <div class="post-content" id="post-content-area">
+                        ${parsedContent}
+                    </div>
+                </div>
+                ${footerTagsHtml}
+            </div>
+            ${relatedForumHtml}
+            ${relatedOtherHtml}
+            `;
+
+            setTimeout(() => {
+                const imagenesPost = document.querySelectorAll('#post-content-area img');
+                imagenesPost.forEach(img => {
+                    let parent = img.parentElement;
+                    if(parent.tagName === 'A') {
+                        parent.onclick = (e) => e.preventDefault(); 
+                    }
+                    img.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        abrirLightbox(img.src);
+                    };
+                });
+            }, 100);
+        }
+
+        function generarFilasRelacionadas(arrPosts) {
+            return arrPosts.map(r => {
+                let rImg = r.primeraImagen 
+                    ? `<img src="${r.primeraImagen}" class="related-thumb">` 
+                    : `<div class="related-thumb" style="display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-file-lines" style="color:var(--steam-grey);"></i></div>`;
+                
+                let originText = r.SUBFORO !== "" ? r.SUBFORO : r.foroParent;
+
+                return `
+                <div class="related-post-row" onclick="location.hash='#post/${r.slug}'">
+                    <div class="related-post-left">
+                        ${rImg}
+                        <div class="related-title">${r.TITULO}</div>
+                    </div>
+                    <div class="related-origin-tag">${originText}</div>
+                    <div class="related-words">${r.palabras} palabras</div>
+                    <div class="related-author">
+                        <span>eltorga</span>
+                        <img src="https://avatars.fastly.steamstatic.com/fe6c30d1abea5d3632a041acb1775ba7f985b392_full.jpg" class="related-author-img">
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function irAInicio() { window.location.hash = ''; }
+        
+        function abrirLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').classList.add('active');
+        }
+        function cerrarLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+        
+        function renderizarIcono(urlIco, fallbackClass, esHeaderSection = false) {
+            if(urlIco) {
+                const claseAdd = esHeaderSection ? 'custom-icon' : 'custom-icon';
+                return `<img src="${urlIco}" class="${claseAdd}">`;
+            }
+            return `<i class="fa-solid ${fallbackClass} fa-fallback"></i>`;
+        }
+        
+        function extraerPrimeraImagen(md) {
+            if(!md) return null;
+            let match = md.match(/!\[.*?\]\((.*?)\)/);
+            if (match) return match[1];
+            match = md.match(/<img.*?src=["'](.*?)["']/);
+            if (match) return match[1];
+            return null;
+        }
+        function contarPalabras(texto) {
+            if(!texto) return 0;
+            return texto.replace(/<[^>]*>?/gm, '').replace(/[^\w\s]/g, ' ').trim().split(/\s+/).filter(w => w.length > 0).length;
+        }
+        
+        function renderizarBadges() {
+            let badges = [
+               "https://community.fastly.steamstatic.com/public/images/badges/48_communitycontributor/1_80.png",
+                "https://steamcommunity-a.akamaihd.net/public/images/badges/15_hwbeta/hwbeta02_80.png",
+                "https://steamcommunity-a.akamaihd.net/public/images/badges/30_steamawardnominations/level04_80.png",
+                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/220/a4e1c060a5b728ded0d821f75c956c55335f6864.png",
+                "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/items/275850/98399b12de4e617fa9794c5f3e5646f18f9af148.png",
+                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/730/400f2cdf69db174f5616038edbb7a3f8e917ae00.png",
+                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/550/9c05f08e59bd520e6136a980e35f7065ec88f5da.png",
+                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/306670/979c2bcb64776c55c8bdcd93bf48e8a2e074466e.png",
+                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/319630/e01c5dd02e9ca3d733f5bb93869c576ff8fb33a9.png"
+            ];
+            let html = '<div class="badges-grid">';
+            for(let i=0; i<9; i++) {
+                html += `<a href="#" target="_blank" data-tooltip="Logro Steam"><img src="${badges[i]}" alt="Badge"></a>`;
+            }
+            return html + '</div>';
+        }
+        
+        function actualizarBreadcrumb(paths) {
+            document.getElementById('breadcrumb').innerHTML = paths.map((p, i) => {
+                const sep = i < paths.length - 1 ? ' <i class="fa-solid fa-chevron-right" style="font-size:0.7rem; margin:0 5px;"></i> ' : '';
+                return `<a href="${p.link}">${p.text}</a>${sep}`;
+            }).join('');
+        }
+    </script>
+</body>
+</html>

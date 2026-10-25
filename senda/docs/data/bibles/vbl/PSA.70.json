@@ -1,0 +1,28 @@
+{
+  "translation_id": "vbl",
+  "translation": "Versión Biblia Libre",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Oh, Dios, ¡sálvame! ¡Apresúrate a ayudarme!"
+    },
+    {
+      "verse": 2,
+      "text": "Por favor, vence y humilla a los que tratan de matarme. Haz que los que me hieren retrocedan con deshonra."
+    },
+    {
+      "verse": 3,
+      "text": "Que los que se burlan de mi se horroricen de su derrota."
+    },
+    {
+      "verse": 4,
+      "text": "Pero que Sean felices todos los que vienen a ti; que los que aman tu salvación siempre digan: “¡Cuán grande es Dios!”"
+    },
+    {
+      "verse": 5,
+      "text": "En lo que a mi concierne, soy un pobre y menesteroso. ¡Apresúrate, oh Dios, a ayudarme! ¡No esperes más!"
+    }
+  ],
+  "attribution": "Versión Biblia Libre. Copyright © 2018-2020 Jonathan Gallagher y Shelly Barrios de Ávila. Bajo CC BY-SA 4.0: confirmar aviso incluido en edición oficial. Fuente https://ebible.org/details.php?id=spavbl",
+  "provider": "offline"
+}

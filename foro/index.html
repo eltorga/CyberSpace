@@ -7,13 +7,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js" defer></script>
     
     <!-- SCRIPT GOOGLE TRANSLATE -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'es',
-                includedLanguages: 'es,en,pt,fr,it,zh-CN',
+                
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE
             }, 'google_translate_element');
         }
@@ -322,11 +324,17 @@
             .related-words, .related-author { text-align: left; justify-content: flex-start; }
             .related-post-left { flex-direction: column; align-items: flex-start; }
         }
-    </style>
+    
+/* Eltorga v0.2.3: traductor, comentarios y editor de código */
+#google_translate_element{position:absolute!important;left:-9999px!important;top:0!important;opacity:0!important;pointer-events:none!important;height:1px!important;overflow:hidden!important}
+.goog-te-banner-frame,.goog-te-banner-frame.skiptranslate,.skiptranslate>iframe,#goog-gt-tt,.goog-te-balloon-frame{display:none!important;visibility:hidden!important}body{top:0!important}html{margin-top:0!important}
+.language-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#202b37;border:1px solid var(--steam-border);border-radius:5px;color:var(--steam-light);padding:10px;cursor:pointer}.language-trigger img,.language-options img{width:25px;height:25px;object-fit:contain}.language-options{display:none;position:absolute;top:100%;left:0;right:0;z-index:150;background:#253341;border:1px solid #4b6678;box-shadow:0 8px 20px #0009;border-radius:5px;max-height:260px;overflow:auto}.language-options.active{display:block}.language-options button{display:flex;gap:12px;align-items:center;color:#fff;background:none;border:0;width:100%;padding:10px;text-align:left;cursor:pointer}.language-options button:hover{background:#2a475e}#custom-language-selector{position:relative}.post-row-comment-count{color:#a9bbc8;white-space:nowrap;font-size:12px}.comment-latest{display:flex;gap:8px;align-items:center;text-align:left;min-width:0}.comment-latest img{width:34px;height:34px;object-fit:cover;border-radius:50%}.comment-latest .last-identity{overflow:hidden}.comment-latest strong,.comment-latest small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}.comment-latest small{font-size:11px;color:var(--steam-grey)}.post-row{grid-template-columns:minmax(0,1fr) 105px minmax(130px,185px);gap:14px}.elt-code{background:#111923;border:1px solid #4b5c70;border-radius:7px;color:#dbe8f4;overflow:hidden;margin:15px 0}.elt-code-head{display:flex;gap:10px;align-items:center;justify-content:space-between;background:#29394c;padding:10px}.elt-copy{border:1px solid #566e84;background:#2a475e;color:#fff;padding:5px 10px;border-radius:5px;cursor:pointer}.elt-code pre{white-space:pre;overflow:auto;padding:15px;margin:0;background:#121c28}.elt-code-line{display:block}.elt-line-no{color:#8fa0b0;display:inline-block;min-width:38px;margin-right:10px;user-select:none;text-align:right;border-right:1px solid #405065;padding-right:9px}.md-download-box .iconify{font-size:28px;color:#d9e8f4}
+</style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
 <script defer src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons-font@v15/font/simple-icons.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><style>.elt-code pre{padding:15px;overflow:auto}.elt-code .elt-copy{border:0;border-radius:4px;background:#32648c;color:white;padding:6px 12px;cursor:pointer}.comment-meta{font-size:12px;color:var(--steam-grey)}</style></head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons-font@v15/font/simple-icons.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><style>.elt-code pre{padding:15px;overflow:auto}.elt-code .elt-copy{border:0;border-radius:4px;background:#32648c;color:white;padding:6px 12px;cursor:pointer}.comment-meta{font-size:12px;color:var(--steam-grey)}</style><link rel="stylesheet" href="js/v024-public.css"><link rel="stylesheet" href="js/v025-puntos.css">
+</head>
 <body>
 
     <div class="bg-global-container" id="bg-global-container"></div>
@@ -447,6 +455,7 @@
                     const r = await fetch(p+'?t='+Date.now()); if(!r.ok) throw Error(p); return r.json();
                 }));
                 siteConfig = config;
+                if(window.eltorgaPublicInit) window.eltorgaPublicInit();
                 document.title = config.siteTitle || 'Eltorga Foro';
                 document.querySelector('.hero-title').textContent = config.heroTitle || 'Foro Online';
                 const logo = document.getElementById('site-logo-placeholder');
@@ -1059,11 +1068,11 @@
                 let relatedInForum = postsGlobal.filter(p => {
                     if (p.slug === post.slug || p.foroParent !== post.foroParent || p.SUBFORO !== post.SUBFORO) return false;
                     return post.cleanTagsArray.some(tag => p.cleanTagsArray.map(x=>x.toLowerCase()).includes(tag.toLowerCase()));
-                }).slice(0,5);
+                }).slice(0,3);
 
                 if(relatedInForum.length > 0) {
                     relatedForumHtml = `<div class="related-section">
-                        <div class="related-title-sep">Posts en este foro con etiquetas similares</div>
+                        <div class="related-title-sep shared-header-style"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> POSTS SIMILARES</div>
                         <div class="related-posts-container">
                             ${generarFilasRelacionadas(relatedInForum)}
                         </div>
@@ -1073,11 +1082,11 @@
                 let relatedOthers = postsGlobal.filter(p => {
                     if (p.slug === post.slug || (p.foroParent === post.foroParent && p.SUBFORO === post.SUBFORO)) return false;
                     return post.cleanTagsArray.some(tag => p.cleanTagsArray.map(x=>x.toLowerCase()).includes(tag.toLowerCase()));
-                }).slice(0,5);
+                }).slice(0,3);
 
                 if(relatedOthers.length > 0) {
                     relatedOtherHtml = `<div class="related-section">
-                        <div class="related-title-sep">Otros foros similares con las mismas etiquetas</div>
+                        <div class="related-title-sep shared-header-style"><i class="fa-solid fa-folder-open" aria-hidden="true"></i> OTROS FOROS</div>
                         <div class="related-posts-container">
                             ${generarFilasRelacionadas(relatedOthers)}
                         </div>
@@ -1114,12 +1123,16 @@
                 </div>
                 ${footerTagsHtml}
             </div>
+            <section class="elt-points-section" id="elt-points-section" aria-label="Puntos de la publicación">
+                <div class="elt-points-heading shared-header-style"><i class="fa-solid fa-coins" aria-hidden="true"></i> PUNTOS</div>
+                <div id="elt-points-slot" data-post-id="${safeAttr(post.ID)}"></div>
+            </section>
             ${relatedForumHtml}
             ${relatedOtherHtml}
             <div id="local-reactions" style="margin-top:22px"></div><section class="forum-section" id="giscus-section" style="margin-top:30px;padding:20px"><div class="shared-header-style">Comentarios</div><div id="giscus-slot" style="padding-top:18px"></div></section>
             `;
-            montarGiscus(post);applyAdminProfile();
-            renderLocalReactions(post);
+            montarGiscus(post);applyAdminProfile();window.EltorgaPuntos?.montar(post);
+            // Solo reacciones nativas de Giscus.
 
             setTimeout(() => {
                 const imagenesPost = document.querySelectorAll('#post-content-area img');
@@ -1154,8 +1167,8 @@
                     
                     <div class="related-words">${r.palabras} palabras</div>
                     <div class="related-author">
-                        <span>eltorga</span>
-                        <span class="related-author-img"></span>
+                        <span class="related-author-name">${safeAttr(siteConfig.profile?.name||'eltorga')}</span>
+                        ${(siteConfig.profile?.avatar||siteConfig.avatar) ? `<img class="related-author-img" src="${safeAttr(siteConfig.profile?.avatar||siteConfig.avatar)}" alt="Avatar del autor" loading="lazy">` : `<span class="related-author-img related-author-placeholder"><i class="fa-solid fa-user"></i></span>`}
                     </div>
                 </div>`;
             }).join('');
@@ -1217,7 +1230,7 @@ function montarGiscus(post) {
             if(!cfg.enabled){document.getElementById('giscus-section').style.display='none';return;}
             const script=document.createElement('script');
             script.src='https://giscus.app/client.js';script.async=true;script.crossOrigin='anonymous';
-            const fields={repo:cfg.repo,'repo-id':cfg.repoId,category:cfg.category,'category-id':cfg.categoryId,mapping:'specific',term:'eltorga-'+post.ID,strict:'1','reactions-enabled':'1','emit-metadata':'0','input-position':'bottom',theme:cfg.theme||'noborder_dark',lang:cfg.lang||'es'};
+            const fields={repo:cfg.repo,'repo-id':cfg.repoId,category:cfg.category,'category-id':cfg.categoryId,mapping:'specific',term:'eltorga-'+post.ID,strict:'1','reactions-enabled':'1','emit-metadata':'1','input-position':'bottom',theme:cfg.theme||'noborder_dark',lang:cfg.lang||'es'};
             Object.entries(fields).forEach(([key,val])=>script.setAttribute('data-'+key,val));
             slot.replaceChildren(script);
         }
@@ -1225,5 +1238,9 @@ function montarGiscus(post) {
         // Download redirect on the same GitHub Pages origin.
         document.addEventListener('click', event=> {const copy=event.target.closest('.elt-copy');if(copy){const code=copy.closest('.elt-code')?.querySelector('code');if(code&&navigator.clipboard)navigator.clipboard.writeText(code.innerText);return;}const a=event.target.closest('.md-dl-btn');if(!a)return;const href=a.getAttribute('href');if(!href)return;event.preventDefault(); const title=a.closest('.md-download-box')?.querySelector('.md-dl-title')?.textContent||'Archivo';window.open('descarga.html?url='+encodeURIComponent(href)+'&title='+encodeURIComponent(title),'_blank','noopener,noreferrer');});
 </script>
+<script src="js/upgrade-public.js"></script>
+<script src="js/v024-public.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/v025-puntos.js" defer></script>
 </body>
 </html>

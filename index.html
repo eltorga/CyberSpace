@@ -7,13 +7,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js" defer></script>
     
     <!-- SCRIPT GOOGLE TRANSLATE -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'es',
-                includedLanguages: 'es,en,pt,fr,it,zh-CN',
+                
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE
             }, 'google_translate_element');
         }
@@ -278,7 +280,7 @@
         .related-title-sep { font-size: 0.85rem; color: var(--steam-grey); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--steam-border); padding-bottom: 5px; }
         .related-posts-container { background: var(--steam-panel); border: 1px solid var(--steam-border); border-radius: 4px; margin-bottom: 20px; overflow: hidden;}
         
-        .related-post-row { display: grid; grid-template-columns: minmax(0, 2fr) auto 100px 110px; gap: 15px; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background 0.2s; }
+        .related-post-row { display: grid; grid-template-columns: minmax(0, 2fr) 100px 110px; gap: 15px; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background 0.2s; }
         .related-post-row:hover { background: rgba(255,255,255,0.1); }
         .related-post-row:last-child { border-bottom: none; }
         
@@ -322,7 +324,16 @@
             .related-words, .related-author { text-align: left; justify-content: flex-start; }
             .related-post-left { flex-direction: column; align-items: flex-start; }
         }
-    </style>
+    
+/* Eltorga v0.2.3: traductor, comentarios y editor de código */
+#google_translate_element{position:absolute!important;left:-9999px!important;top:0!important;opacity:0!important;pointer-events:none!important;height:1px!important;overflow:hidden!important}
+.goog-te-banner-frame,.goog-te-banner-frame.skiptranslate,.skiptranslate>iframe,#goog-gt-tt,.goog-te-balloon-frame{display:none!important;visibility:hidden!important}body{top:0!important}html{margin-top:0!important}
+.language-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#202b37;border:1px solid var(--steam-border);border-radius:5px;color:var(--steam-light);padding:10px;cursor:pointer}.language-trigger img,.language-options img{width:25px;height:25px;object-fit:contain}.language-options{display:none;position:absolute;top:100%;left:0;right:0;z-index:150;background:#253341;border:1px solid #4b6678;box-shadow:0 8px 20px #0009;border-radius:5px;max-height:260px;overflow:auto}.language-options.active{display:block}.language-options button{display:flex;gap:12px;align-items:center;color:#fff;background:none;border:0;width:100%;padding:10px;text-align:left;cursor:pointer}.language-options button:hover{background:#2a475e}#custom-language-selector{position:relative}.post-row-comment-count{color:#a9bbc8;white-space:nowrap;font-size:12px}.comment-latest{display:flex;gap:8px;align-items:center;text-align:left;min-width:0}.comment-latest img{width:34px;height:34px;object-fit:cover;border-radius:50%}.comment-latest .last-identity{overflow:hidden}.comment-latest strong,.comment-latest small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}.comment-latest small{font-size:11px;color:var(--steam-grey)}.post-row{grid-template-columns:minmax(0,1fr) 105px minmax(130px,185px);gap:14px}.elt-code{background:#111923;border:1px solid #4b5c70;border-radius:7px;color:#dbe8f4;overflow:hidden;margin:15px 0}.elt-code-head{display:flex;gap:10px;align-items:center;justify-content:space-between;background:#29394c;padding:10px}.elt-copy{border:1px solid #566e84;background:#2a475e;color:#fff;padding:5px 10px;border-radius:5px;cursor:pointer}.elt-code pre{white-space:pre;overflow:auto;padding:15px;margin:0;background:#121c28}.elt-code-line{display:block}.elt-line-no{color:#8fa0b0;display:inline-block;min-width:38px;margin-right:10px;user-select:none;text-align:right;border-right:1px solid #405065;padding-right:9px}.md-download-box .iconify{font-size:28px;color:#d9e8f4}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
+<script defer src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons-font@v15/font/simple-icons.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><style>.elt-code pre{padding:15px;overflow:auto}.elt-code .elt-copy{border:0;border-radius:4px;background:#32648c;color:white;padding:6px 12px;cursor:pointer}.comment-meta{font-size:12px;color:var(--steam-grey)}</style><link rel="stylesheet" href="js/v024-public.css"><link rel="stylesheet" href="js/v025-puntos.css"><link rel="stylesheet" href="js/v026-comments.css">
 </head>
 <body>
 
@@ -338,7 +349,7 @@
         <div class="header-content">
             <div class="header-left">
                 <div class="header-logo" onclick="irAInicio()">
-                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjElTTl9nzZmj_GSIsNIOXh04Jj35pYD06SGygnvOVAc37PAArgWuHSKQ4YCJEG5SsjYmYh_kinQjMALFy7OG4Emj8fEG2qNSrZ3Mwo8KS9ohP5Ro7aqBlErI6gLeqOKvOEh_KlXp1yf3zt3J65sprZgjw_xlIhFnRtBttptTC20mSu-VE/w800/eltorgaforo_logo_v3.png" alt="Gamer Odyssey">
+                    <span id="site-logo-placeholder" style="font-size:1.35rem;color:#fff;font-weight:bold">ELTORGA FORO</span>
                 </div>
                 <nav class="header-nav">
                     <a class="nav-item" onclick="irAInicio()">Blog</a>
@@ -367,7 +378,7 @@
 
     <!-- HERO SECTION -->
     <div class="hero-section" id="hero-section">
-        <video class="hero-video" id="hero-video-el" src="https://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/2139460/44e80c65cbbf011d3c80e8ac7f0a7d3376507249.mp4" autoplay loop muted playsinline></video>
+        <video class="hero-video" id="hero-video-el" autoplay loop muted playsinline style="display:none"></video>
         <div class="hero-gradient"></div>
         <div class="hero-content">
             <h1 class="hero-title">Foro Online</h1>
@@ -419,9 +430,7 @@
     </footer>
 
     <script>
-        const CSV_STRUCT = "https://docs.google.com/spreadsheets/d/1vEMxpL0Rb_0Z169YzKX4T2ArRAdSPqU2L1p6P_yelCY/export?format=csv";
-        const CSV_POSTS = "https://docs.google.com/spreadsheets/d/147go051TmnQ_sEUl4VqEzolgmYKytkPrew8pVk1uPwY/export?format=csv";
-        
+        let siteConfig = {};
         let foroData = {}; 
         let postsGlobal = [];
         
@@ -432,7 +441,7 @@
         let arrTopForos = [];
         let arrTopTags = [];
 
-        const DEFAULT_BG = "https://cdn.akamai.steamstatic.com/steamcommunity/public/images/items/1239690/dcfed8cceb3d7c74432294aec5fff49050b2ef1b.mp4";
+        const DEFAULT_BG = "";
 
         // Codificador de HASH seguro (arregla bug de Assassin's Creed)
         function safeHash(str) {
@@ -440,21 +449,40 @@
             return encodeURIComponent(str).replace(/'/g, "%27").replace(/"/g, "%22");
         }
 
-        // CARGA CON DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', () => {
-            Promise.all([
-                new Promise(res => Papa.parse(CSV_STRUCT, {download: true, header: true, complete: res})),
-                new Promise(res => Papa.parse(CSV_POSTS, {download: true, header: true, complete: res}))
-            ]).then(results => {
-                const structData = results[0].data.filter(r => r.ESTADO === 'Publicado');
-                const postsData = results[1].data.filter(r => r.ESTADO === 'Publicado');
-                procesarDatos(structData, postsData);
-                renderizarSidebarWidgets();
-                manejarRuta();
-                window.addEventListener("hashchange", manejarRuta);
-            }).catch(e => console.error("Error cargando CSVs:", e));
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const [struct, posts, config] = await Promise.all(['data/foros.json','data/posts.json','data/config.json'].map(async p => {
+                    const r = await fetch(p+'?t='+Date.now()); if(!r.ok) throw Error(p); return r.json();
+                }));
+                siteConfig = config;
+                if(window.eltorgaPublicInit) window.eltorgaPublicInit();
+                document.title = config.siteTitle || 'Eltorga Foro';
+                document.querySelector('.hero-title').textContent = config.heroTitle || 'Foro Online';
+                const logo = document.getElementById('site-logo-placeholder');
+                if(config.logo) logo.outerHTML = `<img src="${safeAttr(config.logo)}" alt="Eltorga Foro">`;
+                const hv = document.getElementById('hero-video-el');
+                if(config.heroMedia) {hv.src=config.heroMedia;hv.style.display='block';}
+                const av=document.getElementById('author-avatar');
+                if(av && config.avatar){av.src=config.avatar;av.style.display='block';}
+                procesarDatos(struct.filter(r=>['Publicado','Fijado'].includes(r.ESTADO)),posts.filter(r=>['Publicado','Fijado'].includes(r.ESTADO)));
+                renderizarSidebarWidgets();renderDynamicHeader(); manejarRuta();
+                window.addEventListener('hashchange',manejarRuta);
+                setTimeout(()=>window.EltorgaComentarios?.refrescarMetricas(),150);
+            } catch(e) {console.error(e);document.getElementById('app-content').textContent='No se pudieron cargar los datos. Abre la web con un servidor local (ADMIN.bat).';}
         });
+        function safeAttr(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 
+        function renderLocalReactions(post) {
+            const r=siteConfig.reactions||{}; if(!['stars','remix','emojis'].includes(r.mode))return;
+            const mount=document.getElementById('local-reactions');if(!mount)return;
+            const key='eltorga-vote-'+(post.ROUTE_ID||post.ID),old=localStorage.getItem(key)||'';
+            const opts=r.mode==='stars'?Array.from({length:5},(_,i)=>({key:String(i+1),icon:'ri-star-fill',label:(i+1)+' estrellas'})):r.mode==='emojis'?[{key:'heart',icon:'ri-heart-fill',label:'Me encanta'},{key:'fire',icon:'ri-fire-fill',label:'Genial'},{key:'laugh',icon:'ri-emotion-laugh-fill',label:'Divertido'}]:Object.entries(r.icons||{}).map(([key,icon])=>({key,icon,label:key}));
+            mount.innerHTML='<div style="padding:15px;background:#202a36;border:1px solid #3a404d;border-radius:5px"><strong>Tu reacción</strong><div id="vote-buttons" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"></div><small style="color:#8f98a0">Preferencia guardada solo en este navegador; no es un recuento público.</small></div>';
+            const box=document.getElementById('vote-buttons');opts.forEach(o=>{if(!/^ri-[a-z0-9-]+$/.test(o.icon))return;const btn=document.createElement('button');btn.type='button';btn.style.cssText='background:'+(old===o.key?'#2a718b':'#2a475e')+';border:1px solid #52718b;color:#fff;padding:8px 12px;cursor:pointer;border-radius:4px';btn.innerHTML='<i class="'+o.icon+'"></i> '+o.label;btn.onclick=()=>{localStorage.setItem(key,o.key);renderLocalReactions(post)};box.append(btn)})
+        }
+        function slugTitulo(value) { return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ñ/gi,m=>m==='Ñ'?'N':'n').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'publicacion'; }
+        function iconMarkup(value) { if(!value)return ''; if(/^ri-[a-z0-9-]+$/.test(value))return '<i class="'+value+'"></i>'; if(/^si:[a-z0-9-]+$/.test(value))return '<i class="si si-'+value.slice(3)+'"></i>';return ''; }
+        function postContent(post) { const raw=post.POST||''; return post.CONTENT_FORMAT==='html' ? DOMPurify.sanitize(raw,{ADD_TAGS:['iframe'],ADD_ATTR:['allowfullscreen','allow','frameborder','loading','referrerpolicy','target','rel','data-download-url','data-download-title']}) : customMarkdownParse(raw); }
         function procesarDatos(struct, posts) {
             foroData = {};
             postsGlobal = [];
@@ -490,18 +518,18 @@
             });
 
             posts.forEach(post => {
-                const target = (post.FORO || post.SUBFORO)?.trim(); 
+                const target = (post.SUBFORO || post.FORO)?.trim(); 
                 if(!target) return;
                 
                 let asignado = false;
-                post.slug = post.TITULO?.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                post.slug = (post.ROUTE_ID || post.ID) + '/' + slugTitulo(post.TITULO || 'publicacion');
                 post.palabras = contarPalabras(post.POST);
                 post.primeraImagen = extraerPrimeraImagen(post.POST);
                 
                 let cleanTags = [];
                 if(post.ETIQUETAS) {
                     cleanTags = post.ETIQUETAS.split(',').map(t=>t.trim());
-                    post.isPinned = cleanTags.some(t => t.toLowerCase() === 'pin');
+                    post.isPinned = post.ESTADO === 'Fijado' || cleanTags.some(t => t.toLowerCase() === 'pin');
                     post.cleanTagsArray = cleanTags.filter(t => t.toLowerCase() !== 'pin');
                     
                     post.cleanTagsArray.forEach(t => {
@@ -610,7 +638,7 @@
                     return `
                     <div class="widget-list-item" onclick="location.hash='#post/${p.slug}'">
                         ${thumb}
-                        <div class="widget-post-title">${p.TITULO}</div>
+                        <div class="widget-post-title">${p.TITULO}<small class="elt-metric-comments" style="display:block" data-elt-post-id="${safeAttr(p.ID)}" data-elt-metric="comments">— comentarios</small></div>
                         ${subIcoHtml}
                     </div>
                     `;
@@ -638,7 +666,8 @@
 
         function setFondoGlobal(urlBg) {
             const container = document.getElementById('bg-global-container');
-            const url = urlBg || DEFAULT_BG;
+            const url = urlBg || siteConfig.globalBackground || DEFAULT_BG;
+            if(!url){container.innerHTML='';return;}
             if(url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.webm')) {
                 container.innerHTML = `<video src="${url}" autoplay loop muted playsinline></video>`;
             } else {
@@ -670,7 +699,7 @@
             txt = txt.replace(/\[center\]([\s\S]*?)\[\/center\]/gi, 
                 '<div style="text-align:center;">$1</div>');
             
-            return marked.parse(txt);
+            return DOMPurify.sanitize(marked.parse(txt), {ADD_TAGS:['iframe'],ADD_ATTR:['allowfullscreen','frameborder','allow']});
         }
 
         function ejecutarBusqueda() {
@@ -710,6 +739,7 @@
         }
 
         function manejarRuta() {
+            setTimeout(()=>window.EltorgaComentarios?.refrescarMetricas(),70);
             const hashTotal = window.location.hash.replace('#', '');
             const [ruta, query] = hashTotal.split('?');
             const parts = ruta.split('/');
@@ -751,7 +781,7 @@
                 heroSection.style.display = 'none';
                 
                 if (parts[0] === 'foro' || parts[0] === 'subforo') {
-                    sidebar.style.display = 'none';
+                    sidebar.style.display = 'flex';
                 } else if (parts[0] === 'post') {
                     sidebar.style.display = 'flex';
                 }
@@ -761,7 +791,7 @@
                 } else if (parts[0] === 'subforo') {
                     renderSubforoView(content, decodeURIComponent(parts[1]), decodeURIComponent(parts[2]), tagFiltro);
                 } else if (parts[0] === 'post') {
-                    renderPostView(content, decodeURIComponent(parts[1]));
+                    renderPostView(content, decodeURIComponent(parts.slice(1).join("/")));
                 }
             }
         }
@@ -816,7 +846,7 @@
                             <div class="fr-latest">
                                 ${lastPost ? `
                                     <a href="#post/${lastPost.slug}" class="fr-latest-link" onclick="event.stopPropagation()">${lastPost.TITULO}</a>
-                                    <span class="fr-latest-author">Por: eltorga</span>
+                                    <span class="fr-latest-author">Por: ${siteConfig.profile?.name||"eltorga"}</span>
                                 ` : '<span style="color:var(--steam-border)">Sin actividad</span>'}
                             </div>
                         </div>
@@ -880,7 +910,7 @@
                             <div class="fr-latest">
                                 ${lastPost ? `
                                     <a href="#post/${lastPost.slug}" class="fr-latest-link" onclick="event.stopPropagation()">${lastPost.TITULO}</a>
-                                    <span class="fr-latest-author">Por: eltorga</span>
+                                    <span class="fr-latest-author">Por: ${siteConfig.profile?.name||"eltorga"}</span>
                                 ` : '<span style="color:var(--steam-border)">Sin actividad</span>'}
                             </div>
                         </div>
@@ -978,18 +1008,18 @@
                         ${imgHTML}
                         <div class="post-row-info">
                             <div class="post-row-title">${pinIcon}${p.TITULO} ${newBadge}</div>
-                            <div style="font-size:0.75rem; color:var(--steam-grey);">Por eltorga</div>
+                            <div style="font-size:0.75rem; color:var(--steam-grey);display:flex;gap:5px;flex-wrap:wrap">${tagsHTML}</div>
                         </div>
                     </div>
-                    <div class="post-row-words"><span>${p.palabras}</span> palabras</div>
-                    <div class="tags-container">${tagsHTML}</div>
+                    <div class="post-row-words"><span class="elt-metric-points" data-elt-post-id="${safeAttr(p.ID)}" data-elt-metric="points">— puntos</span></div>
+                    <div class="tags-container"><span class="elt-metric-comments" data-elt-post-id="${safeAttr(p.ID)}" data-elt-metric="comments"><i class="ri-chat-3-line"></i> — comentarios</span></div>
                 </div>`;
             });
             return html;
         }
 
         function renderPostView(container, slug) {
-            const post = postsGlobal.find(p => p.slug === slug);
+            const post = postsGlobal.find(p => p.slug === slug || p.slug.split("/")[0] === slug.split("/")[0] || p.ID === slug);
             if(!post) { container.innerHTML = "Post no encontrado."; return; }
 
             setFondoGlobal(post.bgHeredado);
@@ -1022,7 +1052,7 @@
                 </div>
             `;
 
-            const parsedContent = customMarkdownParse(post.POST);
+            const parsedContent = postContent(post);
 
             let relatedForumHtml = '';
             let relatedOtherHtml = '';
@@ -1040,11 +1070,11 @@
                 let relatedInForum = postsGlobal.filter(p => {
                     if (p.slug === post.slug || p.foroParent !== post.foroParent || p.SUBFORO !== post.SUBFORO) return false;
                     return post.cleanTagsArray.some(tag => p.cleanTagsArray.map(x=>x.toLowerCase()).includes(tag.toLowerCase()));
-                }).slice(0,5);
+                }).slice(0,3);
 
                 if(relatedInForum.length > 0) {
                     relatedForumHtml = `<div class="related-section">
-                        <div class="related-title-sep">Posts en este foro con etiquetas similares</div>
+                        <div class="related-title-sep shared-header-style"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> POSTS SIMILARES</div>
                         <div class="related-posts-container">
                             ${generarFilasRelacionadas(relatedInForum)}
                         </div>
@@ -1054,11 +1084,11 @@
                 let relatedOthers = postsGlobal.filter(p => {
                     if (p.slug === post.slug || (p.foroParent === post.foroParent && p.SUBFORO === post.SUBFORO)) return false;
                     return post.cleanTagsArray.some(tag => p.cleanTagsArray.map(x=>x.toLowerCase()).includes(tag.toLowerCase()));
-                }).slice(0,5);
+                }).slice(0,3);
 
                 if(relatedOthers.length > 0) {
                     relatedOtherHtml = `<div class="related-section">
-                        <div class="related-title-sep">Otros foros similares con las mismas etiquetas</div>
+                        <div class="related-title-sep shared-header-style"><i class="fa-solid fa-folder-open" aria-hidden="true"></i> OTROS FOROS</div>
                         <div class="related-posts-container">
                             ${generarFilasRelacionadas(relatedOthers)}
                         </div>
@@ -1071,7 +1101,7 @@
                 ${headerHTML}
                 <div class="post-body">
                     <div class="post-sidebar">
-                        <img src="https://avatars.fastly.steamstatic.com/fe6c30d1abea5d3632a041acb1775ba7f985b392_full.jpg" class="author-avatar" alt="eltorga">
+                        <img id="author-avatar" class="author-avatar" alt="eltorga" style="display:none">
                         <div class="author-name-wrapper">
                             <div class="author-name">eltorga</div>
                             <div class="online-dot" data-tooltip="Conectado"></div>
@@ -1095,9 +1125,16 @@
                 </div>
                 ${footerTagsHtml}
             </div>
+            <section class="elt-points-section" id="elt-points-section" aria-label="Puntos de la publicación">
+                <div class="elt-points-heading shared-header-style"><i class="fa-solid fa-coins" aria-hidden="true"></i> PUNTOS</div>
+                <div id="elt-points-slot" data-post-id="${safeAttr(post.ID)}"></div>
+            </section>
             ${relatedForumHtml}
             ${relatedOtherHtml}
+            <div id="local-reactions" style="margin-top:22px"></div><section id="elt-comments-section"><div class="shared-header-style"><i class="ri-chat-3-line"></i> COMENTARIOS</div><div id="elt-comments-slot"></div></section>
             `;
+            window.EltorgaComentarios?.montar(post);applyAdminProfile();window.EltorgaPuntos?.montar(post);
+            // Solo reacciones nativas de Giscus.
 
             setTimeout(() => {
                 const imagenesPost = document.querySelectorAll('#post-content-area img');
@@ -1127,13 +1164,13 @@
                 <div class="related-post-row" onclick="location.hash='#post/${r.slug}'">
                     <div class="related-post-left">
                         ${rImg}
-                        <div class="related-title">${r.TITULO}</div>
+                        <div><div class="related-title">${r.TITULO}</div><small style="color:var(--steam-grey)">${originText}</small></div>
                     </div>
-                    <div class="related-origin-tag">${originText}</div>
-                    <div class="related-words">${r.palabras} palabras</div>
+                    
+                    <div class="related-words"><span class="elt-metric-points" data-elt-post-id="${safeAttr(r.ID)}" data-elt-metric="points">— puntos</span><br><span class="elt-metric-comments" data-elt-post-id="${safeAttr(r.ID)}" data-elt-metric="comments">— comentarios</span></div>
                     <div class="related-author">
-                        <span>eltorga</span>
-                        <img src="https://avatars.fastly.steamstatic.com/fe6c30d1abea5d3632a041acb1775ba7f985b392_full.jpg" class="related-author-img">
+                        <span class="related-author-name">${safeAttr(siteConfig.profile?.name||'eltorga')}</span>
+                        ${(siteConfig.profile?.avatar||siteConfig.avatar) ? `<img class="related-author-img" src="${safeAttr(siteConfig.profile?.avatar||siteConfig.avatar)}" alt="Avatar del autor" loading="lazy">` : `<span class="related-author-img related-author-placeholder"><i class="fa-solid fa-user"></i></span>`}
                     </div>
                 </div>`;
             }).join('');
@@ -1150,6 +1187,8 @@
         }
         
         function renderizarIcono(urlIco, fallbackClass, esHeaderSection = false) {
+            if(urlIco && urlIco.startsWith('ri-')) return `<i class="${safeAttr(urlIco)} fa-fallback"></i>`;
+            if(urlIco && urlIco.startsWith('si:')) return `<span class="iconify fa-fallback" data-icon="${safeAttr(urlIco)}"></span>`;
             if(urlIco) {
                 const claseAdd = esHeaderSection ? 'custom-icon' : 'custom-icon';
                 return `<img src="${urlIco}" class="${claseAdd}">`;
@@ -1171,20 +1210,10 @@
         }
         
         function renderizarBadges() {
-            let badges = [
-               "https://community.fastly.steamstatic.com/public/images/badges/48_communitycontributor/1_80.png",
-                "https://steamcommunity-a.akamaihd.net/public/images/badges/15_hwbeta/hwbeta02_80.png",
-                "https://steamcommunity-a.akamaihd.net/public/images/badges/30_steamawardnominations/level04_80.png",
-                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/220/a4e1c060a5b728ded0d821f75c956c55335f6864.png",
-                "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/items/275850/98399b12de4e617fa9794c5f3e5646f18f9af148.png",
-                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/730/400f2cdf69db174f5616038edbb7a3f8e917ae00.png",
-                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/550/9c05f08e59bd520e6136a980e35f7065ec88f5da.png",
-                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/306670/979c2bcb64776c55c8bdcd93bf48e8a2e074466e.png",
-                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/items/319630/e01c5dd02e9ca3d733f5bb93869c576ff8fb33a9.png"
-            ];
+            let badges = [];
             let html = '<div class="badges-grid">';
             for(let i=0; i<9; i++) {
-                html += `<a href="#" target="_blank" data-tooltip="Logro Steam"><img src="${badges[i]}" alt="Badge"></a>`;
+                html += `<a href="#" target="_blank" data-tooltip="Logro Steam"><i class="ri-medal-line" style="font-size:1.5rem;color:var(--steam-grey)"></i></a>`;
             }
             return html + '</div>';
         }
@@ -1195,6 +1224,27 @@
                 return `<a href="${p.link}">${p.text}</a>${sep}`;
             }).join('');
         }
-    </script>
+        function renderDynamicHeader(){const items=siteConfig.navItems;if(!items?.length)return;const nav=document.querySelector('.header-nav');if(!nav)return;nav.innerHTML=items.map(x=>x.children?.length?`<div class="dropdown"><span class="nav-item">${x.title} <i class="ri-arrow-down-s-line"></i></span><div class="dropdown-menu">${x.children.map(v=>`<a href="${v.url}" target="_blank" rel="noopener noreferrer">${v.title}</a>`).join('')}</div></div>`:`<a class="nav-item" href="${x.url||'#'}" ${x.url?.startsWith('http')?'target="_blank" rel="noopener noreferrer"':''}>${x.title}</a>`).join('')}
+function applyAdminProfile(){const p=siteConfig.profile;if(!p)return;document.querySelectorAll('.author-name').forEach(x=>x.textContent=p.name||'eltorga');if(p.avatar)document.querySelectorAll('.author-avatar').forEach(x=>x.src=p.avatar);document.querySelectorAll('.badge-admin').forEach(x=>x.textContent=p.role||'Administrador');document.querySelectorAll('.badge-dev').forEach(x=>x.textContent=p.role2||'Desarrollador');}
+function montarGiscus(post) {
+            const slot=document.getElementById('giscus-slot'); const cfg=siteConfig.giscus || {};
+            if(!slot)return;
+            if(!cfg.enabled){document.getElementById('giscus-section').style.display='none';return;}
+            const script=document.createElement('script');
+            script.src='https://giscus.app/client.js';script.async=true;script.crossOrigin='anonymous';
+            const fields={repo:cfg.repo,'repo-id':cfg.repoId,category:cfg.category,'category-id':cfg.categoryId,mapping:'specific',term:'eltorga-'+post.ID,strict:'1','reactions-enabled':'1','emit-metadata':'1','input-position':'bottom',theme:cfg.theme||'noborder_dark',lang:cfg.lang||'es'};
+            Object.entries(fields).forEach(([key,val])=>script.setAttribute('data-'+key,val));
+            slot.replaceChildren(script);
+        }
+    
+        // Download redirect on the same GitHub Pages origin.
+        document.addEventListener('click', event=> {const copy=event.target.closest('.elt-copy');if(copy){const code=copy.closest('.elt-code')?.querySelector('code');if(code&&navigator.clipboard)navigator.clipboard.writeText(code.innerText);return;}const a=event.target.closest('.md-dl-btn');if(!a)return;const href=a.getAttribute('href');if(!href)return;event.preventDefault(); const title=a.closest('.md-download-box')?.querySelector('.md-dl-title')?.textContent||'Archivo';window.open('descarga.html?url='+encodeURIComponent(href)+'&title='+encodeURIComponent(title),'_blank','noopener,noreferrer');});
+</script>
+<script src="js/upgrade-public.js"></script>
+<script src="js/v024-public.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/v025-puntos.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js" defer></script>
+<script src="js/v026-comments.js" defer></script>
 </body>
 </html>

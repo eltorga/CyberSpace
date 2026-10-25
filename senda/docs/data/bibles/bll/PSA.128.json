@@ -1,0 +1,32 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Dichoso todo el que teme a Yahvé, el que anda en sus caminos."
+    },
+    {
+      "verse": 2,
+      "text": "Comerás del fruto de tu trabajo; serás feliz y te irá bien."
+    },
+    {
+      "verse": 3,
+      "text": "Tu esposa será como una vid fructífera dentro de tu casa; tus hijos serán como brotes de olivo alrededor de tu mesa."
+    },
+    {
+      "verse": 4,
+      "text": "¡Miren cómo es bendecido el hombre que teme a Yahvé!"
+    },
+    {
+      "verse": 5,
+      "text": "Que Yahvé te bendiga desde Sión, y que veas la prosperidad de Jerusalén todos los días de tu vida."
+    },
+    {
+      "verse": 6,
+      "text": "Que llegues a ver a los hijos de tus hijos. ¡ Que haya paz en Israel!"
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

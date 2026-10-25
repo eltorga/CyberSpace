@@ -1,0 +1,79 @@
+[
+  {
+    "id": "onbv",
+    "name": "Biblica® Open Nueva Biblia Viva",
+    "abbr": "ONBV",
+    "language": "es",
+    "provider": "offline",
+    "provider_ref": "spaonbv",
+    "license": "CC BY-SA 4.0",
+    "public_export": true,
+    "scope": "Completa"
+  },
+  {
+    "id": "rv1909",
+    "name": "Reina-Valera 1909",
+    "abbr": "RV1909",
+    "language": "es",
+    "provider": "offline",
+    "provider_ref": "spaRV1909",
+    "license": "Dominio público",
+    "public_export": true,
+    "scope": "Completa"
+  },
+  {
+    "id": "bes",
+    "name": "Biblia en Español Sencillo",
+    "abbr": "BES",
+    "language": "es",
+    "provider": "offline",
+    "provider_ref": "spabes",
+    "license": "Dominio público",
+    "public_export": true,
+    "scope": "Completa"
+  },
+  {
+    "id": "pddpt",
+    "name": "Palabra de Dios para ti",
+    "abbr": "PDDPT",
+    "language": "es",
+    "provider": "offline",
+    "provider_ref": "spapddpt",
+    "license": "CC BY 4.0",
+    "public_export": true,
+    "scope": "Completa"
+  },
+  {
+    "id": "bll",
+    "name": "Biblia Libre Latinoamericana",
+    "abbr": "BLL",
+    "language": "es",
+    "provider": "offline",
+    "provider_ref": "spabll",
+    "license": "Dominio público",
+    "public_export": true,
+    "scope": "En revisión"
+  },
+  {
+    "id": "sblm",
+    "name": "Santa Biblia Libre para el Mundo",
+    "abbr": "SBLM",
+    "language": "es",
+    "provider": "offline",
+    "provider_ref": "spablm",
+    "license": "Dominio público",
+    "public_export": true,
+    "scope": "En revisión"
+  },
+  {
+    "id": "vbl",
+    "name": "Versión Biblia Libre",
+    "abbr": "VBL",
+    "language": "es",
+    "provider": "offline",
+    "provider_ref": "spavbl",
+    "license": "CC BY-SA 4.0",
+    "public_export": true,
+    "scope": "Parcial: principalmente Nuevo Testamento"
+  }
+]

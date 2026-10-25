@@ -1,0 +1,28 @@
+{
+  "translation_id": "sblm",
+  "translation": "Santa Biblia Libre para el Mundo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Si Yahvé no edifica la casa, en vano trabajan los que la edifican. Si Yahvé no guarda la ciudad, en vano vela la guardia."
+    },
+    {
+      "verse": 2,
+      "text": "Por demás es que os levantéis de madrugada, y vayáis tarde a reposar, y que comáis pan de dolores, pues a su amado dará Dios el sueño."
+    },
+    {
+      "verse": 3,
+      "text": "He aquí, herencia de Yahvé son los hijos; cosa de estima el fruto del vientre."
+    },
+    {
+      "verse": 4,
+      "text": "Como saetas en mano del valiente, así son los hijos habidos en la juventud."
+    },
+    {
+      "verse": 5,
+      "text": "Bienaventurado el hombre que llenó su aljaba de ellos; no será avergonzado cuando hable con los enemigos en la puerta."
+    }
+  ],
+  "attribution": "Santa Biblia libre para el mundo. David Williams y Michael Paul Johnson. Dominio público, traducción en revisión. https://ebible.org/details.php?id=spablm",
+  "provider": "offline"
+}

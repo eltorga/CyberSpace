@@ -1,0 +1,11 @@
+Si tu equipo no pudo descargar automáticamente desde eBible.org, guarda aquí los ZIP USFM oficiales con estos nombres:
+
+spaonbv_usfm.zip
+spaRV1909_usfm.zip
+spabes_usfm.zip
+spapddpt_usfm.zip
+spabll_usfm.zip
+spablm_usfm.zip
+spavbl_usfm.zip
+
+Cierra Senda, copia los archivos aquí, vuelve a abrirla. La importación se hará automáticamente. No necesitas clave API.

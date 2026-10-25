@@ -1,0 +1,28 @@
+{
+  "translation_id": "bes",
+  "translation": "Biblia en Español Sencillo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Señor, ¿ quién puede alojarse en tu tienda? ¿ Quién puede vivir en tu santo monte?"
+    },
+    {
+      "verse": 2,
+      "text": "El que vive con integridad, hace lo justo y dice la verdad de corazón;"
+    },
+    {
+      "verse": 3,
+      "text": "el que no miente con su lengua, no hace mal a su amigo ni daña la buena fama de su prójimo;"
+    },
+    {
+      "verse": 4,
+      "text": "el que honra a quienes temen al Señor y se aparta de quien no tiene su aprobación; el que mantiene su juramento aunque salga perjudicado;"
+    },
+    {
+      "verse": 5,
+      "text": "el que no presta su dinero cobrando intereses ni acepta dinero para dar una sentencia falsa contra un inocente. El que hace estas cosas nunca caerá."
+    }
+  ],
+  "attribution": "La Biblia en Español Sencillo 2026, traducida y editada por Irma Flores, AudioBiblia.org. Publicada como dominio público. https://ebible.org/find/details.php?id=spabes",
+  "provider": "offline"
+}

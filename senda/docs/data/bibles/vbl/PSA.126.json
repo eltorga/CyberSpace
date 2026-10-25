@@ -1,0 +1,32 @@
+{
+  "translation_id": "vbl",
+  "translation": "Versión Biblia Libre",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡ Cuando el Señor trajo a Israel de vuelta del cautiverio, fue como si estuviéramos soñando!"
+    },
+    {
+      "verse": 2,
+      "text": "Reímos mucho y cantamos de alegría. Las otras naciones dijeron, “ El Señor ha hecho cosas maravillosas por su pueblo ”."
+    },
+    {
+      "verse": 3,
+      "text": "Ciertamente el Señor ha hecho cosas maravillosas por nosotros. ¡Cuánto nos alegramos!"
+    },
+    {
+      "verse": 4,
+      "text": "Por favor, vuelve y ayúdanos otra vez, Señor. Renuévanos como los arroyos de agua que renuevan el desierto de Negev."
+    },
+    {
+      "verse": 5,
+      "text": "Los que siembran en lágrimas cosecharán con gritos de alegría!"
+    },
+    {
+      "verse": 6,
+      "text": "Los que lloran cuando salen a sembrar su semilla cantarán de júbilo cuando lleven la cosecha a casa."
+    }
+  ],
+  "attribution": "Versión Biblia Libre. Copyright © 2018-2020 Jonathan Gallagher y Shelly Barrios de Ávila. Bajo CC BY-SA 4.0: confirmar aviso incluido en edición oficial. Fuente https://ebible.org/details.php?id=spavbl",
+  "provider": "offline"
+}

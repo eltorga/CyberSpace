@@ -1,0 +1,62 @@
+[
+  {
+    "id": "important",
+    "label": "Importante / recordar",
+    "color": "#E5B84B",
+    "icon": "fi fi-rr-star"
+  },
+  {
+    "id": "jesus",
+    "label": "Palabras de Jesús",
+    "color": "#D95C5C",
+    "icon": "fi fi-rr-heart"
+  },
+  {
+    "id": "doctrine",
+    "label": "Fe / doctrina",
+    "color": "#4F7CAC",
+    "icon": "fi fi-rr-cross"
+  },
+  {
+    "id": "promise",
+    "label": "Promesa / esperanza",
+    "color": "#5C9B6E",
+    "icon": "fi fi-rr-leaf"
+  },
+  {
+    "id": "prayer",
+    "label": "Oración / vida espiritual",
+    "color": "#8B6FB1",
+    "icon": "fi fi-rr-hands-praying"
+  },
+  {
+    "id": "warning",
+    "label": "Advertencia / pecado",
+    "color": "#E07A3F",
+    "icon": "fi fi-rr-triangle-warning"
+  },
+  {
+    "id": "love",
+    "label": "Amor / misericordia",
+    "color": "#D98AA5",
+    "icon": "fi fi-rr-heart"
+  },
+  {
+    "id": "spirit",
+    "label": "Espíritu Santo",
+    "color": "#6FA8C9",
+    "icon": "fi fi-rr-dove"
+  },
+  {
+    "id": "law",
+    "label": "Ley / mandamiento",
+    "color": "#8B6F47",
+    "icon": "fi fi-rr-scroll"
+  },
+  {
+    "id": "context",
+    "label": "Contexto / información",
+    "color": "#8A8F98",
+    "icon": "fi fi-rr-search-alt"
+  }
+]

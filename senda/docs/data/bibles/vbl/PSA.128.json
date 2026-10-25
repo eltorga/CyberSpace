@@ -1,0 +1,32 @@
+{
+  "translation_id": "vbl",
+  "translation": "Versión Biblia Libre",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡Felices son los que alaban al Señor, todos los que siguen sus caminos!"
+    },
+    {
+      "verse": 2,
+      "text": "Ustedes comerán el producto de sus manos. Estarán felices y les irá bien."
+    },
+    {
+      "verse": 3,
+      "text": "Tu esposa será como una vid fructífera creciendo en tu casa. Tus hijos serán como retoños de olivo alrededor de tu mesa."
+    },
+    {
+      "verse": 4,
+      "text": "Esta será la bendición del Señor para los que lo adoran."
+    },
+    {
+      "verse": 5,
+      "text": "Que el Señor te bendiga desde Sión; que veas a Jerusalén prosperar todos los días de tu vida."
+    },
+    {
+      "verse": 6,
+      "text": "Que veas a los hijos de tus hijos. ¡ Y que Israel esté en paz!"
+    }
+  ],
+  "attribution": "Versión Biblia Libre. Copyright © 2018-2020 Jonathan Gallagher y Shelly Barrios de Ávila. Bajo CC BY-SA 4.0: confirmar aviso incluido en edición oficial. Fuente https://ebible.org/details.php?id=spavbl",
+  "provider": "offline"
+}

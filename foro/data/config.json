@@ -1,9 +1,9 @@
 {
   "siteTitle": "Eltorga Foro",
   "heroTitle": "Foro Online",
-  "logo": "assets/logos/eltorgaforo_logo_v3-56d7a741.png",
+  "logo": "",
   "heroMedia": "",
-  "globalBackground": "assets/fondos/b9ab43211c8f592a416a2235faf50b33-99967a89.jpg",
+  "globalBackground": "",
   "avatar": "",
   "socialLinks": {
     "steam": "https://steamcommunity.com/",
@@ -20,17 +20,7 @@
     "lang": "es"
   },
   "reactions": {
-    "mode": "native",
-    "icons": {
-      "THUMBS_UP": "ri-thumb-up-line",
-      "THUMBS_DOWN": "ri-thumb-down-line",
-      "LAUGH": "ri-emotion-happy-line",
-      "HOORAY": "ri-party-popper-line",
-      "CONFUSED": "ri-question-line",
-      "HEART": "ri-heart-line",
-      "ROCKET": "ri-rocket-line",
-      "EYES": "ri-eye-line"
-    }
+    "mode": "native"
   },
   "downloads": {
     "disclaimer": "Eltorga no aloja archivos de terceros. Compartimos enlaces disponibles públicamente en Internet. Cada usuario es responsable de comprobar la procedencia, seguridad y legalidad de los archivos antes de descargarlos.",
@@ -67,7 +57,38 @@
       "icon": "si:youtube"
     }
   ],
+  "languages": [
+    {
+      "code": "es",
+      "name": "Español",
+      "flag": "1F1EA-1F1F8"
+    },
+    {
+      "code": "en",
+      "name": "English",
+      "flag": "1F1EC-1F1E7"
+    },
+    {
+      "code": "fr",
+      "name": "Français",
+      "flag": "1F1EB-1F1F7"
+    },
+    {
+      "code": "pt",
+      "name": "Português",
+      "flag": "1F1E75-1F1F79"
+    }
+  ],
+  "points": {
+    "enabled": true,
+    "url": "https://gdomtqjfcqxzytprqdqj.supabase.co",
+    "publishableKey": "sb_publishable_P5JWyrXlXmYf3RrL7wWZFQ_g-fcB8Mr"
+  },
   "navItems": [
+    {
+      "title": "Blog",
+      "url": "#"
+    },
     {
       "title": "Streams",
       "children": [
@@ -84,10 +105,60 @@
     {
       "title": "Foro",
       "url": "#"
-    },
-    {
-      "title": "Blog",
-      "url": "#"
     }
-  ]
+  ],
+  "profile": {
+    "achievements": [
+      {
+        "name": "Logro 1",
+        "image": ""
+      },
+      {
+        "name": "Logro 2",
+        "image": ""
+      },
+      {
+        "name": "Logro 3",
+        "image": ""
+      },
+      {
+        "name": "Logro 4",
+        "image": ""
+      },
+      {
+        "name": "Logro 5",
+        "image": ""
+      },
+      {
+        "name": "Logro 6",
+        "image": ""
+      },
+      {
+        "name": "Logro 7",
+        "image": ""
+      },
+      {
+        "name": "Logro 8",
+        "image": ""
+      },
+      {
+        "name": "Logro 9",
+        "image": ""
+      }
+    ],
+    "name": "eltorga",
+    "avatar": "assets/media/eltorga_photo-be2838eb.jpg",
+    "role": "Administrador",
+    "role2": "Desarrollador",
+    "posts": "142",
+    "likes": "396",
+    "reputation": "530",
+    "roleIcon": "ri-shield-star-line",
+    "role2Icon": "ri-code-s-slash-line",
+    "roleColor": "#d32f2f",
+    "role2Color": "#66c0f4",
+    "postsIcon": "ri-edit-line",
+    "likesIcon": "ri-heart-3-fill",
+    "reputationIcon": "ri-arrow-up-line"
+  }
 }

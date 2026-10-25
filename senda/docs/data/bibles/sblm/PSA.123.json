@@ -1,0 +1,24 @@
+{
+  "translation_id": "sblm",
+  "translation": "Santa Biblia Libre para el Mundo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "A ti alzo mis ojos, a ti que habitas en los cielos."
+    },
+    {
+      "verse": 2,
+      "text": "He aquí, como los ojos de los siervos miran a la mano de sus señores, y como los ojos de la sierva a la mano de su señora, así nuestros ojos miran a Yahvé, nuestro Dios, hasta que tenga misericordia de nosotros."
+    },
+    {
+      "verse": 3,
+      "text": "Ten misericordia de nosotros, oh Yahvé, ten misericordia de nosotros, porque estamos muy hastiados de menosprecio."
+    },
+    {
+      "verse": 4,
+      "text": "Hastiada está nuestra alma de la burla de los que viven holgadamente, y del menosprecio de los soberbios."
+    }
+  ],
+  "attribution": "Santa Biblia libre para el mundo. David Williams y Michael Paul Johnson. Dominio público, traducción en revisión. https://ebible.org/details.php?id=spablm",
+  "provider": "offline"
+}

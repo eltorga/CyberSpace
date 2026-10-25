@@ -1,0 +1,114 @@
+ELTORGA FORO v0.2.6 — CONFIGURACIÓN DE COMENTARIOS PROPIOS Y GITHUB
+====================================================================
+
+ESTA CARPETA ES LA VERSIÓN COMPLETA: usa ADMIN.bat como antes.
+Base: Eltorga Foro v0.2.5 completo, conservando la administración de la v0.2.4.
+Conserva publicaciones, foros, perfiles, medios, idiomas, fondos, botones de puntos y archivos JSON.
+No necesitas crear un nuevo proyecto de Supabase ni instalar Next.js.
+
+PASO 1. SUPABASE: SQL
+--------------------
+Supabase > SQL Editor > New Query.
+Ejecuta SUPABASE_COMENTARIOS_v0.2.6.sql (archivo incluido en esta carpeta).
+Se suma a las tablas de puntos v0.2.5; no borra votos ni publicaciones.
+No es necesario repetir SUPABASE_PUNTOS.sql si ya funcionaba.
+Comprueba que aparecen las funciones eltorga_comments_list, eltorga_comments_create
+ y eltorga_forum_metrics en Database > Functions.
+
+PASO 2. AUTH: PROVEEDORES
+-------------------------
+Supabase > Authentication > Sign In / Providers:
+1) Anonymous Sign-Ins: activar (invitados con apodo, sin registro).
+2) GitHub: activar DESPUÉS de configurar OAuth en GitHub (paso 3).
+
+PASO 3. CREAR APLICACIÓN OAUTH EN GITHUB
+----------------------------------------
+Visita: https://github.com/settings/developers > OAuth Apps > New OAuth App
+Application name: Eltorga Foro
+Homepage URL: tu URL PUBLICADA real (ej. https://USUARIO.github.io/REPOSITORIO/)
+Authorization callback URL: COPIA LA DIRECCIÓN EXACTA de
+  Supabase > Authentication > Sign In / Providers > GitHub > Callback URL.
+  Para este proyecto normalmente es:
+  https://gdomtqjfcqxzytprqdqj.supabase.co/auth/v1/callback
+  Confírmala en tu panel antes de usarla.
+Deja Enable Device Flow desmarcado. Registrar aplicación.
+Copiar el GitHub Client ID y generar Client Secret.
+
+PASO 4. CONFIGURAR GITHUB EN SUPABASE
+-------------------------------------
+Supabase > Authentication > Sign In / Providers > GitHub
+GitHub Enabled: activar.
+Client ID: pega el ID generado por GitHub.
+Client Secret: pega el secreto generado por GitHub, SOLO EN SUPABASE.
+Guardar.
+NO coloques nunca el Client Secret en archivos del foro, ADMIN.bat, config.json o chat.
+
+PASO 5. URLS DE RETORNO EN SUPABASE
+-----------------------------------
+Supabase > Authentication > URL Configuration:
+Site URL: dirección HTTPS real de tu foro (sin #post/...)
+Redirect URLs: agrega EXACTAMENTE estas direcciones:
+  1. La URL pública de tu foro con barra final cuando corresponda:
+     https://USUARIO.github.io/REPOSITORIO/
+  2. http://127.0.0.1:8765/admin/
+Si tienes dominio propio, utiliza la URL publicada real.
+El código redirige automáticamente a la publicación después del inicio de sesión.
+Para probar el foro público en localhost puedes añadir también
+http://127.0.0.1:8765/ si lo necesitas.
+No uses la URL de GitHub como Authorization callback URL en GitHub;
+esa dirección es la CALLBACK DE SUPABASE (paso 3).
+
+PASO 6. DAR PERMISO AL MODERADOR (OBLIGATORIO)
+----------------------------------------------
+1. Publica la web y entra al menos una vez en un comentario mediante GitHub.
+2. En Supabase > Authentication > Users comprueba que apareció tu cuenta GitHub.
+3. Ejecuta en SQL Editor (reemplaza TU_USUARIO_GITHUB por el nick de tu cuenta):
+
+insert into public.eltorga_comment_admins(user_id)
+select id from auth.users
+where raw_app_meta_data->>'provider'='github'
+  and lower(raw_user_meta_data->>'user_name')=lower('TU_USUARIO_GITHUB')
+on conflict (user_id) do nothing;
+
+En el SQL Editor verifica que se agregó 1 fila; si no se agregó ninguna,
+verifica que ya iniciaste sesión en el foro y que el apodo es EXACTO.
+Nunca autorices a otro usuario si no confías en esa persona.
+
+PASO 7. MODERACIÓN DESDE ADMIN.bat
+----------------------------------
+Ejecuta ADMIN.bat > pestaña Comentarios.
+Inicia sesión con GitHub (usando LA MISMA CUENTA autorizada en el paso 6).
+Si te sale error "redirect URL not allowed", revisa el paso 5.
+Pulsa "Consultar comentarios" y podrás ocultar, restaurar,
+eliminar o destacar respuestas.
+Un ordenador que abre ADMIN.bat pero no tiene la cuenta autorizada NO puede moderar.
+
+PASO 8. PUBLICAR A GITHUB PAGES
+-------------------------------
+Usa el mismo botón de Preparar GitHub Pages del panel ADMIN.bat.
+Sube el resultado al repositorio como antes. El ZIP completo incluye:
+- index.html y descarga.html (sitio público)
+- js/v026-comments.js y js/v026-comments.css
+- data/*.json y assets/*
+- ADMIN.bat y admin/* para trabajar localmente
+- SQL y guía para configuración remota
+
+IMPORTANTE
+----------
+* Invitados: escriben apodo; Supabase crea identidad anónima al comentar.
+* Usuarios GitHub: usan nombre de usuario y avatar de GitHub.
+* Autores GitHub: pueden editar y borrar sus mensajes al iniciar sesión.
+* Invitados: pueden borrar su comentario mientras conservan su sesión.
+* Enlaces Markdown: sí. Almacenar archivos/imágenes: NO.
+* Insertar imágenes Markdown/HTML: se descarta al visualizar por seguridad.
+* Límite: un comentario cada 30 segundos por identidad, 20/día invitado y 100/día GitHub.
+* Respuestas destacadas: solo cuentas con autorización de moderador.
+* Invitados que borren cookies pueden perder la identidad y el derecho a borrar.
+* No hay importación automática desde GitHub Discussions/Giscus.
+* Un apodo invitado NO equivale a una identidad verificada y puede repetirse.
+* Para una web abierta al público activa CAPTCHA/Turnstile en la configuración
+  de Supabase Auth para reducir automatización de cuentas anónimas.
+* SQL SECURITY DEFINER: el esquema requiere ejecutar las instrucciones completas;
+  no añadas grants públicos sobre las tablas internas.
+* Están configuradas únicamente la URL pública y la Publishable Key en config.json.
+  Nunca se incluye la clave secret de GitHub, service_role ni el password de DB.

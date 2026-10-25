@@ -1,0 +1,24 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "A ti levanto mis ojos, a ti, que tienes tu trono en los cielos."
+    },
+    {
+      "verse": 2,
+      "text": "Así como los ojos de los siervos se fijan en la mano de su amo, y los ojos de la esclava en la mano de su dueña, así nuestros ojos miran a Yahvé, nuestro Dios, hasta que tenga compasión de nosotros."
+    },
+    {
+      "verse": 3,
+      "text": "Ten compasión de nosotros, Yahvé, ten compasión de nosotros, porque ya no aguantamos tanto desprecio."
+    },
+    {
+      "verse": 4,
+      "text": "Nuestra alma está harta de las burlas de los que viven tranquilos, y del desprecio de los orgullosos."
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

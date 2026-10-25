@@ -1,0 +1,28 @@
+{
+  "translation_id": "sblm",
+  "translation": "Santa Biblia Libre para el Mundo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Yahvé, ¿ quién habitará en tu santuario? ¿ Quién morará en tu santo monte?"
+    },
+    {
+      "verse": 2,
+      "text": "El que anda en integridad y hace justicia, y habla verdad en su corazón;"
+    },
+    {
+      "verse": 3,
+      "text": "el que no calumnia con su lengua, ni hace mal a su prójimo, ni admite reproche alguno contra su vecino;"
+    },
+    {
+      "verse": 4,
+      "text": "aquel a cuyos ojos el vil es menospreciado, pero honra a los que temen a Yahvé; el que, aun jurando en daño suyo, no cambia;"
+    },
+    {
+      "verse": 5,
+      "text": "el que su dinero no da a usura, ni acepta soborno contra el inocente. El que hace estas cosas jamás será conmovido."
+    }
+  ],
+  "attribution": "Santa Biblia libre para el mundo. David Williams y Michael Paul Johnson. Dominio público, traducción en revisión. https://ebible.org/details.php?id=spablm",
+  "provider": "offline"
+}

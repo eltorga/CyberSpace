@@ -1,0 +1,20 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡Miren! Alaben a Yahvé, todos ustedes, siervos de Yahvé, los que están de noche en la casa de Yahvé."
+    },
+    {
+      "verse": 2,
+      "text": "Levanten sus manos hacia el santuario, y alaben a Yahvé."
+    },
+    {
+      "verse": 3,
+      "text": "Que Yahvé te bendiga desde Sión, el creador del cielo y de la tierra."
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

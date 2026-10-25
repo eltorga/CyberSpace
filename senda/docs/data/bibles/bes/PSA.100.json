@@ -1,0 +1,28 @@
+{
+  "translation_id": "bes",
+  "translation": "Biblia en Español Sencillo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "¡Aclamen al Señor con alegría, habitantes de toda la tierra!"
+    },
+    {
+      "verse": 2,
+      "text": "Adoren al Señor con alegría; vengan ante él con un canto."
+    },
+    {
+      "verse": 3,
+      "text": "Sepan que el Señor es Dios. Él nos hizo y somos suyos; somos su pueblo, las ovejas que él alimenta."
+    },
+    {
+      "verse": 4,
+      "text": "Entren por sus puertas con alegría y en su casa con alabanza; denle honor y bendigan su nombre."
+    },
+    {
+      "verse": 5,
+      "text": "El Señor es bueno; su misericordia no tiene fin y su fidelidad permanece de generación en generación."
+    }
+  ],
+  "attribution": "La Biblia en Español Sencillo 2026, traducida y editada por Irma Flores, AudioBiblia.org. Publicada como dominio público. https://ebible.org/find/details.php?id=spabes",
+  "provider": "offline"
+}

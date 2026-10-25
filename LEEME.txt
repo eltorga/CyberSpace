@@ -1,0 +1,123 @@
+ELTORGA FORO 0.2.6 — COMENTARIOS CON SUPABASE Y GITHUB
+
+IMPORTANTE: Lee CONFIGURAR_GITHUB_Y_COMENTARIOS.txt antes de publicar.
+
+ELTORGA FORO v0.2.4 — ADMINISTRACIÓN LOCAL
+
+Esta actualización continúa la versión v0.2.3.
+
+PASOS:
+1. Conserva una copia de la carpeta anterior.
+2. Descomprime el ZIP en una carpeta nueva de Windows.
+3. Revisa que tienes Python 3 instalado. Ejecuta ADMIN.bat.
+4. Abre http://127.0.0.1:8765/admin/ en tu PC.
+5. En el administrador pulsa «Preparar GitHub Pages» y sube a GitHub el contenido de PARA_GITHUB. No publiques admin/, ADMIN.bat ni backups/.
+
+FUNCIONES NUEVAS:
+- Editor HTML visual con elementos especiales, barra y ajuste de imágenes en línea.
+- Administrador de idiomas y banderas OpenMoji (Google Translate instalado como motor).
+- Biblioteca multimedia en assets/media/ con colecciones opcionales.
+- Giscus: sincronización de Discussions mediante GraphQL al pulsar botón del administrador.
+  Necesitas introducir temporalmente un token con acceso de lectura al repositorio.
+  No se guarda el token en archivos ni en respaldos. Se genera data/comments.json.
+- Recuento de comentarios por fila del foro SOLO cuando hayas sincronizado
+  desde el administrador y publicado data/comments.json.
+  En el post abierto Giscus puede emitir metadata de su discusión, sin token.
+
+ADVERTENCIAS:
+- Google Translate usa un servicio externo. Su comportamiento depende de Google
+  y del navegador. El selector conserva la ruta #post al recargar.
+- Un token GitHub GraphQL es necesario para la sincronización local; nunca se publica.
+- La lista del administrador muestra las discusiones relacionadas (y último comentario),
+  no todas las respuestas de todos los hilos: para moderación abre la discusión en GitHub.
+- No borres archivos multimedia referenciados en JSON: el administrador bloquea su borrado.
+- La interacción del editor se probó en navegador aislado con librerías simuladas;
+  debes validar en tu Chrome de Windows con las librerías CDN reales.
+- Al depender de librerías y servicios externos, usar la web sin Internet puede afectar
+  el editor, los iconos y la traducción.
+
+EXPORTACIÓN A GITHUB PAGES:
+Ejecuta botón «Preparar GitHub Pages» dentro del administrador. La carpeta PARA_GITHUB contiene solo recursos
+públicos; no incluye el panel local, scripts Python ni tokens.
+Para conservar datos ya editados en tu instalación anterior, NO sobreescribas
+las carpetas data/ y assets/ al aplicar el parche. Si eliges proyecto completo,
+copia manualmente tus archivos actuales antes de abrir el administrador.
+
+
+VERSIÓN 0.2.4
+- Multimedia tiene explorador de carpetas/subcarpetas, selección y movimiento de archivos. Mover actualiza los enlaces en data/*.json.
+- No elimines recursos si el panel muestra referencias de uso. Haz un respaldo antes de reorganizar grandes colecciones.
+- El idioma español no es eliminable y el regreso al idioma original conserva la URL/hash actual.
+- Perfil: avatar, cargos, iconos, colores, estadísticas y 9 logros con vista previa.
+- Preparar GitHub Pages se ejecuta desde el panel abierto por ADMIN.bat; no hay otro .bat.
+- El recuento de comentarios requiere sincronizar GitHub Discussions; cuando no hay datos sincronizados se muestra un guion.
+- Google Translate depende de su widget externo. Algunos navegadores/bloqueadores pueden impedir la traducción.
+
+Si conservas EXPORTAR_GITHUB.bat de una instalación anterior, puedes eliminarlo manualmente: ya no se utiliza.
+
+==============================================================
+ELTORGA FORO v0.2.6 — VERSIÓN COMPLETA SOBRE v0.2.4 ORIGINAL
+==============================================================
+
+ESTA CARPETA YA ES EL FORO COMPLETO; NO ES UN PARCHE.
+Se elaboró directamente sobre el archivo eltorga-foro-v0.2.4(1).zip.
+Conserva el administrador original v0.2.4 y TODOS sus archivos, los
+posts/foros JSON, sus 3 scripts de administración y la exportación
+integrada en ADMIN.bat.
+
+NOVEDADES:
+- Puntos bajo post-container, antes de Posts Similares y Otros Foros.
+- Moneda dorada a la izquierda, +1, +2, +3, +4, +5, +6, +7, +8,
+  +9 y +10 en UNA SOLA FILA, total acumulado a la derecha.
+- En móviles los botones se desplazan horizontalmente, sin 2 filas.
+- Un voto por identidad Supabase por publicación (no se cambia).
+- Contadores públicos persistentes con Supabase.
+- Posts Similares / Otros Foros: cabeceras como Comentarios, blur.
+- Imagen del autor relacionada vinculada a Perfil administrador.
+- post-container con fondo traslúcido y blur.
+- Nueva pestaña «Puntos» en el MISMO ADMIN.bat y administrador v0.2.4.
+  Habilitar/deshabilitar puntos, configurar URL/clave publicable,
+  consultar funcionamiento y ranking de publicaciones.
+- Giscus y todas las secciones anteriores se conservan.
+
+INICIAR:
+1. Extrae toda esta carpeta a tu ordenador (Windows).
+2. Ejecuta ADMIN.bat como antes (requiere Python 3 instalado).
+3. El panel abre http://127.0.0.1:8765/admin/.
+4. Ve a «Puntos» para revisar la conexión, ya rellenada con
+   URL y clave PUBLICABLE recibidas, y pulsar «Consultar puntos».
+5. El botón del panel «Preparar GitHub Pages» crea PARA_GITHUB.
+   Sube SOLAMENTE EL CONTENIDO de PARA_GITHUB a tu repositorio.
+   No subas admin/, ADMIN.bat, backups ni herramientas Python.
+
+SUPABASE (paso necesario antes de recibir votos):
+1. Proyecto «eltorga-foro» > Authentication > Sign In / Providers >
+   Allow anonymous sign-ins: activar.
+2. SQL Editor > New Query > pegar el archivo SUPABASE_PUNTOS.sql
+   de esta carpeta > Run. Se puede ejecutar de nuevo; conserva votos.
+3. En ADMIN.bat > «Puntos» > «Consultar puntos» deberás ver
+   «Conexión operativa» si URL, clave y SQL están correctos.
+4. Con la web publicada, abre un post y comprueba el total en 0
+   (si nadie ha votado) y la posibilidad de votar una vez.
+
+IMPORTANTE SOBRE EL VOTO ANÓNIMO:
+Una identidad anónima por navegador NO equivale a una persona real;
+quien borra el almacenamiento local o usa otro dispositivo puede
+conseguir una identidad nueva. Para impedir abuso masivo se podría
+activar CAPTCHA y límites adicionales mediante backend.
+Nunca pongas una secret key, service_role o contraseña de Supabase
+ni en el panel, ni en config.json, ni en GitHub.
+
+NOTA SOBRE PUBLICACIONES:
+Los puntos se asocian al campo ID permanente de data/posts.json.
+Cambiar el título no borra los puntos; borrar/cambiar el ID sí puede
+hacer que parezcan perdidos. No cambies el ID de las publicaciones.
+
+ARCHIVOS NUEVOS:
+js/v025-puntos.js y js/v025-puntos.css
+admin/puntos-v025.js (panel original con pestaña adicional)
+SUPABASE_PUNTOS.sql (SQL completo y actualizado)
+
+ESTA VERSIÓN MODIFICA DATA/CONFIG.JSON PARA HABILITAR PUNTOS.
+Si la web no está conectada o el SQL aún no se ejecutó, los contadores
+mostrarán un aviso en lugar de inventar números.

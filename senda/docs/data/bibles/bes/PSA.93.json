@@ -1,0 +1,28 @@
+{
+  "translation_id": "bes",
+  "translation": "Biblia en Español Sencillo",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "El Señor es rey; está vestido de gloria. El Señor está vestido de fuerza; el poder ciñe su túnica. El mundo está firme y no se moverá."
+    },
+    {
+      "verse": 2,
+      "text": "Tu trono existe desde tiempos antiguos; tú eres eterno."
+    },
+    {
+      "verse": 3,
+      "text": "Los ríos alzan, Señor, los ríos alzan su voz; la alzan con gran estruendo."
+    },
+    {
+      "verse": 4,
+      "text": "El Señor en el cielo es más fuerte que el ruido de las grandes aguas, más fuerte que las grandes olas del mar."
+    },
+    {
+      "verse": 5,
+      "text": "Tu testimonio es completamente seguro; tu casa debe ser santa, Señor, para siempre."
+    }
+  ],
+  "attribution": "La Biblia en Español Sencillo 2026, traducida y editada por Irma Flores, AudioBiblia.org. Publicada como dominio público. https://ebible.org/find/details.php?id=spabes",
+  "provider": "offline"
+}

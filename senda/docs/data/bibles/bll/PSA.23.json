@@ -1,0 +1,32 @@
+{
+  "translation_id": "bll",
+  "translation": "Biblia Libre Latinoamericana",
+  "verses": [
+    {
+      "verse": 1,
+      "text": "Yahvé es mi pastor, nada me falta."
+    },
+    {
+      "verse": 2,
+      "text": "Me hace descansar en verdes pastos. Me conduce junto a arroyos de aguas tranquilas."
+    },
+    {
+      "verse": 3,
+      "text": "Él me renueva las fuerzas. Me guía por caminos rectos, haciendo honor a su nombre."
+    },
+    {
+      "verse": 4,
+      "text": "Aunque pase por el valle de sombra de muerte, no temeré peligro alguno, porque tú estás a mi lado. Tu vara y tu bastón me infunden aliento."
+    },
+    {
+      "verse": 5,
+      "text": "Preparas un banquete para mí en presencia de mis enemigos. Has ungido mi cabeza con aceite; mi copa rebosa."
+    },
+    {
+      "verse": 6,
+      "text": "Ciertamente tu bondad y tu amor me acompañarán todos los días de mi vida, y habitaré en la casa de Yahvé para siempre."
+    }
+  ],
+  "attribution": "Santa Biblia libre Latinoamericano. Dominio público; borrador en revisión. https://ebible.org/find/details.php?id=spabll",
+  "provider": "offline"
+}

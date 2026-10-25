@@ -1,0 +1,17 @@
+# Nunca subir datos personales ni claves de Senda (solo se publica docs/).
+data/senda.sqlite3
+data/senda.sqlite3-*
+data/bibles/
+config/settings.json
+config/profile.json
+config/book_covers.json
+backups/
+Biblias_USFM/*.zip
+illustrations/
+collection_covers/
+profile/
+book_covers/
+*.log
+__pycache__/
+*.pyc
+.DS_Store
