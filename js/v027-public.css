@@ -1,0 +1,37 @@
+/* ELTORGA v0.2.7 — estilo del foro original, contadores compactos, etiquetas tipográficas. */
+/* Listado: una sola columna flexible de contenido y dos cifras juntas en la derecha. */
+.post-row{grid-template-columns:minmax(0,1fr) 152px!important;column-gap:13px!important;row-gap:8px;min-width:0;padding:13px 18px!important;align-items:center}
+.post-row-left{min-width:0;gap:13px}.post-row-info{min-width:0;flex:1}.post-row-title{min-width:0;white-space:normal!important;display:block!important;line-height:1.4;overflow-wrap:anywhere}
+.elt-post-tag-links{font-size:12px;color:#72b8e7;display:flex;align-items:baseline;flex-wrap:wrap;gap:5px;margin-top:6px;line-height:1.45;min-width:0}
+.elt-post-tag-links .elt-text-tag{color:#7bc4f2!important;text-decoration:none!important;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;font-weight:500;cursor:pointer;overflow-wrap:anywhere}
+.elt-post-tag-links .elt-text-tag:hover{color:#eaf6ff!important;text-decoration:underline!important}
+.elt-tag-separator{color:#728b9d;font-weight:600;user-select:none}
+.elt-post-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:center;justify-self:end;width:152px;text-align:center}
+.elt-post-stat{display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:0;gap:3px;line-height:1.15}
+.elt-post-stat strong{font-size:18px!important;font-weight:700;line-height:1.2;color:#f0c76f!important;font-variant-numeric:tabular-nums;white-space:nowrap}
+.elt-post-stat strong.elt-metric-comments{color:#e1eaf2!important}
+.elt-post-stat small{font-size:10px;color:#95aabd;text-transform:lowercase;white-space:nowrap}
+.related-words.elt-related-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;text-align:center;min-width:0}
+.related-words.elt-related-stats .elt-post-stat strong{font-size:15px!important}
+.related-words.elt-related-stats .elt-post-stat small{font-size:9px}
+.related-post-row{grid-template-columns:minmax(0,1fr) 120px 98px!important;gap:12px!important}
+/* Mismo header y blur en las cuatro secciones. */
+.elt-points-heading,.related-title-sep,#elt-comments-section>.shared-header-style{box-sizing:border-box;min-height:40px!important;height:40px!important;padding:0 16px!important;display:flex!important;align-items:center!important;gap:10px!important;margin:0!important;font-size:12px!important;font-weight:600!important;line-height:1!important;letter-spacing:.45px!important;background:linear-gradient(100deg,#294355,#161c23 92%)!important;border-bottom:1px solid #405366!important;color:#e5edf6!important}
+.elt-points-heading>i,.related-title-sep>i,#elt-comments-section>.shared-header-style>i{display:inline-flex;align-items:center;justify-content:center;width:17px;min-width:17px;font-size:15px;line-height:1}
+#elt-comments-section>.shared-header-style>i{color:#c9e6f8!important}
+#elt-comments-section{margin-top:19px!important;min-width:0}
+/* Editor seguro en anchos pequeños y grandes. */
+#elt-comments-slot{box-sizing:border-box;width:100%;min-width:0;max-width:100%;padding:15px!important;overflow:hidden}
+#elt-comments-slot *{box-sizing:border-box}
+#elt-comments-slot .elt-comment-toolbar,#elt-comments-slot .elt-comment-bottom,#elt-comments-slot .elt-auth-options,#elt-comments-slot .elt-auth-current{min-width:0;max-width:100%;gap:9px}
+#elt-comments-slot .elt-comment-compose{box-sizing:border-box;width:100%;max-width:100%;min-width:0;overflow:hidden;padding:14px!important}
+#elt-comments-slot .elt-comment-compose input,#elt-comments-slot .elt-comment-compose textarea{box-sizing:border-box;max-width:100%;width:100%;min-width:0}
+#elt-comments-slot .elt-comment-compose textarea{display:block;max-width:100%;resize:vertical}
+#elt-comments-slot .elt-markdown-bar{width:100%;max-width:100%;display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+#elt-comments-slot .elt-comment-bottom{align-items:center;flex-wrap:wrap}
+#elt-comments-slot .elt-comment-bottom small{flex:1 1 200px;white-space:normal;overflow-wrap:anywhere}
+#elt-comments-slot .elt-comment-bottom button{flex:0 0 auto;margin-left:auto}
+#elt-comments-slot .elt-comment-content,#elt-comments-slot .elt-comment-preview{overflow-wrap:anywhere;word-break:normal;max-width:100%;min-width:0}
+#elt-comments-slot .elt-comment-content pre,#elt-comments-slot .elt-comment-preview pre{max-width:100%;overflow-x:auto}
+@media(max-width:780px){.post-row{grid-template-columns:minmax(0,1fr) 142px!important;padding:13px 12px!important}.elt-post-stats{width:142px}.related-post-row{grid-template-columns:minmax(0,1fr) 120px!important}.related-author{display:none!important}}
+@media(max-width:520px){.post-row{grid-template-columns:minmax(0,1fr)!important;gap:8px}.elt-post-stats{justify-self:start;width:145px;margin-left:57px}.related-post-row{grid-template-columns:minmax(0,1fr) 96px!important;gap:7px!important;padding:10px!important}.related-words.elt-related-stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.related-words.elt-related-stats .elt-post-stat strong{font-size:13px!important}#elt-comments-slot{padding:10px!important}#elt-comments-slot .elt-comment-compose{padding:10px!important}#elt-comments-slot .elt-comment-bottom button{margin-left:0;width:100%}#elt-comments-slot .elt-auth-options button{max-width:100%}}

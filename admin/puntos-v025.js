@@ -9,8 +9,6 @@
     btn.onclick=()=>show('points');
     nav.insertAdjacentElement('afterend',btn);
   }
-  const version=document.querySelector('.admin-footer span');
-  if(version)version.textContent='Eltorga Foro v0.2.5 · Guardado automático al aplicar cambios';
   const originalShow=show;
   show=function(tabName){
     if(tabName!=='points')return originalShow(tabName);

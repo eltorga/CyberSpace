@@ -141,7 +141,8 @@ async function refreshMetrics(){
       const metrics=new Map((data||[]).map(x=>[String(x.post_id),x]));
       document.querySelectorAll('[data-elt-post-id]').forEach(n=>{
         const m=metrics.get(n.dataset.eltPostId);if(!m)return;
-        n.textContent=Number(n.dataset.eltMetric==='points'?m.points:m.comments).toLocaleString('es') + (n.dataset.eltMetric==='points'?' puntos':' comentarios');
+        const total=Number(n.dataset.eltMetric==='points'?m.points:m.comments).toLocaleString('es');
+        n.textContent=n.dataset.metricFormat==='number'?total:total+(n.dataset.eltMetric==='points'?' puntos':' comentarios');
       });
     }
   }catch(e){console.warn('Eltorga: estadísticas no disponibles',e.message||e);}

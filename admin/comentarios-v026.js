@@ -9,7 +9,7 @@
     btn.onclick=()=>show('comments-v026');
     nav.insertAdjacentElement('beforebegin',btn);
   }
-  const version=document.querySelector('.admin-footer span');if(version)version.textContent='Eltorga Foro v0.2.6 · Guardado automático al aplicar cambios';
+  
   show=function(tabName){
     if(tabName!=='comments-v026')return oldShow(tabName);
     tab='comments-v026';editing=-1;
@@ -50,7 +50,7 @@ function eltAdminInfo(message){const el=$('elt-admin-comment-status');if(el)el.t
 async function eltSaveCommentSettings(){
   const c=DB.config.comments||{};
   DB.config.comments={...c,enabled:$('elt-comment-enable').checked,allowGuests:true,githubLogin:true};
-  await save('config'); eltAdminInfo('Configuración guardada en data/config.json. Publica el sitio desde ADMIN.bat para verla en GitHub Pages.');
+  await save('config'); eltAdminInfo('Configuración guardada en data/config.json. Sube el archivo data/config.json de esta misma carpeta a tu repositorio cuando quieras publicar el cambio.');
 }
 async function eltAdminLogin(){
   const sb=eltAdminClient();if(!sb)return eltAdminInfo('Configura primero Supabase desde Puntos.');

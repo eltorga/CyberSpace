@@ -333,7 +333,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
 <script defer src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons-font@v15/font/simple-icons.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><style>.elt-code pre{padding:15px;overflow:auto}.elt-code .elt-copy{border:0;border-radius:4px;background:#32648c;color:white;padding:6px 12px;cursor:pointer}.comment-meta{font-size:12px;color:var(--steam-grey)}</style><link rel="stylesheet" href="js/v024-public.css"><link rel="stylesheet" href="js/v025-puntos.css"><link rel="stylesheet" href="js/v026-comments.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons-font@v15/font/simple-icons.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><style>.elt-code pre{padding:15px;overflow:auto}.elt-code .elt-copy{border:0;border-radius:4px;background:#32648c;color:white;padding:6px 12px;cursor:pointer}.comment-meta{font-size:12px;color:var(--steam-grey)}</style><link rel="stylesheet" href="js/v024-public.css"><link rel="stylesheet" href="js/v025-puntos.css"><link rel="stylesheet" href="js/v026-comments.css"><link rel="stylesheet" href="js/v027-public.css">
 </head>
 <body>
 
@@ -999,7 +999,7 @@
 
                 let tagsHTML = "";
                 if(p.cleanTagsArray.length > 0) {
-                    tagsHTML = p.cleanTagsArray.map(t => `<span class="tag-badge" onclick="event.stopPropagation(); location.hash='${baseHash}?tag=${safeHash(t)}'">${t}</span>`).join('');
+                    tagsHTML = p.cleanTagsArray.map(t => `<a class="elt-text-tag" href="${baseHash}?tag=${safeHash(t)}" onclick="event.stopPropagation()">${t}</a>`).join('<span class="elt-tag-separator" aria-hidden="true">•</span>');
                 }
 
                 html += `
@@ -1008,11 +1008,13 @@
                         ${imgHTML}
                         <div class="post-row-info">
                             <div class="post-row-title">${pinIcon}${p.TITULO} ${newBadge}</div>
-                            <div style="font-size:0.75rem; color:var(--steam-grey);display:flex;gap:5px;flex-wrap:wrap">${tagsHTML}</div>
+                            <div class="elt-post-tag-links">${tagsHTML}</div>
                         </div>
                     </div>
-                    <div class="post-row-words"><span class="elt-metric-points" data-elt-post-id="${safeAttr(p.ID)}" data-elt-metric="points">— puntos</span></div>
-                    <div class="tags-container"><span class="elt-metric-comments" data-elt-post-id="${safeAttr(p.ID)}" data-elt-metric="comments"><i class="ri-chat-3-line"></i> — comentarios</span></div>
+                    <div class="elt-post-stats" aria-label="Estadísticas de publicación">
+                        <div class="elt-post-stat"><strong class="elt-metric-points" data-elt-post-id="${safeAttr(p.ID)}" data-elt-metric="points" data-metric-format="number">—</strong><small>puntos</small></div>
+                        <div class="elt-post-stat"><strong class="elt-metric-comments" data-elt-post-id="${safeAttr(p.ID)}" data-elt-metric="comments" data-metric-format="number">—</strong><small>comentarios</small></div>
+                    </div>
                 </div>`;
             });
             return html;
@@ -1129,9 +1131,9 @@
                 <div class="elt-points-heading shared-header-style"><i class="fa-solid fa-coins" aria-hidden="true"></i> PUNTOS</div>
                 <div id="elt-points-slot" data-post-id="${safeAttr(post.ID)}"></div>
             </section>
+            <div id="local-reactions" style="margin-top:0"></div><section id="elt-comments-section"><div class="shared-header-style"><i class="ri-chat-3-fill" aria-hidden="true"></i> COMENTARIOS</div><div id="elt-comments-slot"></div></section>
             ${relatedForumHtml}
             ${relatedOtherHtml}
-            <div id="local-reactions" style="margin-top:22px"></div><section id="elt-comments-section"><div class="shared-header-style"><i class="ri-chat-3-line"></i> COMENTARIOS</div><div id="elt-comments-slot"></div></section>
             `;
             window.EltorgaComentarios?.montar(post);applyAdminProfile();window.EltorgaPuntos?.montar(post);
             // Solo reacciones nativas de Giscus.
@@ -1167,7 +1169,7 @@
                         <div><div class="related-title">${r.TITULO}</div><small style="color:var(--steam-grey)">${originText}</small></div>
                     </div>
                     
-                    <div class="related-words"><span class="elt-metric-points" data-elt-post-id="${safeAttr(r.ID)}" data-elt-metric="points">— puntos</span><br><span class="elt-metric-comments" data-elt-post-id="${safeAttr(r.ID)}" data-elt-metric="comments">— comentarios</span></div>
+                    <div class="related-words elt-related-stats"><div class="elt-post-stat"><strong class="elt-metric-points" data-elt-post-id="${safeAttr(r.ID)}" data-elt-metric="points" data-metric-format="number">—</strong><small>puntos</small></div><div class="elt-post-stat"><strong class="elt-metric-comments" data-elt-post-id="${safeAttr(r.ID)}" data-elt-metric="comments" data-metric-format="number">—</strong><small>comentarios</small></div></div>
                     <div class="related-author">
                         <span class="related-author-name">${safeAttr(siteConfig.profile?.name||'eltorga')}</span>
                         ${(siteConfig.profile?.avatar||siteConfig.avatar) ? `<img class="related-author-img" src="${safeAttr(siteConfig.profile?.avatar||siteConfig.avatar)}" alt="Avatar del autor" loading="lazy">` : `<span class="related-author-img related-author-placeholder"><i class="fa-solid fa-user"></i></span>`}

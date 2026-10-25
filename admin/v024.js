@@ -72,9 +72,6 @@ profileSave=async function(){v24CaptureProfile();await save('config');v24Preview
 function v24ChooseAchievement(i){v24CaptureProfile();libraryOpen(path=>{v24Profile().achievements[i].image=path;profileUI()},{kind:'image'})}
 function v24MoveAchievement(i,step){v24CaptureProfile();const a=v24Achievements(),j=i+step;if(j<0||j>8)return;[a[i],a[j]]=[a[j],a[i]];profileUI()}
 
-// Panel único de publicación. No hay un segundo .bat para exportar.
-async function v24Export(){try{const r=await api('/api/export',{});alert('Se prepararon los archivos públicos en: '+r.folder+'\nSube su contenido a GitHub Pages.')}catch(e){alert('No se pudo preparar GitHub Pages: '+e.message)}}
-const footer=document.querySelector('.admin-footer');if(footer){const b=document.createElement('button');b.innerHTML='<i class="ri-github-line"></i> Preparar GitHub Pages';b.onclick=v24Export;footer.insertBefore(b,footer.lastElementChild);footer.querySelector('span').textContent='Eltorga Foro v0.2.4 · Guardado automático al aplicar cambios'}
 // Español es el idioma original: permanece disponible, aunque puede reordenarse.
 const v24OldLanguageUI=languageUI;
 languageUI=function(){if(!languages().some(l=>l.code==='es'))languages().unshift({code:'es',name:'Español',flag:flagCodes.es});v24OldLanguageUI();languages().forEach((lang,i)=>{if(lang.code==='es'){const row=document.querySelector(`[data-lang-row="${i}"]`);if(row){const trash=row.querySelector('button[title="Eliminar"]');if(trash){trash.disabled=true;trash.title='Español es el idioma original'}const code=$('langcode'+i);if(code){code.readOnly=true;code.title='Código del idioma original'}}}})};

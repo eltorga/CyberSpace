@@ -1,0 +1,13 @@
+# GitHub Pages solo necesita las páginas y recursos de la raíz.
+# Los archivos locales siguen en esta MISMA carpeta, pero no deben publicarse.
+/admin/
+/ADMIN.bat
+/*.sql
+/LEEME*.txt
+/CONFIGURAR*.txt
+/backups/
+/PARA_GITHUB/
+/__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

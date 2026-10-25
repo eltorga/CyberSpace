@@ -45,11 +45,6 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json(github_sync(ROOT,auth))
             if path=='/api/media/manage':
                 return self.send_json(media_manage(ROOT,json.loads(body)))
-            if path=='/api/export':
-                import subprocess, sys
-                result=subprocess.run([sys.executable,str(ROOT/'admin/export_public.py')],cwd=ROOT,capture_output=True,text=True,timeout=90)
-                if result.returncode:raise ValueError(result.stderr[-1000:])
-                return self.send_json({'ok':True,'folder':'PARA_GITHUB','message':'Archivos públicos preparados desde ADMIN.bat'})
             if path=='/api/restore':
                 if not zipfile.is_zipfile(io.BytesIO(body)):raise ValueError('ZIP inválido')
                 with zipfile.ZipFile(io.BytesIO(body)) as archive:
