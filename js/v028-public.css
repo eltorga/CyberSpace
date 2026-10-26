@@ -1,0 +1,14 @@
+/* Eltorga 0.2.8 — código, iconos y perfil personalizado. */
+.post-content .elt-inline-code,.editor-live .elt-inline-code{display:inline;padding:2px 6px;font:600 .91em ui-monospace,Consolas,monospace!important;color:#a9e2ff;background:#192c3f;border:1px solid #3a6380;border-radius:4px;letter-spacing:normal;white-space:break-spaces}
+.elt-code,.elt-code pre,.elt-code pre code{font-family:ui-monospace,SFMono-Regular,Consolas,'Liberation Mono',monospace!important;font-size:13px!important;line-height:1.5!important;letter-spacing:normal!important;font-kerning:none}
+.elt-code pre{white-space:pre!important;tab-size:4;overflow-x:auto!important;text-align:left!important}
+.elt-code code{white-space:inherit!important;word-spacing:normal!important;tab-size:4}
+.elt28-line{display:flex;white-space:pre;min-height:1.5em}.elt28-line-number{display:inline-block;flex:none;min-width:35px;margin-right:12px;padding-right:10px;text-align:right;color:#7991a4;border-right:1px solid #405065;user-select:none}.elt28-line-content{white-space:pre}
+.elt-copy.elt28-copied{background:#186d58!important;border-color:#39b999!important}
+.elt28-separator{display:flex;align-items:center;justify-content:center;gap:10px;margin:17px 0;padding:11px 15px;border:1px solid #4b7899;border-radius:6px;color:white;text-align:center;letter-spacing:.3px}
+.elt28-sep-symbol{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}.elt28-sep-symbol .elt28-si{display:inline-block;mask-position:center;mask-size:contain;mask-repeat:no-repeat;-webkit-mask-position:center;-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat}
+.elt28-download{box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;min-width:0;gap:12px;border:1px solid #4d6176;border-radius:7px;padding:14px}
+.elt28-download .md-dl-left{display:flex;align-items:center;min-width:0;gap:12px}.elt28-download .md-dl-info{min-width:0;overflow-wrap:anywhere}.elt28-download .elt28-dl-brand{display:flex;align-items:center;justify-content:center;flex:none;min-width:40px}.elt28-download .elt28-si{display:inline-block;mask-position:center;mask-repeat:no-repeat;mask-size:contain;-webkit-mask-position:center;-webkit-mask-repeat:no-repeat;-webkit-mask-size:contain}.elt28-download .md-dl-btn{color:#fff!important}
+.elt28-public-roles{display:flex;flex-direction:column;gap:5px;margin:10px 0}.elt28-public-role{display:flex;justify-content:center;align-items:center;gap:6px;border:1px solid #ffffff24;padding:5px 8px;color:#fff;font-size:12px;font-weight:600;border-radius:5px}.elt28-public-role img{height:18px;width:18px;object-fit:contain}
+.nav-item>i:first-child{vertical-align:-1px;margin-right:3px}
+@media(max-width:600px){.elt28-download{flex-wrap:wrap}.elt28-download .md-dl-btn{margin-left:auto}.elt-code pre{font-size:12px!important}}

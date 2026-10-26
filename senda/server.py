@@ -2,7 +2,7 @@
 """
 Senda - Biblia de estudio
 Servidor local para Windows (stdlib only).
-El panel local actualiza directamente /docs, el único sitio web de GitHub Pages.
+El panel local actualiza /docs; la raíz tiene un index.html de entrada para Pages.
 """
 from __future__ import annotations
 import json, os, re, sqlite3, shutil, tempfile, zipfile, html, time, threading, webbrowser, base64, io
@@ -31,8 +31,8 @@ BIBLES = DATA / "bibles"
 DB = DATA / "senda.sqlite3"
 SETTINGS_FILE = CONFIG / "settings.json"
 HOST = "127.0.0.1"
-PORT = int(os.environ.get("SENDA_PORT", "8765"))
-VERSION = "1.2.0"
+PORT = int(os.environ.get("SENDA_PORT", "8787"))
+VERSION = "1.2.1"
 CACHE_DAYS = 25
 
 def now():
@@ -1240,12 +1240,22 @@ def sync_public_site():
             site['settings']['compare_translation'] = ''
         site['installation_pending'] = not bool(offline_ids)
 
-        # Escritura atómica: evita que el lector encuentre un JSON incompleto.
+        # Mantener estable site.json cuando los contenidos no cambian, evitando
+        # commits innecesarios cada vez que se inicia el panel.
         dest = PUBLIC / 'data' / 'site.json'
         dest.parent.mkdir(parents=True, exist_ok=True)
-        tmp = dest.with_suffix('.json.tmp')
-        tmp.write_text(json.dumps(site, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
-        tmp.replace(dest)
+        previous = read_json(dest, {}) or {}
+        if isinstance(previous, dict):
+            previous_content = {k: v for k, v in previous.items() if k != 'generated_at'}
+        else:
+            previous_content = {}
+        current_content = {k: v for k, v in site.items() if k != 'generated_at'}
+        if previous_content == current_content and dest.is_file():
+            site['generated_at'] = previous.get('generated_at', site['generated_at'])
+        else:
+            tmp = dest.with_suffix('.json.tmp')
+            tmp.write_text(json.dumps(site, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+            tmp.replace(dest)
         generated.add('data/site.json')
 
         for rel in set(old) - generated:

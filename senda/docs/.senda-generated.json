@@ -1,5 +1,8 @@
 [
   ".nojekyll",
+  "assets/images/1.png",
+  "collection_covers/088bd511e78f45a2b6ce381e.jpg",
+  "collection_covers/c132fba060d64937be90440f.jpg",
   "covers/1CH.svg",
   "covers/1CO.svg",
   "covers/1JN.svg",
@@ -8413,6 +8416,8 @@
   "data/site.json",
   "favicon.png",
   "index.html",
+  "profile/avatar.jpg",
+  "profile/cover.jpg",
   "public.js",
   "senda-logo.png",
   "styles.css"

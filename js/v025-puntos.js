@@ -78,10 +78,11 @@
       '<div class="elt-points-coin" title="Monedas"><i class="fa-solid fa-coins" aria-hidden="true"></i></div>'+
       '<div class="elt-points-buttons" role="group" aria-label="Otorgar de uno a diez puntos">'+
       Array.from({length:10},(_,i)=>'<button type="button" class="elt-point-btn" data-value="'+(i+1)+'" aria-label="Otorgar '+(i+1)+' puntos">+'+(i+1)+'</button>').join('')+
-      '</div><div class="elt-points-count" aria-label="Puntos acumulados"><strong id="elt-points-total">—</strong><small>PUNTOS</small><span id="elt-points-voters">— votos</span></div></div>'+
-      '<p id="elt-points-status" class="elt-points-status" role="status" aria-live="polite">Consultando puntuación…</p>';
+      '</div><div class="elt-eng-stats"><div class="elt-eng-stat elt-points-count" aria-label="Puntos acumulados"><strong id="elt-points-total">—</strong><small>PUNTOS</small><span id="elt-points-voters">— votos</span></div><div class="elt-eng-stat" aria-label="Visitas"><i class="ri-eye-line"></i><strong id="elt-eng-visits">—</strong><small>VISITAS</small></div><button type="button" class="elt-eng-stat" id="elt-eng-bookmark" title="Registrar favorito y copiar enlace"><i class="ri-star-line"></i><strong id="elt-eng-favorites">—</strong><small>FAVORITOS</small></button></div></div>'+
+      '<p id="elt-points-status" class="elt-points-status" role="status" aria-live="polite">Consultando puntuación…</p><p id="elt-eng-hint" role="status" aria-live="polite"></p>';
     mount.querySelectorAll('.elt-point-btn').forEach(b=>b.addEventListener('click',()=>vote(id,Number(b.dataset.value),current)));
     refresh(id,current);
+    window.EltorgaEngagement?.montar(post);
   }
   window.EltorgaPuntos={montar};
 })();

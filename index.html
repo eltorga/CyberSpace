@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamer Odyssey - Foro Avanzado</title>
+    <title>Eltorga Foro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
     <script src="https://code.iconify.design/3/3.1.1/iconify.min.js" defer></script>
@@ -330,10 +329,16 @@
 .goog-te-banner-frame,.goog-te-banner-frame.skiptranslate,.skiptranslate>iframe,#goog-gt-tt,.goog-te-balloon-frame{display:none!important;visibility:hidden!important}body{top:0!important}html{margin-top:0!important}
 .language-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#202b37;border:1px solid var(--steam-border);border-radius:5px;color:var(--steam-light);padding:10px;cursor:pointer}.language-trigger img,.language-options img{width:25px;height:25px;object-fit:contain}.language-options{display:none;position:absolute;top:100%;left:0;right:0;z-index:150;background:#253341;border:1px solid #4b6678;box-shadow:0 8px 20px #0009;border-radius:5px;max-height:260px;overflow:auto}.language-options.active{display:block}.language-options button{display:flex;gap:12px;align-items:center;color:#fff;background:none;border:0;width:100%;padding:10px;text-align:left;cursor:pointer}.language-options button:hover{background:#2a475e}#custom-language-selector{position:relative}.post-row-comment-count{color:#a9bbc8;white-space:nowrap;font-size:12px}.comment-latest{display:flex;gap:8px;align-items:center;text-align:left;min-width:0}.comment-latest img{width:34px;height:34px;object-fit:cover;border-radius:50%}.comment-latest .last-identity{overflow:hidden}.comment-latest strong,.comment-latest small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}.comment-latest small{font-size:11px;color:var(--steam-grey)}.post-row{grid-template-columns:minmax(0,1fr) 105px minmax(130px,185px);gap:14px}.elt-code{background:#111923;border:1px solid #4b5c70;border-radius:7px;color:#dbe8f4;overflow:hidden;margin:15px 0}.elt-code-head{display:flex;gap:10px;align-items:center;justify-content:space-between;background:#29394c;padding:10px}.elt-copy{border:1px solid #566e84;background:#2a475e;color:#fff;padding:5px 10px;border-radius:5px;cursor:pointer}.elt-code pre{white-space:pre;overflow:auto;padding:15px;margin:0;background:#121c28}.elt-code-line{display:block}.elt-line-no{color:#8fa0b0;display:inline-block;min-width:38px;margin-right:10px;user-select:none;text-align:right;border-right:1px solid #405065;padding-right:9px}.md-download-box .iconify{font-size:28px;color:#d9e8f4}
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
-<script defer src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<!-- CSS reales del foro: en v0.2.8 faltaban estas referencias. -->
+<link rel="stylesheet" href="js/v024-public.css?v=029">
+<link rel="stylesheet" href="js/v025-puntos.css?v=029"><link rel="stylesheet" href="js/v0292-public.css?v=0292">
+<link rel="stylesheet" href="js/v026-comments.css?v=029">
+<link rel="stylesheet" href="js/v027-public.css?v=029">
+<link rel="stylesheet" href="js/v028-public.css?v=029">
+<link id="elt-hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="js/v029-public.css?v=029"><link rel="stylesheet" href="js/v0291-public.css?v=0291">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons-font@v15/font/simple-icons.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"><style>.elt-code pre{padding:15px;overflow:auto}.elt-code .elt-copy{border:0;border-radius:4px;background:#32648c;color:white;padding:6px 12px;cursor:pointer}.comment-meta{font-size:12px;color:var(--steam-grey)}</style><link rel="stylesheet" href="js/v024-public.css"><link rel="stylesheet" href="js/v025-puntos.css"><link rel="stylesheet" href="js/v026-comments.css"><link rel="stylesheet" href="js/v027-public.css">
 </head>
 <body>
 
@@ -452,7 +457,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const [struct, posts, config] = await Promise.all(['data/foros.json','data/posts.json','data/config.json'].map(async p => {
-                    const r = await fetch(p+'?t='+Date.now()); if(!r.ok) throw Error(p); return r.json();
+                    const r = await fetch(p,{cache:'no-cache'}); if(!r.ok) throw Error(p); return r.json();
                 }));
                 siteConfig = config;
                 if(window.eltorgaPublicInit) window.eltorgaPublicInit();
@@ -694,8 +699,8 @@
                 '<div class="md-download-box"><div class="md-dl-left"><i class="fa-brands $4 md-dl-icon"></i><div class="md-dl-info"><div class="md-dl-title">$2</div><div class="md-dl-size"><i class="fa-solid fa-database"></i> $3</div></div></div><a href="$1" target="_blank" class="md-dl-btn">Descargar</a></div>');
             txt = txt.replace(/\[separador icono="(.*?)" texto="(.*?)"\]/gi, 
                 '<div class="md-separator"><i class="fa-solid $1"></i> $2</div>');
-            txt = txt.replace(/\[youtube id="(.*?)"\]/gi, 
-                '<div class="md-yt-container"><iframe src="https://www.youtube.com/embed/$1?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe></div>');
+            txt = txt.replace(/\[youtube id="([\w-]{11})"(?: autoplay="([01])")?\]/gi,
+                (_whole,id,auto)=>`<div class="md-yt-container"><iframe src="https://www.youtube.com/embed/${id}${auto==='1'?'?autoplay=1&mute=1&playsinline=1':''}" loading="lazy" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`);
             txt = txt.replace(/\[center\]([\s\S]*?)\[\/center\]/gi, 
                 '<div style="text-align:center;">$1</div>');
             
@@ -1228,25 +1233,14 @@
         }
         function renderDynamicHeader(){const items=siteConfig.navItems;if(!items?.length)return;const nav=document.querySelector('.header-nav');if(!nav)return;nav.innerHTML=items.map(x=>x.children?.length?`<div class="dropdown"><span class="nav-item">${x.title} <i class="ri-arrow-down-s-line"></i></span><div class="dropdown-menu">${x.children.map(v=>`<a href="${v.url}" target="_blank" rel="noopener noreferrer">${v.title}</a>`).join('')}</div></div>`:`<a class="nav-item" href="${x.url||'#'}" ${x.url?.startsWith('http')?'target="_blank" rel="noopener noreferrer"':''}>${x.title}</a>`).join('')}
 function applyAdminProfile(){const p=siteConfig.profile;if(!p)return;document.querySelectorAll('.author-name').forEach(x=>x.textContent=p.name||'eltorga');if(p.avatar)document.querySelectorAll('.author-avatar').forEach(x=>x.src=p.avatar);document.querySelectorAll('.badge-admin').forEach(x=>x.textContent=p.role||'Administrador');document.querySelectorAll('.badge-dev').forEach(x=>x.textContent=p.role2||'Desarrollador');}
-function montarGiscus(post) {
-            const slot=document.getElementById('giscus-slot'); const cfg=siteConfig.giscus || {};
-            if(!slot)return;
-            if(!cfg.enabled){document.getElementById('giscus-section').style.display='none';return;}
-            const script=document.createElement('script');
-            script.src='https://giscus.app/client.js';script.async=true;script.crossOrigin='anonymous';
-            const fields={repo:cfg.repo,'repo-id':cfg.repoId,category:cfg.category,'category-id':cfg.categoryId,mapping:'specific',term:'eltorga-'+post.ID,strict:'1','reactions-enabled':'1','emit-metadata':'1','input-position':'bottom',theme:cfg.theme||'noborder_dark',lang:cfg.lang||'es'};
-            Object.entries(fields).forEach(([key,val])=>script.setAttribute('data-'+key,val));
-            slot.replaceChildren(script);
-        }
-    
         // Download redirect on the same GitHub Pages origin.
         document.addEventListener('click', event=> {const copy=event.target.closest('.elt-copy');if(copy){const code=copy.closest('.elt-code')?.querySelector('code');if(code&&navigator.clipboard)navigator.clipboard.writeText(code.innerText);return;}const a=event.target.closest('.md-dl-btn');if(!a)return;const href=a.getAttribute('href');if(!href)return;event.preventDefault(); const title=a.closest('.md-download-box')?.querySelector('.md-dl-title')?.textContent||'Archivo';window.open('descarga.html?url='+encodeURIComponent(href)+'&title='+encodeURIComponent(title),'_blank','noopener,noreferrer');});
 </script>
 <script src="js/upgrade-public.js"></script>
 <script src="js/v024-public.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/v025-puntos.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js" defer></script>
-<script src="js/v026-comments.js" defer></script>
+<script src="js/v025-puntos.js" defer></script><script defer src="js/v0292-engagement.js?v=0292"></script>
+
+<script src="js/v026-comments.js" defer></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" defer></script><script src="js/v028-public.js" defer></script><script src="js/v029-public.js" defer></script>
 </body>
 </html>

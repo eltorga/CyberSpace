@@ -1023,3 +1023,266 @@ renderSettings=function(){
   const oldToDataURL=toDataURL;
   toDataURL=async function(file){return window.sendaOptimizeUpload(file)};
 })();
+
+// ===== Senda 1.2.1 · guardado automático local y publicación sin exportar a GitHub =====
+(function(){
+  'use strict';
+  const delay=1450;
+  let activeAutosaver=null;
+
+  function updateSaveIndicator(label, problem=false){
+    const el=$('#saveStatus');
+    if(el){el.textContent=label;el.classList.toggle('senda-save-error',problem);}
+  }
+  function makeAutosaver({root, endpoint, build, isValid, savedId, selector,
+                          getExtra, onSaved, onClose, idle=delay, statusParent}){
+    if(!root)return null;
+    const status=document.createElement('span');status.className='senda-auto-label';
+    status.textContent='Autoguardado activado';
+    (statusParent||root.querySelector('.modal-actions')||root).prepend(status);
+    let id=savedId||null, last='', timer=null, pending=null, closed=false, lastError=false;
+    const snapshot=()=>{
+      const value=build(id);
+      if(getExtra)value.__extra=getExtra();
+      return JSON.stringify(value);
+    };
+    last=savedId ? snapshot() : '';
+    const isDirty=()=>snapshot()!==last;
+    const setStatus=(message,fail=false)=>{
+      if(root.isConnected)status.textContent=message;
+      updateSaveIndicator(message,fail);
+      lastError=fail;
+    };
+    const autosaver={
+      get dirty(){return isDirty();}, get pending(){return !!pending;},
+      async flush(force=false){
+        clearTimeout(timer);
+        if(closed)return true;
+        // Un único escritor por formulario: evita duplicados cuando se crea una nota.
+        if(pending){try{await pending;}catch(_){return false;} if(!isDirty())return !lastError;}
+        if(!isDirty())return !lastError;
+        if(!isValid()){
+          setStatus('Borrador pendiente: completa los datos necesarios');return false;
+        }
+        const payload=build(id), extra=getExtra?getExtra():undefined;
+        const submitted=JSON.stringify({...payload,...(getExtra?{__extra:extra}:{})});
+        setStatus('Guardando automáticamente…');
+        pending=(async()=>{
+          const result=await api(endpoint,{method:'POST',body:JSON.stringify(payload)});
+          id=result.id||id;
+          if(result.state)state=result.state;
+          if(onSaved)await onSaved(result,id,extra);
+          // Guardar exactamente el estado enviado: nunca borrar cambios nuevos
+          // que el usuario haya hecho mientras estaba activa la petición.
+          last=JSON.stringify({...payload,id,...(getExtra?{__extra:extra}:{})});
+          if(result.publication?.ok===false){
+            setStatus('Datos guardados; error al actualizar la web',true);
+          }else{
+            setStatus('Guardado automáticamente ✓ · listo para GitHub Desktop');
+          }
+          return true;
+        })();
+        try{
+          await pending;
+        }catch(e){setStatus('Error al guardar: '+e.message,true);return false;}
+        finally{pending=null;}
+        if(isDirty())autosaver.schedule();
+        return true;
+      },
+      schedule(){
+        if(closed)return;
+        clearTimeout(timer);
+        if(!isDirty()){if(!lastError)status.textContent='Todo guardado ✓';return;}
+        status.textContent='Cambios pendientes…';
+        updateSaveIndicator('Autoguardado pendiente…');
+        timer=setTimeout(()=>{autosaver.flush();},idle);
+      },
+      async close(){
+        clearTimeout(timer);
+        const ok=await autosaver.flush(true);
+        if(!ok && isDirty() && isValid()){
+          toast('No se pudo guardar. Revisa tu conexión con el panel.');return;
+        }
+        closed=true;
+        if(activeAutosaver===autosaver)activeAutosaver=null;
+        if(onClose)onClose();
+        closeModal();
+      }
+    };
+    activeAutosaver=autosaver;
+    root.addEventListener('input',e=>{
+      if(e.target.matches('input,textarea,select,[contenteditable]') || e.target.closest('[contenteditable]'))autosaver.schedule();
+    });
+    root.addEventListener('change',()=>autosaver.schedule());
+    root.addEventListener('click',e=>{
+      if(e.target.closest('[data-choice],[data-color],[data-icon],[data-cover-ticket],[data-edit-cmd],[data-format],[data-role="quote"],[data-role="table"]')){
+        // Los controles de edición modifican el DOM en su handler antes de propagarse.
+        autosaver.schedule();
+      }
+    });
+    for(const body of root.querySelectorAll('[contenteditable="true"]')){
+      const watcher=new MutationObserver(()=>autosaver.schedule());
+      watcher.observe(body,{subtree:true,characterData:true,childList:true,attributes:true});
+    }
+    if(root.closest('#modal')){
+      root.querySelectorAll('[data-close]').forEach(x=>x.onclick=()=>autosaver.close());
+      $('#modal').onclick=e=>{if(e.target===$('#modal'))autosaver.close();};
+    }
+    if(selector){const button=root.querySelector(selector); if(button)button.onclick=async()=>{
+      if(!isValid())return toast('Completa los datos obligatorios.');
+      const ok=await autosaver.flush(true);
+      if(ok)await autosaver.close();
+    };}
+    return autosaver;
+  }
+
+  // Cada editor permanece abierto durante el autoguardado: no pierde el foco.
+  const noteModalBefore=openNoteModal;
+  openNoteModal=function(existing){
+    noteModalBefore(existing);
+    const root=$('#modal .modal'),body=$('#noteBody');if(!root||!body)return;
+    const reference=existing?.reference||selectedRefs();
+    const draftKey='senda.note.'+(existing?.id||reference);
+    if(!existing){try{const saved=localStorage.getItem(draftKey);if(saved)body.innerHTML=saved;}catch(_){}}
+    let currentId=existing?.id||null;
+    const getBody=()=>body.innerHTML.trim();
+    const save=makeAutosaver({root,endpoint:'/api/note',selector:'#saveNote',savedId:currentId,
+      isValid:()=>!!body.textContent.trim() && !!$('#noteCollection')?.value,
+      build:id=>({id:id||undefined,scope:'verse',reference,title:$('#noteTitle').value.trim(),
+        html:getBody(),translation_id:existing?.translation_id||selectedTranslation,
+        category_id:categoryForCollection(+$('#noteCollection').value),
+        collection_id:+$('#noteCollection').value,is_public:existing?.is_public!==0}),
+      onSaved:(_result,id)=>{currentId=id;try{localStorage.removeItem(draftKey);}catch(_){}},
+      onClose:()=>{if(typeof renderVerses==='function' && $('#readerText'))renderVerses(currentVerses);
+        else if(typeof render==='function')render();}
+    });
+    body.addEventListener('input',()=>{try{localStorage.setItem(draftKey,getBody())}catch(_){}});
+    if(!save)return;
+  };
+
+  const videoModalBefore=openMediaModal;
+  openMediaModal=function(existing=null){
+    videoModalBefore(existing);
+    const root=$('#modal .modal'),body=$('#mediaRichBody');if(!root||!body)return;
+    const reference=existing?.reference||selectedRefs();
+    makeAutosaver({root,endpoint:'/api/media',selector:'#saveMedia',savedId:existing?.id||null,
+      isValid:()=>/^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test($('#mediaUrl')?.value.trim()||'') && !!$('#mediaCollection')?.value,
+      build:id=>({id:id||undefined,reference,kind:'video',title:$('#mediaTitle').value.trim(),
+        subtitle:$('#mediaSubtitle').value.trim(),description_html:body.innerHTML,
+        description:body.textContent.trim(),youtube_url:$('#mediaUrl').value.trim(),
+        translation_id:existing?.translation_id||selectedTranslation,
+        collection_id:+$('#mediaCollection').value,is_public:existing?.is_public!==0}),
+      onClose:()=>{if($('#versePanel'))showVersePanel();else render();}
+    });
+  };
+
+  const collectionModalBefore=openCollectionModal;
+  openCollectionModal=function(existing=null){
+    collectionModalBefore(existing);
+    const root=$('#modal .modal');if(!root||!$('#colName'))return;
+    let lastTicket='';
+    const photoTicket=()=>root.querySelector('[data-cover-ticket].active')?.dataset.coverTicket||'';
+    makeAutosaver({root,endpoint:'/api/collection',selector:'#saveCollection',savedId:existing?.id||null,
+      isValid:()=>!!$('#colName')?.value.trim(),
+      getExtra:photoTicket,
+      build:id=>({id:id||undefined,name:$('#colName').value.trim(),description:$('#colDesc').value,
+        cover:state.collections.find(x=>+x.id===+id)?.cover||existing?.cover||'',
+        color:root.querySelector('[data-color].active')?.dataset.color||existing?.color||'#8b6f47',
+        icon:root.querySelector('[data-icon].active')?.dataset.icon||existing?.icon||'fi fi-rr-book-alt',
+        cover_position:$('#cropX').value+'% '+$('#cropY').value+'%',
+        is_public:existing?.is_public!==0}),
+      onSaved:async (_result,id,ticket)=>{
+        if(ticket&&ticket!==lastTicket){
+          const r=await api('/api/collection-cover',{method:'POST',body:JSON.stringify({id,ticket})});
+          if(r.state)state=r.state;
+          lastTicket=ticket;
+        }
+      },
+      onClose:()=>render()
+    });
+  };
+
+  // Las preferencias se guardan en cuanto se cambia un campo válido.
+  const settingsBefore=renderSettings;
+  renderSettings=function(){
+    settingsBefore();
+    const root=$('#content');if(!root||!$('#saveSettings'))return;
+    const controls=['canon','mainT','compareT','defaultBook','defaultChapter','unsplashKey'];
+    const build=()=>({canon:$('#canon').value,main_translation:$('#mainT').value,
+      compare_translation:$('#compareT').value,default_book:$('#defaultBook').value,
+      default_chapter:+$('#defaultChapter').value,unsplash_access_key:$('#unsplashKey').value});
+    let last=JSON.stringify(build()),timer=null,busy=null;
+    const status=document.createElement('span');status.className='senda-auto-label';status.textContent='Autoguardado de preferencias activo';
+    $('#saveSettings').parentElement.appendChild(status);
+    const flush=async()=>{
+      clearTimeout(timer);if(busy)await busy;
+      const payload=build(),snap=JSON.stringify(payload);
+      if(snap===last)return true;
+      if(!payload.default_chapter||payload.default_chapter<1){status.textContent='Escribe un capítulo válido';return false;}
+      status.textContent='Guardando preferencias…';
+      busy=api('/api/settings',{method:'POST',body:JSON.stringify(payload)});
+      try{const d=await busy;last=snap;state.settings=d.settings;selectedTranslation=d.settings.main_translation;
+        status.textContent=d.publication?.ok===false?'Preferencias guardadas; web pendiente':'Preferencias guardadas automáticamente ✓';
+        updateSaveIndicator(status.textContent,d.publication?.ok===false);
+      }catch(e){status.textContent='Error: '+e.message;updateSaveIndicator(status.textContent,true);return false}
+      finally{busy=null;}
+      if(JSON.stringify(build())!==last)timer=setTimeout(flush,1000);
+      return true;
+    };
+    for(const id of controls){const el=$('#'+id);if(!el)continue;
+      const mark=()=>{clearTimeout(timer);status.textContent='Preferencias pendientes…';timer=setTimeout(flush,1300);};
+      el.addEventListener('input',mark);el.addEventListener('change',mark);
+    }
+    $('#saveSettings').onclick=async()=>{if(await flush())toast('Preferencias guardadas')};
+  };
+
+  // Las imágenes del editor siguen guardándose con su botón para evitar
+  // generar PNG pesados mientras se ajustan el texto y los efectos.
+
+  // El botón de la barra confirma cualquier editor abierto y actualiza docs/.
+  // Corrige también el controlador anterior, que consultaba un valor inexistente.
+  const shellBefore=renderShell;
+  renderShell=function(){
+    shellBefore();
+    const save=$('#saveAllBtn');
+    if(save)save.onclick=async()=>{
+      try{
+        if(activeAutosaver?.dirty){const ok=await activeAutosaver.flush(true);if(!ok)return toast('Hay un borrador que necesita revisión');}
+        const d=await api('/api/save',{method:'POST',body:'{}'});
+        const good=d.publication?.ok!==false;
+        updateSaveIndicator(good?'Guardado ✓ · listo para GitHub Desktop':'Guardado local · error de publicación',!good);
+        toast(good?'Cambios guardados y web pública actualizada.':'Guardado local, pero no se pudo actualizar la web.');
+      }catch(e){updateSaveIndicator('Error al guardar',true);toast(e.message)}
+    };
+  };
+})();
+
+// Senda 1.2.1 · Autoguardado de los textos y el recorte del perfil.
+(function(){
+ const original=openTimelineSettings;
+ openTimelineSettings=function(){
+   original();
+   const modal=$('#modal .modal');if(!modal||!$('#profileName'))return;
+   let timer=null, last=JSON.stringify({name:$('#profileName').value,subtitle:$('#profileSub').value,
+     cover_position:$('#timelineCropX').value+'% '+$('#timelineCropY').value});
+   const label=document.createElement('p');label.className='senda-auto-label';
+   label.textContent='Nombre, subtítulo y recorte se autoguardan. Las fotos requieren Guardar perfil.';
+   modal.querySelector('.modal-actions')?.prepend(label);
+   const flush=async()=>{
+     clearTimeout(timer);
+     const payload={name:$('#profileName')?.value||'',subtitle:$('#profileSub')?.value||'',
+       cover_position:($('#timelineCropX')?.value||'50')+'% '+($('#timelineCropY')?.value||'50')+'%'};
+     const current=JSON.stringify(payload);if(current===last)return;
+     label.textContent='Autoguardando datos del perfil…';
+     try{const r=await api('/api/profile',{method:'POST',body:JSON.stringify(payload)});
+       state=r.state;last=current;
+       label.textContent=r.publication?.ok===false?'Perfil guardado; web pública pendiente':'Datos del perfil autoguardados ✓';
+     }catch(e){label.textContent='Error al autoguardar perfil: '+e.message;}
+   };
+   for(const id of ['profileName','profileSub','timelineCropX','timelineCropY']){
+     const el=$('#'+id);if(!el)continue;
+     const change=()=>{clearTimeout(timer);label.textContent='Perfil con cambios pendientes…';timer=setTimeout(flush,1700)};
+     el.addEventListener('input',change);el.addEventListener('change',change);
+   }
+ };
+})();

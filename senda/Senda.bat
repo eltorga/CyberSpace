@@ -4,7 +4,8 @@ cd /d "%~dp0"
 title Senda - Panel local
 
 set "PYTHONUTF8=1"
-set "PORT=8765"
+set "PORT=8787"
+set "SENDA_PORT=%PORT%"
 
 echo.
 echo  ============================================
@@ -29,7 +30,8 @@ if %errorlevel%==0 (
 )
 
 echo  [OK] Python encontrado.
-echo  [INFO] Iniciando Senda en http://127.0.0.1:%PORT%
+echo  [INFO] Administrador: http://127.0.0.1:%PORT%
+echo  [INFO] Sitio publico: http://127.0.0.1:%PORT%/sitio/
 echo  [INFO] Esta ventana registra los cambios y errores.
 echo.
 echo  [INFO] Para detener Senda: cierra esta ventana o presiona CTRL+C.

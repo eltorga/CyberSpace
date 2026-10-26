@@ -1,0 +1,15 @@
+/* Eltorga v0.2.9.1 — scroll discreto para todos los bloques de código publicados. */
+.elt-code pre,
+.elt-code pre code,
+pre:has(> code.hljs) {
+  scrollbar-width: thin;
+  scrollbar-color: #456781 transparent;
+}
+.elt-code pre::-webkit-scrollbar,
+pre:has(> code.hljs)::-webkit-scrollbar {width:6px;height:6px;}
+.elt-code pre::-webkit-scrollbar-track,
+pre:has(> code.hljs)::-webkit-scrollbar-track {background:transparent;}
+.elt-code pre::-webkit-scrollbar-thumb,
+pre:has(> code.hljs)::-webkit-scrollbar-thumb {background:#456781;border-radius:10px;}
+.elt-code pre::-webkit-scrollbar-thumb:hover,
+pre:has(> code.hljs)::-webkit-scrollbar-thumb:hover {background:#6ea0be;}

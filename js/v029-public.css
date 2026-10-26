@@ -1,0 +1,27 @@
+/* Eltorga Foro 0.2.9 | corregidos enlaces de estilo y vista de descargas */
+.post-content img {border:0!important; outline:0!important;box-shadow:none}
+/* No sobreescribir marcos de lightbox ni los estilos de miniaturas externas */
+.elt-code pre,.elt-code pre code {background:#171c25;color:#abb2bf;font-family:Consolas,"Cascadia Code",ui-monospace,monospace!important;font-size:13px!important;letter-spacing:normal!important;word-spacing:normal!important;line-height:1.6!important;white-space:pre!important}
+.elt-code pre code.hljs {display:block;padding:0!important;background:transparent!important;overflow:visible!important}
+.elt-code .elt28-line {display:flex;white-space:pre;line-height:1.6}
+.elt-code .elt28-line-content {min-width:max-content}
+.elt-inline-code {border-color:#45647e!important}
+/* Tarjetas de descarga: icono de marca a la izquierda y nombre/tamaño juntos. */
+.md-download-box {box-sizing:border-box;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;padding:13px 18px!important;min-width:0;max-width:100%;}
+.md-download-box .md-dl-left {display:flex!important;align-items:center!important;gap:13px!important;min-width:0;flex:1 1 auto;}
+.md-download-box .md-dl-info{display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0;overflow-wrap:anywhere}
+.md-download-box .md-dl-title{font-size:14px!important;line-height:1.35;font-weight:700;color:#f1f6fa}
+.md-download-box .md-dl-size{font-size:12px;display:flex;align-items:center;gap:5px;color:#a5b4c3}
+.md-download-box .md-dl-size i{font-size:12px;color:#9dadbd}
+.md-download-box .elt28-dl-brand,.md-download-box .md-dl-icon {display:flex!important;flex:0 0 auto!important;align-items:center;justify-content:center;width:42px;min-width:42px;max-height:44px;height:42px;font-size:38px!important;color:#44ad75}
+.md-download-box .elt28-dl-brand .elt28-si{max-width:42px;max-height:42px;display:block}
+.md-download-box .md-dl-btn{margin-left:auto;flex:0 0 auto;align-self:center!important;padding:11px 19px!important;background:#2387c8;border-radius:4px;color:#fff!important;font-weight:600;text-decoration:none}
+/* Puntos y comentarios: defensas ante CSS ajeno cargado antes o después */
+.elt-points-section,.elt-points-heading,.elt-points-body,#elt-comments-section,#elt-comments-slot{box-sizing:border-box}
+.elt-points-buttons{display:flex;flex-wrap:nowrap;align-items:center;overflow-x:auto}
+.elt-point-btn{appearance:none;flex:0 0 37px}
+#elt-comments-section{min-width:0;overflow:hidden}
+#elt-comments-slot .elt-auth-current img{width:32px!important;height:32px!important;max-width:32px!important;object-fit:cover!important;border-radius:50%!important;display:inline-block!important;flex:none!important}
+#elt-comments-slot .elt-comment-avatar img{width:100%!important;height:100%!important;object-fit:cover!important}
+#elt-comments-slot textarea,#elt-comments-slot input{max-width:100%;box-sizing:border-box}
+@media(max-width:660px){.md-download-box{flex-wrap:nowrap;gap:8px!important;padding:12px 10px!important}.md-download-box .md-dl-btn{padding:9px!important}.md-download-box .md-dl-title{font-size:12px!important}.md-download-box .md-dl-icon,.md-download-box .elt28-dl-brand{width:33px;min-width:33px;font-size:30px!important}}

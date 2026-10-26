@@ -1,0 +1,22 @@
+/* V0.2.9.2: contadores compactos en el panel de puntos */
+.elt-points-section .elt-points-body{grid-template-columns:38px minmax(0,1fr) minmax(200px,auto);gap:10px}
+.elt-points-section .elt-eng-stats{border-left:1px solid #425366;display:flex;align-items:stretch;gap:0;padding-left:8px;justify-content:space-evenly;min-width:0}
+.elt-eng-stats .elt-eng-stat{border:0;background:transparent;color:#cad8e4;padding:3px 9px;min-width:66px;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;text-align:center;text-decoration:none;line-height:1.1}
+.elt-eng-stats strong{font-size:20px;color:#f1c76c;font-variant-numeric:tabular-nums}
+.elt-eng-stats small{font-size:9px;letter-spacing:.4px;color:#c5d5e1;font-weight:700}
+.elt-eng-stats .elt-eng-stat>i{font-size:13px;color:#a2bed3}
+.elt-eng-stats button.elt-eng-stat{cursor:pointer;border-radius:5px}
+.elt-eng-stats button.elt-eng-stat:hover,.elt-eng-stats button.elt-eng-selected{background:#25485f}
+#elt-eng-hint{padding:0 14px 7px;color:#9db3c4;font-size:11px;min-height:0;margin:0}
+@media(max-width:950px){.elt-points-section .elt-points-body{grid-template-columns:38px minmax(0,1fr)}.elt-points-section .elt-eng-stats{grid-column:1/-1;border-left:0;border-top:1px solid #354e62;justify-content:space-evenly;padding:8px 0 0}.elt-eng-stats .elt-eng-stat{flex:1}}
+@media(max-width:560px){.elt-points-section .elt-points-body{grid-template-columns:32px minmax(0,1fr)}}
+/* Align role chips and achievement icons with the real post sidebar */
+.post-sidebar .elt28-public-roles{display:flex;flex-direction:column;gap:5px;align-items:stretch;width:100%;margin:7px 0}
+.post-sidebar .elt28-public-role{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;box-sizing:border-box;border-radius:3px;padding:5px 4px;color:#fff;font-size:11px;line-height:1.3;text-align:center}
+.post-sidebar .elt28-public-role img{width:17px;height:17px;object-fit:contain}
+.post-sidebar .badges-grid>a{display:grid;place-items:center;min-width:0;min-height:35px;text-decoration:none;outline:none!important;border:0!important;background:transparent!important}
+.post-sidebar .badges-grid>a img{display:block;object-fit:contain;max-width:100%;height:32px}
+.post-sidebar .badges-grid>a>i{border:0!important;text-decoration:none!important;color:#9daebb!important}
+.elt-eng-stats .elt-points-count{border-left:0!important;padding-left:9px;align-items:center;min-width:75px}
+.elt-eng-stats .elt-points-count>span{font-size:9px;margin-top:5px;white-space:nowrap}
+@media(max-width:500px){.elt-eng-stats .elt-points-count{min-width:0;flex:1;padding-left:0}.elt-eng-stats .elt-eng-stat{padding:4px 2px;min-width:0}.elt-eng-stats strong{font-size:19px}}

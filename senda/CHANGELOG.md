@@ -32,3 +32,12 @@
 - Contadores en el perfil y retrato ampliado.
 - Indicadores de contenido exteriores al texto seleccionable.
 - Fotografías manuales optimizadas en el navegador mediante WebP de alta calidad cuando la reducción de tamaño compensa; no se recomprimen respaldos importados.
+
+## 1.2.1 — GitHub Pages, autoguardado e interfaz pública limpia
+- Ocultados en la web pública el aviso «versión pública» y la etiqueta «Modo público / Solo lectura». El resto del sitio queda intacto.
+- Se incluye `index.html` en la raíz para publicar desde `/(root)`, compartiendo la misma web de `docs/`.
+- Se mantiene `Senda.bat` y su administrador local en puerto 8787.
+- Autoguardado de notas, videos, colecciones, campos del perfil y preferencias con indicadores de estado.
+- El editor gráfico conserva el botón Guardar imagen para evitar PNG repetidos; su guardado sincroniza automáticamente `docs/`.
+- Corregido el botón general de guardar cambios; `site.json` no se reescribe sin variaciones de contenido.
+- Importar/Exportar contenido como respaldo sigue disponible; no hay exportación para GitHub.
