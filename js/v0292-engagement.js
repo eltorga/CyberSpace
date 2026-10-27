@@ -35,9 +35,7 @@
        const data=await rpc(sb,'eltorga_engagement_favorite',id);
        if(current!==token)return;
        paint(data);
-       const url=location.href;
-       if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(url).catch(()=>{});
-       info('Enlace copiado. Para guardarlo en tus marcadores pulsa Ctrl+D (Windows) o ⌘+D (Mac).');
+       info('');
      }catch(err){info('No se pudo registrar el favorito. '+(err.message||''));}
      finally{button.disabled=false;}
    };

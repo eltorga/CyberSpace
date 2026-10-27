@@ -1,6 +1,6 @@
 @echo off
 cd /d "%~dp0"
-title Eltorga Foro v0.2.5 - Administrador
+title Eltorga Foro v0.2.9.5 - Administrador
 where py >nul 2>&1
 if %errorlevel%==0 (
  py -3 admin\server.py

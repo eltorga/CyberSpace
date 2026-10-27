@@ -46,6 +46,11 @@
       "name": "YouTube",
       "url": "https://youtube.com/",
       "icon": "si:youtube"
+    },
+    {
+      "name": "Biblioteca",
+      "url": "#",
+      "icon": "ri-gamepad-line"
     }
   ],
   "languages": [
@@ -79,5 +84,101 @@
     "enabled": true,
     "allowGuests": true,
     "githubLogin": true
+  },
+  "profile": {
+    "achievements": [
+      {
+        "name": "Logro 1",
+        "image": ""
+      },
+      {
+        "name": "Logro 2",
+        "image": ""
+      },
+      {
+        "name": "Logro 3",
+        "image": ""
+      },
+      {
+        "name": "Logro 4",
+        "image": ""
+      },
+      {
+        "name": "Logro 5",
+        "image": ""
+      },
+      {
+        "name": "Logro 6",
+        "image": ""
+      },
+      {
+        "name": "Logro 7",
+        "image": ""
+      },
+      {
+        "name": "Logro 8",
+        "image": ""
+      },
+      {
+        "name": "Logro 9",
+        "image": ""
+      }
+    ],
+    "name": "eltorga",
+    "avatar": "assets/media/eltorga_photo-3e8d6969.jpg",
+    "role": "Desarrollador",
+    "role2": "Administrador",
+    "posts": "142",
+    "likes": "396",
+    "reputation": "530",
+    "roleIcon": "ri-code-s-slash-line",
+    "role2Icon": "ri-shield-star-line",
+    "roleColor": "#66c0f4",
+    "role2Color": "#d32f2f",
+    "postsIcon": "ri-edit-line",
+    "likesIcon": "ri-heart-3-fill",
+    "reputationIcon": "ri-arrow-up-line",
+    "stats": [
+      {
+        "id": "posts",
+        "label": "Posts creados",
+        "value": "142",
+        "icon": "ri-edit-line"
+      },
+      {
+        "id": "likes",
+        "label": "Likes recibidos",
+        "value": "396",
+        "icon": "ri-heart-3-fill"
+      },
+      {
+        "id": "reputation",
+        "label": "Reputación",
+        "value": "530",
+        "icon": "ri-arrow-up-line"
+      }
+    ],
+    "roles": [
+      {
+        "name": "Desarrollador",
+        "icon": "ri-code-s-slash-line",
+        "image": "",
+        "c1": "#66c0f4",
+        "c2": "#66c0f4",
+        "mode": "solid",
+        "textColor": "#ffffff",
+        "invert": false
+      },
+      {
+        "name": "Administrador",
+        "icon": "ri-shield-star-line",
+        "image": "",
+        "c1": "#d32f2f",
+        "c2": "#d32f2f",
+        "mode": "solid",
+        "textColor": "#ffffff",
+        "invert": false
+      }
+    ]
   }
 }

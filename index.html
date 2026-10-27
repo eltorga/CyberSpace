@@ -339,7 +339,7 @@
 <link rel="stylesheet" href="js/v029-public.css?v=029"><link rel="stylesheet" href="js/v0291-public.css?v=0291">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
-</head>
+<link rel="stylesheet" href="js/v0293-public.css"><link rel="stylesheet" href="js/v0294-public.css?v=0294"><link rel="stylesheet" href="js/v0295-public.css?v=0295"></head>
 <body>
 
     <div class="bg-global-container" id="bg-global-container"></div>
@@ -460,6 +460,7 @@
                     const r = await fetch(p,{cache:'no-cache'}); if(!r.ok) throw Error(p); return r.json();
                 }));
                 siteConfig = config;
+                if(Array.isArray(config.heroLinks)&&config.heroLinks.length){const buttons=document.querySelector('.hero-buttons');if(buttons){buttons.replaceChildren(...config.heroLinks.map(item=>{const a=document.createElement('a');const u=String(item.url||'#');a.href=/^(https?:\/\/|\/|#)/i.test(u)?u:'#';a.className='btn-hero';if(/^https?:/i.test(a.href)){a.target='_blank';a.rel='noopener noreferrer';}const iconValue=String(item.icon||'');const i=document.createElement(/^si:[a-z0-9-]+$/i.test(iconValue)?'span':'i');if(/^si:[a-z0-9-]+$/i.test(iconValue)){i.className='iconify';i.setAttribute('data-icon',iconValue);}else i.className=/^ri-[a-z0-9-]+$/.test(iconValue)?iconValue:'ri-links-line';a.append(i,document.createTextNode(' '+String(item.name||'Enlace')));return a;}));}}
                 if(window.eltorgaPublicInit) window.eltorgaPublicInit();
                 document.title = config.siteTitle || 'Eltorga Foro';
                 document.querySelector('.hero-title').textContent = config.heroTitle || 'Foro Online';
@@ -1241,6 +1242,6 @@ function applyAdminProfile(){const p=siteConfig.profile;if(!p)return;document.qu
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="js/v025-puntos.js" defer></script><script defer src="js/v0292-engagement.js?v=0292"></script>
 
-<script src="js/v026-comments.js" defer></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" defer></script><script src="js/v028-public.js" defer></script><script src="js/v029-public.js" defer></script>
+<script src="js/v026-comments.js" defer></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" defer></script><script src="js/v028-public.js" defer></script><script src="js/v029-public.js" defer></script><script src="js/v0293-public.js" defer></script><script src="js/v0295-public.js?v=0295" defer></script>
 </body>
 </html>

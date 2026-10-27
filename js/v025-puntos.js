@@ -21,8 +21,10 @@
   function paint(data){
     const total=document.getElementById('elt-points-total');
     const voters=document.getElementById('elt-points-voters');
+    const rating=document.getElementById('elt-points-rating');
     if(total)total.textContent=Number(data?.total||0).toLocaleString('es');
-    if(voters)voters.textContent=Number(data?.voters||0).toLocaleString('es')+' votos';
+    if(voters)voters.textContent=Number(data?.voters||0).toLocaleString('es');
+    if(rating){const n=Number(data?.voters||0);const points=Number(data?.total||0);rating.textContent=n?Math.min(100,Math.max(0,Math.round(points/n/10*100)))+'%':'0%';}
     const already=Number(data?.my_points||0);
     document.querySelectorAll('.elt-point-btn').forEach(btn=>{
       btn.disabled=!!already;
@@ -75,10 +77,10 @@
     if(!id){mount.textContent='Esta publicación no tiene un identificador permanente.';return;}
     mount.dataset.postId=id;
     mount.innerHTML='<div class="elt-points-body">'+
-      '<div class="elt-points-coin" title="Monedas"><i class="fa-solid fa-coins" aria-hidden="true"></i></div>'+
+      '<div class="elt-points-coin" title="Puntos"><i class="ri-bard-fill" aria-hidden="true"></i></div>'+
       '<div class="elt-points-buttons" role="group" aria-label="Otorgar de uno a diez puntos">'+
       Array.from({length:10},(_,i)=>'<button type="button" class="elt-point-btn" data-value="'+(i+1)+'" aria-label="Otorgar '+(i+1)+' puntos">+'+(i+1)+'</button>').join('')+
-      '</div><div class="elt-eng-stats"><div class="elt-eng-stat elt-points-count" aria-label="Puntos acumulados"><strong id="elt-points-total">—</strong><small>PUNTOS</small><span id="elt-points-voters">— votos</span></div><div class="elt-eng-stat" aria-label="Visitas"><i class="ri-eye-line"></i><strong id="elt-eng-visits">—</strong><small>VISITAS</small></div><button type="button" class="elt-eng-stat" id="elt-eng-bookmark" title="Registrar favorito y copiar enlace"><i class="ri-star-line"></i><strong id="elt-eng-favorites">—</strong><small>FAVORITOS</small></button></div></div>'+
+      '</div><div class="elt-eng-stats"><div class="elt-eng-stat elt-points-count" aria-label="Puntos acumulados"><strong id="elt-points-total">—</strong><small>PUNTOS</small></div><div class="elt-eng-stat" aria-label="Cantidad de votos"><strong id="elt-points-voters">—</strong><small>VOTOS</small></div><div class="elt-eng-stat" aria-label="Promedio normalizado"><strong id="elt-points-rating">—</strong><small>RANKING</small></div><div class="elt-eng-stat elt294-stat-after-divider" aria-label="Visitas"><strong id="elt-eng-visits">—</strong><small>VISITAS</small></div><button type="button" class="elt-eng-stat" id="elt-eng-bookmark" title="Añadir a favoritos"><strong id="elt-eng-favorites">—</strong><small>FAVORITOS</small></button></div></div>'+
       '<p id="elt-points-status" class="elt-points-status" role="status" aria-live="polite">Consultando puntuación…</p><p id="elt-eng-hint" role="status" aria-live="polite"></p>';
     mount.querySelectorAll('.elt-point-btn').forEach(b=>b.addEventListener('click',()=>vote(id,Number(b.dataset.value),current)));
     refresh(id,current);

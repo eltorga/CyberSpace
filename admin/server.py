@@ -1,7 +1,7 @@
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit, unquote
-import json, mimetypes, os, re, shutil, uuid, io, zipfile, datetime
+import json, mimetypes, os, re, shutil, uuid, io, zipfile, datetime, tempfile
 from server_upgrade import media_list,media_manage,github_sync
 ROOT=Path(__file__).resolve().parent.parent
 os.chdir(ROOT)
@@ -23,7 +23,7 @@ class Handler(SimpleHTTPRequestHandler):
                 for dirname in ('data','assets','css','js','admin'):
                     for f in (ROOT/dirname).rglob('*'):
                         if f.is_file():z.write(f,f.relative_to(ROOT).as_posix())
-                for name in ('index.html','descarga.html','ADMIN.bat','LEEME.txt'):
+                for name in ('index.html','descarga.html','404.html','ADMIN.bat','LEEME.txt'):
                     if (ROOT/name).is_file():z.write(ROOT/name,name)
             raw=output.getvalue();self.send_response(200);self.send_header('Content-Type','application/zip');self.send_header('Content-Disposition','attachment; filename="eltorga-respaldo.zip"');self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw);return
         if urlsplit(self.path).path=='/admin':self.send_response(302);self.send_header('Location','/admin/');self.end_headers();return
@@ -46,31 +46,65 @@ class Handler(SimpleHTTPRequestHandler):
             if path=='/api/media/manage':
                 return self.send_json(media_manage(ROOT,json.loads(body)))
             if path=='/api/restore':
-                if not zipfile.is_zipfile(io.BytesIO(body)):raise ValueError('ZIP inválido')
+                # Restaura el CONTENIDO editable de un respaldo completo, nunca el programa
+                # o los permisos de Supabase. Sustituye data/ y assets/ en lugar de combinar.
+                if not zipfile.is_zipfile(io.BytesIO(body)):
+                    raise ValueError('El archivo seleccionado no es un ZIP válido')
                 with zipfile.ZipFile(io.BytesIO(body)) as archive:
-                    files=[x for x in archive.infolist() if not x.is_dir()]
-                    if len(files)>10000 or sum(x.file_size for x in files)>1024*1024*1024:raise ValueError('Respaldo demasiado grande')
-                    allowed=('data/','assets/','css/','js/','admin/')
-                    for info in files:
-                        n=info.filename
-                        if n.startswith('/') or '\\' in n or '..' in Path(n).parts or not(n.startswith(allowed) or n in ('index.html','descarga.html','ADMIN.bat','LEEME.txt')):raise ValueError('Ruta no permitida en ZIP')
-                    names={x.filename for x in files}
+                    infos=[x for x in archive.infolist() if not x.is_dir()]
+                    if len(infos)>10000 or sum(x.file_size for x in infos)>1024*1024*1024:
+                        raise ValueError('Respaldo demasiado grande')
+                    allowed_contents=[]
+                    for info in infos:
+                        name=info.filename
+                        if name.startswith('/') or '\\' in name or '..' in Path(name).parts:
+                            raise ValueError('Ruta peligrosa dentro del respaldo')
+                        if name.startswith(('data/','assets/')):
+                            allowed_contents.append(info)
+                    names={x.filename for x in allowed_contents}
                     for required in DATA.values():
                         if required not in names:raise ValueError('Falta '+required)
-                    for required in DATA.values():
-                        val=json.loads(archive.read(required))
-                        if not isinstance(val,dict if required.endswith('config.json') else list):raise ValueError('JSON inválido: '+required)
+                        data=json.loads(archive.read(required))
+                        if not isinstance(data,dict if required.endswith('config.json') else list):
+                            raise ValueError('JSON inválido en '+required)
+                    for info in allowed_contents:
+                        if info.filename.startswith('assets/'):
+                            if Path(info.filename).name != '.gitkeep' and Path(info.filename).suffix.lower() not in {'.png','.jpg','.jpeg','.webp','.gif','.mp4','.webm','.avif','.svg','.ico','.woff2','.woff','.ttf','.json','.gitkeep'}:
+                                raise ValueError('Formato de archivo multimedia no permitido: '+info.filename)
+                    # Se guarda una copia automática antes de modificar ningún archivo.
                     snapshots=ROOT/'backups';snapshots.mkdir(exist_ok=True)
-                    timestamp=datetime.datetime.now().strftime('%Y%m%d-%H%M%S');snapshot=snapshots/('antes-de-restaurar-'+timestamp+'.zip')
+                    stamp=datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+                    snapshot=snapshots/('antes-de-restaurar-'+stamp+'-'+uuid.uuid4().hex[:4]+'.zip')
                     with zipfile.ZipFile(snapshot,'w',zipfile.ZIP_DEFLATED) as old:
-                        for directory in ('data','assets','css','js','admin'):
-                            for f in (ROOT/directory).rglob('*'):
-                                if f.is_file():old.write(f,f.relative_to(ROOT).as_posix())
-                        for name in ('index.html','descarga.html','ADMIN.bat','LEEME.txt'):
-                            if (ROOT/name).exists():old.write(ROOT/name,name)
-                    for info in files:
-                        dest=ROOT/info.filename;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(archive.read(info))
-                return self.send_json({'ok':True,'pre_restore_backup':str(snapshot.relative_to(ROOT))})
+                        for folder in ('data','assets'):
+                            if (ROOT/folder).exists():
+                                for f in (ROOT/folder).rglob('*'):
+                                    if f.is_file():old.write(f,f.relative_to(ROOT).as_posix())
+                    with tempfile.TemporaryDirectory(prefix='.eltorga-restauracion-',dir=ROOT) as temp:
+                        stage=Path(temp)/'nuevo';stage.mkdir()
+                        for info in allowed_contents:
+                            dest=stage/info.filename
+                            dest.parent.mkdir(parents=True,exist_ok=True)
+                            # Descomprimir solo datos + multimedia; nunca ejecutar archivos ZIP.
+                            dest.write_bytes(archive.read(info))
+                        (stage/'data').mkdir(exist_ok=True)
+                        (stage/'assets').mkdir(exist_ok=True)
+                        old_dir=Path(temp)/'anterior';old_dir.mkdir()
+                        committed=[]
+                        try:
+                            for folder in ('data','assets'):
+                                original=ROOT/folder
+                                if original.exists():original.rename(old_dir/folder)
+                                (stage/folder).rename(original)
+                                committed.append(folder)
+                        except Exception:
+                            for folder in reversed(committed):
+                                if (ROOT/folder).exists():shutil.rmtree(ROOT/folder)
+                            for folder in ('data','assets'):
+                                if (old_dir/folder).exists() and not (ROOT/folder).exists():
+                                    (old_dir/folder).rename(ROOT/folder)
+                            raise
+                return self.send_json({'ok':True,'pre_restore_backup':str(snapshot.relative_to(ROOT)),'replaced':['data','assets'],'note':'El programa y las tablas de Supabase no se modificaron'})
             if path.startswith('/api/save/'):
                 key=path.rsplit('/',1)[-1]
                 if key not in DATA:return self.send_json({'error':'Recurso inválido'},404)

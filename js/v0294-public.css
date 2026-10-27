@@ -1,0 +1,20 @@
+/* v0.2.9.4 — métricas de votos y clasificación, sin duplicar la leyenda del total */
+.elt-points-section .elt-points-body{grid-template-columns:37px minmax(0,1fr) minmax(290px,auto);gap:8px}
+.elt-points-section .elt-eng-stats{display:flex;align-items:stretch;justify-content:flex-end;border:0;padding:0;gap:0;min-width:0}
+.elt-points-section .elt-eng-stat{min-width:54px;padding:5px 6px;flex:0 1 auto;gap:3px}
+.elt-points-section .elt-eng-stat strong{font-size:19px}
+.elt-points-section .elt-eng-stat small{font-size:9px;letter-spacing:.2px}
+.elt-points-section .elt-eng-stat>i{font-size:12px}
+.elt-points-section .elt294-stat-after-divider{border-left:1px solid #435467;padding-left:12px;margin-left:5px}
+.elt-points-section .elt-points-count{min-width:55px;border:0;padding-left:6px}
+.elt-points-section #elt-points-voters{color:#e1ebf5}
+.elt-points-section #elt-points-rating{color:#e9cd81}
+.elt-points-section .elt-points-coin i{font-size:19px}
+.elt-points-section .elt-points-buttons{flex:1 1 auto;}
+@media(max-width:1190px){
+ .elt-points-section .elt-points-body{grid-template-columns:37px minmax(0,1fr)}
+ .elt-points-section .elt-eng-stats{grid-column:1/-1;width:100%;border-top:1px solid #34485a;padding-top:8px;justify-content:space-evenly}
+ .elt-points-section .elt-eng-stat{flex:1 1 0;min-width:0}
+ .elt-points-section .elt294-stat-after-divider{margin-left:0}
+}
+@media(max-width:550px){.elt-points-section .elt-points-body{grid-template-columns:31px minmax(0,1fr)}.elt-points-section .elt-eng-stat strong{font-size:17px}.elt-points-section .elt-eng-stat small{font-size:8px}.elt-points-section .elt294-stat-after-divider{padding-left:5px}}

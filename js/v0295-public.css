@@ -1,0 +1,10 @@
+/* Eltorga Foro v0.2.9.5: apariencia coherente entre vista previa y post. */
+.post-sidebar .elt295-roles{display:flex;flex-direction:column;gap:5px;align-items:stretch;width:100%;margin:7px 0}
+.post-sidebar .elt295-roles .elt28-public-role{box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;min-height:24px;width:100%;border:0;border-radius:3px;padding:5px 8px;font:600 11px/1.3 system-ui,sans-serif;text-align:center;overflow-wrap:anywhere}
+.post-sidebar .elt295-roles .elt28-public-role img{height:18px;width:18px;object-fit:contain}
+.post-sidebar .badges-grid >span{display:grid;place-items:center;min-height:35px;min-width:0}
+.post-sidebar .badges-grid >span img{width:32px;height:32px;max-width:100%;object-fit:contain}
+.post-sidebar .badges-grid >span i{font-size:1.5rem;color:var(--steam-grey)}
+/* Visitas y favoritos muestran solo el valor y su etiqueta. */
+.elt-points-section .elt294-stat-after-divider > i,
+.elt-points-section #elt-eng-bookmark > i{display:none!important}
